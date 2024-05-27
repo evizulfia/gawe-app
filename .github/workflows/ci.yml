@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Laravel CI
 
 on:
   push:
@@ -10,10 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Validate HTML
-      run: |
-        sudo apt-get install -y tidy
-        tidy -q -e index.html
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4" # Sesuaikan dengan versi PHP yang Anda gunakan
+
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run tests
+        run: php artisan test
