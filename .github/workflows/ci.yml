@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       target-branch:
-        description: "Target branch to merge into"
+        description: 'Target branch to merge into'
         required: true
 
 jobs:
@@ -41,9 +41,14 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
+      - name: Copy .env.testing
+        run: cp .env.testing .env
+
+      - name: Run Laravel migrations
+        run: php artisan migrate --force --env=testing
+
       - name: Run Laravel tests
-        run: |
-          php artisan test
+        run: php artisan test --env=testing
 
       - name: Debugging Info
         run: |
