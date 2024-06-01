@@ -79,7 +79,7 @@ jobs:
       - name: Merge master into target branch
         run: |
           git checkout ${{ github.event.inputs['target-branch'] }}
-          git merge master
+          git merge master -m "Merged 'master' into ${{ github.event.inputs['target-branch'] }}"
 
       - name: Push changes
         env:
