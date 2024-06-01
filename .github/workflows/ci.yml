@@ -36,13 +36,16 @@ jobs:
         run: |
           npm install
 
-      - name: Copy .env and generate key
+      - name: Copy .env.example to .env
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      - name: Copy .env.testing
+      - name: Copy .env.testing to .env
         run: cp .env.testing .env
+
+      - name: Generate APP_KEY for testing environment
+        run: php artisan key:generate --env=testing
 
       - name: Run Laravel migrations
         run: php artisan migrate --force --env=testing
