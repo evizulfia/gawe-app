@@ -1,9 +1,14 @@
-name: Laravel CI
+name: Laravel CI and Merge
 
 on:
   push:
     branches:
       - "*"
+  workflow_dispatch:
+    inputs:
+      target-branch:
+        description: "Target branch to merge into"
+        required: true
 
 jobs:
   build:
@@ -46,3 +51,29 @@ jobs:
           node -v
           npm -v
           composer -V
+
+  merge:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Merge master into target branch
+        run: |
+          git checkout ${{ github.event.inputs['target-branch'] }}
+          git merge master
+
+      - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push origin ${{ github.event.inputs['target-branch'] }}
