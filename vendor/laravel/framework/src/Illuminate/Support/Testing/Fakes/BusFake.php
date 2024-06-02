@@ -63,7 +63,11 @@ class BusFake implements QueueingDispatcher
      * @param  array|string  $jobsToFake
      * @return void
      */
+<<<<<<< HEAD
     public function __construct(QueueingDispatcher $dispatcher, $jobsToFake = [])
+=======
+    public function __construct(QueueingDispatcher $dispatcher, $jobsToFake = [], ?BatchRepository $batchRepository = null)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->dispatcher = $dispatcher;
 

@@ -198,9 +198,108 @@ class MySqlGrammar extends Grammar
      */
     public function compileAutoIncrementStartingValues(Blueprint $blueprint)
     {
+<<<<<<< HEAD
         return collect($blueprint->autoIncrementingStartingValues())->map(function ($value, $column) use ($blueprint) {
             return 'alter table '.$this->wrapTable($blueprint->getTable()).' auto_increment = '.$value;
         })->all();
+=======
+        if ($command->column->autoIncrement
+            && $value = $command->column->get('startingValue', $command->column->get('from'))) {
+            return 'alter table '.$this->wrapTable($blueprint).' auto_increment = '.$value;
+        }
+    }
+
+    /**
+     * Compile a rename column command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array|string
+     */
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        $version = $connection->getServerVersion();
+
+        if (($connection->isMaria() && version_compare($version, '10.5.2', '<')) ||
+            (! $connection->isMaria() && version_compare($version, '8.0.3', '<'))) {
+            return $this->compileLegacyRenameColumn($blueprint, $command, $connection);
+        }
+
+        return parent::compileRenameColumn($blueprint, $command, $connection);
+    }
+
+    /**
+     * Compile a rename column command for legacy versions of MySQL.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return string
+     */
+    protected function compileLegacyRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        $column = collect($connection->getSchemaBuilder()->getColumns($blueprint->getTable()))
+            ->firstWhere('name', $command->from);
+
+        $modifiers = $this->addModifiers($column['type'], $blueprint, new ColumnDefinition([
+            'change' => true,
+            'type' => match ($column['type_name']) {
+                'bigint' => 'bigInteger',
+                'int' => 'integer',
+                'mediumint' => 'mediumInteger',
+                'smallint' => 'smallInteger',
+                'tinyint' => 'tinyInteger',
+                default => $column['type_name'],
+            },
+            'nullable' => $column['nullable'],
+            'default' => $column['default'] && (str_starts_with(strtolower($column['default']), 'current_timestamp') || $column['default'] === 'NULL')
+                ? new Expression($column['default'])
+                : $column['default'],
+            'autoIncrement' => $column['auto_increment'],
+            'collation' => $column['collation'],
+            'comment' => $column['comment'],
+            'virtualAs' => ! is_null($column['generation']) && $column['generation']['type'] === 'virtual'
+                ? $column['generation']['expression'] : null,
+            'storedAs' => ! is_null($column['generation']) && $column['generation']['type'] === 'stored'
+                ? $column['generation']['expression'] : null,
+        ]));
+
+        return sprintf('alter table %s change %s %s %s',
+            $this->wrapTable($blueprint),
+            $this->wrap($command->from),
+            $this->wrap($command->to),
+            $modifiers
+        );
+    }
+
+    /**
+     * Compile a change column command into a series of SQL statements.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array|string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        $columns = [];
+
+        foreach ($blueprint->getChangedColumns() as $column) {
+            $sql = sprintf('%s %s%s %s',
+                is_null($column->renameTo) ? 'modify' : 'change',
+                $this->wrap($column),
+                is_null($column->renameTo) ? '' : ' '.$this->wrap($column->renameTo),
+                $this->getType($column)
+            );
+
+            $columns[] = $this->addModifiers($sql, $blueprint, $column);
+        }
+
+        return 'alter table '.$this->wrapTable($blueprint).' '.implode(', ', $columns);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

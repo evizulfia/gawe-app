@@ -13,6 +13,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\MultipleRecordsFoundException;
 use Illuminate\Database\RecordsNotFoundException;
+use Illuminate\Foundation\Exceptions\Renderer\Renderer;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -203,7 +204,53 @@ class Handler implements ExceptionHandlerContract
      */
     public function ignore(string $class)
     {
+<<<<<<< HEAD
         $this->dontReport[] = $class;
+=======
+        return $this->ignore($exceptions);
+    }
+
+    /**
+     * Indicate that the given exception type should not be reported.
+     *
+     * @param  array|string  $exceptions
+     * @return $this
+     */
+    public function ignore(array|string $exceptions)
+    {
+        $exceptions = Arr::wrap($exceptions);
+
+        $this->dontReport = array_values(array_unique(array_merge($this->dontReport, $exceptions)));
+
+        return $this;
+    }
+
+    /**
+     * Indicate that the given attributes should never be flashed to the session on validation errors.
+     *
+     * @param  array|string  $attributes
+     * @return $this
+     */
+    public function dontFlash(array|string $attributes)
+    {
+        $this->dontFlash = array_values(array_unique(
+            array_merge($this->dontFlash, Arr::wrap($attributes))
+        ));
+
+        return $this;
+    }
+
+    /**
+     * Set the log level for the given exception type.
+     *
+     * @param  class-string<\Throwable>  $type
+     * @param  \Psr\Log\LogLevel::*  $level
+     * @return $this
+     */
+    public function level($type, $level)
+    {
+        $this->levels[$type] = $level;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         return $this;
     }
@@ -540,9 +587,13 @@ class Handler implements ExceptionHandlerContract
     protected function renderExceptionContent(Throwable $e)
     {
         try {
-            return config('app.debug') && app()->has(ExceptionRenderer::class)
-                        ? $this->renderExceptionWithCustomRenderer($e)
-                        : $this->renderExceptionWithSymfony($e, config('app.debug'));
+            if (config('app.debug')) {
+                return app()->has(ExceptionRenderer::class)
+                    ? $this->renderExceptionWithCustomRenderer($e)
+                    : $this->container->make(Renderer::class)->render(request(), $e);
+            }
+
+            return $this->renderExceptionWithSymfony($e, config('app.debug'));
         } catch (Throwable $e) {
             return $this->renderExceptionWithSymfony($e, config('app.debug'));
         }

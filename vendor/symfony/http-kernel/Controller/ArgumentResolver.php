@@ -19,6 +19,12 @@ use Symfony\Component\HttpKernel\Controller\ArgumentResolver\SessionValueResolve
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
+<<<<<<< HEAD
+=======
+use Symfony\Component\HttpKernel\Exception\NearMissValueResolverException;
+use Symfony\Component\HttpKernel\Exception\ResolverNotFoundException;
+use Symfony\Contracts\Service\ServiceProviderInterface;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 /**
  * Responsible for resolving the arguments passed to an action.
@@ -46,6 +52,7 @@ final class ArgumentResolver implements ArgumentResolverInterface
     {
         $arguments = [];
 
+<<<<<<< HEAD
         foreach ($this->argumentMetadataFactory->createArgumentMetadata($controller) as $metadata) {
             foreach ($this->argumentValueResolvers as $resolver) {
                 if (!$resolver->supports($request, $metadata)) {
@@ -58,6 +65,51 @@ final class ArgumentResolver implements ArgumentResolverInterface
                 foreach ($resolved as $append) {
                     $atLeastOne = true;
                     $arguments[] = $append;
+=======
+        foreach ($this->argumentMetadataFactory->createArgumentMetadata($controller, $reflector) as $metadata) {
+            $argumentValueResolvers = $this->argumentValueResolvers;
+            $disabledResolvers = [];
+
+            if ($this->namedResolvers && $attributes = $metadata->getAttributesOfType(ValueResolver::class, $metadata::IS_INSTANCEOF)) {
+                $resolverName = null;
+                foreach ($attributes as $attribute) {
+                    if ($attribute->disabled) {
+                        $disabledResolvers[$attribute->resolver] = true;
+                    } elseif ($resolverName) {
+                        throw new \LogicException(sprintf('You can only pin one resolver per argument, but argument "$%s" of "%s()" has more.', $metadata->getName(), $metadata->getControllerName()));
+                    } else {
+                        $resolverName = $attribute->resolver;
+                    }
+                }
+
+                if ($resolverName) {
+                    if (!$this->namedResolvers->has($resolverName)) {
+                        throw new ResolverNotFoundException($resolverName, $this->namedResolvers instanceof ServiceProviderInterface ? array_keys($this->namedResolvers->getProvidedServices()) : []);
+                    }
+
+                    $argumentValueResolvers = [
+                        $this->namedResolvers->get($resolverName),
+                        new RequestAttributeValueResolver(),
+                        new DefaultValueResolver(),
+                    ];
+                }
+            }
+
+            $valueResolverExceptions = [];
+            foreach ($argumentValueResolvers as $name => $resolver) {
+                if (isset($disabledResolvers[\is_int($name) ? $resolver::class : $name])) {
+                    continue;
+                }
+
+                try {
+                    $count = 0;
+                    foreach ($resolver->resolve($request, $metadata) as $argument) {
+                        ++$count;
+                        $arguments[] = $argument;
+                    }
+                } catch (NearMissValueResolverException $e) {
+                    $valueResolverExceptions[] = $e;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 }
 
                 if (!$atLeastOne) {
@@ -68,6 +120,7 @@ final class ArgumentResolver implements ArgumentResolverInterface
                 continue 2;
             }
 
+<<<<<<< HEAD
             $representative = $controller;
 
             if (\is_array($representative)) {
@@ -77,6 +130,22 @@ final class ArgumentResolver implements ArgumentResolverInterface
             }
 
             throw new \RuntimeException(sprintf('Controller "%s" requires that you provide a value for the "$%s" argument. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.', $representative, $metadata->getName()));
+=======
+            $reasons = array_map(static fn (NearMissValueResolverException $e) => $e->getMessage(), $valueResolverExceptions);
+            if (!$reasons) {
+                $reasons[] = 'Either the argument is nullable and no null value has been provided, no default value has been provided or there is a non-optional argument after this one.';
+            }
+
+            $reasonCounter = 1;
+            if (\count($reasons) > 1) {
+                foreach ($reasons as $i => $reason) {
+                    $reasons[$i] = $reasonCounter.') '.$reason;
+                    ++$reasonCounter;
+                }
+            }
+
+            throw new \RuntimeException(sprintf('Controller "%s" requires the "$%s" argument that could not be resolved. '.($reasonCounter > 1 ? 'Possible reasons: ' : '').'%s', $metadata->getControllerName(), $metadata->getName(), implode(' ', $reasons)));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         }
 
         return $arguments;

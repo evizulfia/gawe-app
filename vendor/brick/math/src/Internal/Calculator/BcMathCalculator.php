@@ -50,12 +50,15 @@ class BcMathCalculator extends Calculator
         return \bcdiv($a, $b, 0);
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritdoc}
      *
      * @psalm-suppress InvalidNullableReturnType
      * @psalm-suppress NullableReturnStatement
      */
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function divR(string $a, string $b) : string
     {
         if (version_compare(PHP_VERSION, '7.2') >= 0) {
@@ -72,6 +75,7 @@ class BcMathCalculator extends Calculator
     {
         $q = \bcdiv($a, $b, 0);
 
+<<<<<<< HEAD
         if (version_compare(PHP_VERSION, '7.2') >= 0) {
             $r = \bcmod($a, $b, 0);
         } else {
@@ -81,6 +85,8 @@ class BcMathCalculator extends Calculator
         assert($q !== null);
         assert($r !== null);
 
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         return [$q, $r];
     }
 
@@ -103,12 +109,15 @@ class BcMathCalculator extends Calculator
         return \bcpowmod($base, $exp, $mod, 0);
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritDoc}
      *
      * @psalm-suppress NullableReturnStatement
      * @psalm-suppress InvalidNullableReturnType
      */
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function sqrt(string $n) : string
     {
         return \bcsqrt($n, 0);

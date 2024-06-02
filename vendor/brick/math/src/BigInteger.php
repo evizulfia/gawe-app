@@ -29,7 +29,11 @@ final class BigInteger extends BigNumber
      *
      * @var string
      */
+<<<<<<< HEAD
     private $value;
+=======
+    private readonly string $value;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * Protected constructor. Use a factory method to obtain an instance.
@@ -42,6 +46,7 @@ final class BigInteger extends BigNumber
     }
 
     /**
+<<<<<<< HEAD
      * Creates a BigInteger of the given value.
      *
      * @param BigNumber|int|float|string $value
@@ -53,8 +58,13 @@ final class BigInteger extends BigNumber
      * @psalm-pure
      */
     public static function of($value) : BigNumber
+=======
+     * @psalm-pure
+     */
+    protected static function from(BigNumber $number): static
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
-        return parent::of($value)->toBigInteger();
+        return $number->toBigInteger();
     }
 
     /**
@@ -239,9 +249,10 @@ final class BigInteger extends BigNumber
         }
 
         if ($randomBytesGenerator === null) {
-            $randomBytesGenerator = 'random_bytes';
+            $randomBytesGenerator = random_bytes(...);
         }
 
+        /** @var int<1, max> $byteLength */
         $byteLength = \intdiv($numBits - 1, 8) + 1;
 
         $extraBits = ($byteLength * 8 - $numBits);
@@ -439,14 +450,18 @@ final class BigInteger extends BigNumber
      * Returns the result of the division of this number by the given one.
      *
      * @param BigNumber|int|float|string $that         The divisor. Must be convertible to a BigInteger.
-     * @param int                        $roundingMode An optional rounding mode.
+     * @param RoundingMode               $roundingMode An optional rounding mode, defaults to UNNECESSARY.
      *
      * @return BigInteger The result.
      *
      * @throws MathException If the divisor is not a valid number, is not convertible to a BigInteger, is zero,
      *                       or RoundingMode::UNNECESSARY is used and the remainder is not zero.
      */
+<<<<<<< HEAD
     public function dividedBy($that, int $roundingMode = RoundingMode::UNNECESSARY) : BigInteger
+=======
+    public function dividedBy(BigNumber|int|float|string $that, RoundingMode $roundingMode = RoundingMode::UNNECESSARY) : BigInteger
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $that = BigInteger::of($that);
 
@@ -553,6 +568,8 @@ final class BigInteger extends BigNumber
      * @param BigNumber|int|float|string $that The divisor. Must be convertible to a BigInteger.
      *
      * @return BigInteger[] An array containing the quotient and the remainder.
+     *
+     * @psalm-return array{BigInteger, BigInteger}
      *
      * @throws DivisionByZeroException If the divisor is zero.
      */
@@ -965,10 +982,14 @@ final class BigInteger extends BigNumber
         return BigRational::create($this, BigInteger::one(), false);
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritdoc}
      */
     public function toScale(int $scale, int $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+=======
+    public function toScale(int $scale, RoundingMode $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         return $this->toBigDecimal()->toScale($scale, $roundingMode);
     }
@@ -1148,6 +1169,7 @@ final class BigInteger extends BigNumber
 
         $this->value = $data['value'];
     }
+<<<<<<< HEAD
 
     /**
      * This method is required by interface Serializable and SHOULD NOT be accessed directly.
@@ -1181,4 +1203,6 @@ final class BigInteger extends BigNumber
 
         $this->value = $value;
     }
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

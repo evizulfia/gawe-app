@@ -32,9 +32,12 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
     public const REQUIREMENT_MISMATCH = 1;
     public const ROUTE_MATCH = 2;
 
+<<<<<<< HEAD
     /** @var RequestContext */
     protected $context;
 
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * Collects HTTP methods that would be allowed for the request.
      */
@@ -46,20 +49,25 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
      * @internal
      */
     protected array $allowSchemes = [];
+<<<<<<< HEAD
 
     protected $routes;
     protected $request;
     protected $expressionLanguage;
+=======
+    protected ?Request $request = null;
+    protected ExpressionLanguage $expressionLanguage;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * @var ExpressionFunctionProviderInterface[]
      */
     protected $expressionLanguageProviders = [];
 
-    public function __construct(RouteCollection $routes, RequestContext $context)
-    {
-        $this->routes = $routes;
-        $this->context = $context;
+    public function __construct(
+        protected RouteCollection $routes,
+        protected RequestContext $context,
+    ) {
     }
 
     /**
@@ -174,7 +182,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
             }
 
             if ('/' !== $pathinfo && !$hasTrailingVar && $hasTrailingSlash === ($trimmedPathinfo === $pathinfo)) {
-                if ($supportsTrailingSlash && (!$requiredMethods || \in_array('GET', $requiredMethods))) {
+                if ($supportsTrailingSlash && (!$requiredMethods || \in_array('GET', $requiredMethods, true))) {
                     return $this->allow = $this->allowSchemes = [];
                 }
                 continue;
@@ -185,7 +193,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
                 continue;
             }
 
-            if ($requiredMethods && !\in_array($method, $requiredMethods)) {
+            if ($requiredMethods && !\in_array($method, $requiredMethods, true)) {
                 $this->allow = array_merge($this->allow, $requiredMethods);
                 continue;
             }
@@ -211,6 +219,10 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
             unset($defaults['_canonical_route']);
         }
         $attributes['_route'] = $name;
+
+        if ($mapping = $route->getOption('mapping')) {
+            $attributes['_route_mapping'] = $mapping;
+        }
 
         return $this->mergeDefaults($attributes, $defaults);
     }

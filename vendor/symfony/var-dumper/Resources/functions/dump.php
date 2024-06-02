@@ -41,8 +41,23 @@ if (!function_exists('dd')) {
             header('HTTP/1.1 500 Internal Server Error');
         }
 
+<<<<<<< HEAD
         foreach ($vars as $v) {
             VarDumper::dump($v);
+=======
+        if (!$vars) {
+            VarDumper::dump(new ScalarStub('🐛'));
+
+            exit(1);
+        }
+
+        if (array_key_exists(0, $vars) && 1 === count($vars)) {
+            VarDumper::dump($vars[0]);
+        } else {
+            foreach ($vars as $k => $v) {
+                VarDumper::dump($v, is_int($k) ? 1 + $k : $k);
+            }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         }
 
         exit(1);

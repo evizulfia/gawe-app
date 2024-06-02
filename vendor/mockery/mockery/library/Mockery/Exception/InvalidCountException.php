@@ -25,40 +25,130 @@ use Mockery\Exception\RuntimeException;
 
 class InvalidCountException extends Mockery\CountValidator\Exception
 {
+<<<<<<< HEAD
     protected $method = null;
+=======
+    /**
+     * @var int|null
+     */
+    protected $actual = null;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
+    /**
+     * @var int
+     */
     protected $expected = 0;
 
+    /**
+     * @var string
+     */
     protected $expectedComparative = '<=';
 
+<<<<<<< HEAD
     protected $actual = null;
+=======
+    /**
+     * @var string|null
+     */
+    protected $method = null;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
+    /**
+     * @var LegacyMockInterface|null
+     */
     protected $mockObject = null;
 
+<<<<<<< HEAD
     public function setMock(Mockery\LegacyMockInterface $mock)
+=======
+    /**
+     * @return int|null
+     */
+    public function getActualCount()
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->mockObject = $mock;
         return $this;
     }
 
+<<<<<<< HEAD
     public function setMethodName($name)
     {
         $this->method = $name;
         return $this;
+=======
+    /**
+     * @return int
+     */
+    public function getExpectedCount()
+    {
+        return $this->expected;
     }
 
+    /**
+     * @return string
+     */
+    public function getExpectedCountComparative()
+    {
+        return $this->expectedComparative;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMethodName()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @return LegacyMockInterface|null
+     */
+    public function getMock()
+    {
+        return $this->mockObject;
+    }
+
+    /**
+     * @throws RuntimeException
+     * @return string|null
+     */
+    public function getMockName()
+    {
+        $mock = $this->getMock();
+
+        if ($mock === null) {
+            return '';
+        }
+
+        return $mock->mockery_getName();
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    }
+
+    /**
+     * @param  int  $count
+     * @return self
+     */
     public function setActualCount($count)
     {
         $this->actual = $count;
         return $this;
     }
 
+    /**
+     * @param  int  $count
+     * @return self
+     */
     public function setExpectedCount($count)
     {
         $this->expected = $count;
         return $this;
     }
 
+    /**
+     * @param  string $comp
+     * @return self
+     */
     public function setExpectedCountComparative($comp)
     {
         if (!in_array($comp, array('=', '>', '<', '>=', '<='))) {
@@ -70,12 +160,27 @@ class InvalidCountException extends Mockery\CountValidator\Exception
         return $this;
     }
 
+<<<<<<< HEAD
     public function getMock()
+=======
+    /**
+     * @param  string $name
+     * @return self
+     */
+    public function setMethodName($name)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         return $this->mockObject;
     }
 
+<<<<<<< HEAD
     public function getMethodName()
+=======
+    /**
+     * @return self
+     */
+    public function setMock(LegacyMockInterface $mock)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         return $this->method;
     }

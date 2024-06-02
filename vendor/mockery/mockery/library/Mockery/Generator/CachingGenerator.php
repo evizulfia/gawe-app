@@ -22,6 +22,17 @@ namespace Mockery\Generator;
 
 class CachingGenerator implements Generator
 {
+<<<<<<< HEAD
+=======
+    /**
+     * @var array<string,string>
+     */
+    protected $cache = [];
+
+    /**
+     * @var Generator
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     protected $generator;
     protected $cache = array();
 
@@ -30,16 +41,17 @@ class CachingGenerator implements Generator
         $this->generator = $generator;
     }
 
+    /**
+     * @return string
+     */
     public function generate(MockConfiguration $config)
     {
         $hash = $config->getHash();
-        if (isset($this->cache[$hash])) {
+
+        if (array_key_exists($hash, $this->cache)) {
             return $this->cache[$hash];
         }
 
-        $definition = $this->generator->generate($config);
-        $this->cache[$hash] = $definition;
-
-        return $definition;
+        return $this->cache[$hash] = $this->generator->generate($config);
     }
 }

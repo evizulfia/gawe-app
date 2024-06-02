@@ -22,10 +22,26 @@ namespace Mockery\Generator;
 
 class MockNameBuilder
 {
+<<<<<<< HEAD
     protected static $mockCounter = 0;
 
     protected $parts = [];
 
+=======
+    /**
+     * @var int
+     */
+    protected static $mockCounter = 0;
+
+    /**
+     * @var list<string>
+     */
+    protected $parts = [];
+
+    /**
+     * @param string $part
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function addPart($part)
     {
         $this->parts[] = $part;
@@ -33,6 +49,9 @@ class MockNameBuilder
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function build()
     {
         $parts = ['Mockery', static::$mockCounter++];

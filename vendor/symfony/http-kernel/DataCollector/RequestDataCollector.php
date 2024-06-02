@@ -36,12 +36,18 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
      */
     private \SplObjectStorage $controllers;
     private array $sessionUsages = [];
+<<<<<<< HEAD
     private $requestStack;
 
     public function __construct(RequestStack $requestStack = null)
     {
+=======
+
+    public function __construct(
+        private ?RequestStack $requestStack = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->controllers = new \SplObjectStorage();
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -472,7 +478,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
                 'line' => $r->getStartLine(),
             ];
 
-            if (str_contains($r->name, '{closure}')) {
+            if ($r->isAnonymous()) {
                 return $controller;
             }
             $controller['method'] = $r->name;

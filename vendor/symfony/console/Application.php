@@ -72,10 +72,15 @@ class Application implements ResetInterface
 {
     private array $commands = [];
     private bool $wantHelps = false;
+<<<<<<< HEAD
     private $runningCommand = null;
     private string $name;
     private string $version;
     private $commandLoader = null;
+=======
+    private ?Command $runningCommand = null;
+    private ?CommandLoaderInterface $commandLoader = null;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private bool $catchExceptions = true;
     private bool $autoExit = true;
     private $definition;
@@ -88,15 +93,15 @@ class Application implements ResetInterface
     private $signalRegistry;
     private array $signalsToDispatchEvent = [];
 
-    public function __construct(string $name = 'UNKNOWN', string $version = 'UNKNOWN')
-    {
-        $this->name = $name;
-        $this->version = $version;
+    public function __construct(
+        private string $name = 'UNKNOWN',
+        private string $version = 'UNKNOWN',
+    ) {
         $this->terminal = new Terminal();
         $this->defaultCommand = 'list';
         if (\defined('SIGINT') && SignalRegistry::isSupported()) {
             $this->signalRegistry = new SignalRegistry();
-            $this->signalsToDispatchEvent = [\SIGINT, \SIGTERM, \SIGUSR1, \SIGUSR2];
+            $this->signalsToDispatchEvent = [\SIGINT, \SIGQUIT, \SIGTERM, \SIGUSR1, \SIGUSR2];
         }
     }
 
@@ -597,7 +602,7 @@ class Application implements ResetInterface
         $expr = implode('[^:]*:', array_map('preg_quote', explode(':', $namespace))).'[^:]*';
         $namespaces = preg_grep('{^'.$expr.'}', $allNamespaces);
 
-        if (empty($namespaces)) {
+        if (!$namespaces) {
             $message = sprintf('There are no commands defined in the "%s" namespace.', $namespace);
 
             if ($alternatives = $this->findAlternatives($namespace, $allNamespaces)) {
@@ -653,12 +658,12 @@ class Application implements ResetInterface
         $expr = implode('[^:]*:', array_map('preg_quote', explode(':', $name))).'[^:]*';
         $commands = preg_grep('{^'.$expr.'}', $allCommands);
 
-        if (empty($commands)) {
+        if (!$commands) {
             $commands = preg_grep('{^'.$expr.'}i', $allCommands);
         }
 
         // if no commands matched or we just matched namespaces
-        if (empty($commands) || \count(preg_grep('{^'.$expr.'$}i', $commands)) < 1) {
+        if (!$commands || \count(preg_grep('{^'.$expr.'$}i', $commands)) < 1) {
             if (false !== $pos = strrpos($name, ':')) {
                 // check if a namespace exists and contains commands
                 $this->findNamespace(substr($name, 0, $pos));
@@ -695,7 +700,7 @@ class Application implements ResetInterface
 
                 $aliases[$nameOrAlias] = $commandName;
 
-                return $commandName === $nameOrAlias || !\in_array($commandName, $commands);
+                return $commandName === $nameOrAlias || !\in_array($commandName, $commands, true);
             }));
         }
 
@@ -956,10 +961,15 @@ class Application implements ResetInterface
             if (Terminal::hasSttyAvailable()) {
                 $sttyMode = shell_exec('stty -g');
 
+<<<<<<< HEAD
                 foreach ([\SIGINT, \SIGTERM] as $signal) {
                     $this->signalRegistry->register($signal, static function () use ($sttyMode) {
                         shell_exec('stty '.$sttyMode);
                     });
+=======
+                foreach ([\SIGINT, \SIGQUIT, \SIGTERM] as $signal) {
+                    $this->signalRegistry->register($signal, static fn () => shell_exec('stty '.$sttyMode));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 }
             }
 

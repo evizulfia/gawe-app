@@ -33,19 +33,29 @@ class PsrHandler extends AbstractHandler implements FormattableHandlerInterface
      */
     protected $logger;
 
+<<<<<<< HEAD
     /**
      * @var FormatterInterface|null
      */
     protected $formatter;
+=======
+    protected FormatterInterface|null $formatter = null;
+    private bool $includeExtra;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * @param LoggerInterface $logger The underlying PSR-3 compliant logger to which messages will be proxied
      */
+<<<<<<< HEAD
     public function __construct(LoggerInterface $logger, $level = Logger::DEBUG, bool $bubble = true)
+=======
+    public function __construct(LoggerInterface $logger, int|string|Level $level = Level::Debug, bool $bubble = true, bool $includeExtra = false)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         parent::__construct($level, $bubble);
 
         $this->logger = $logger;
+        $this->includeExtra = $includeExtra;
     }
 
     /**
@@ -57,12 +67,24 @@ class PsrHandler extends AbstractHandler implements FormattableHandlerInterface
             return false;
         }
 
+<<<<<<< HEAD
         if ($this->formatter) {
             $formatted = $this->formatter->format($record);
             $this->logger->log(strtolower($record['level_name']), (string) $formatted, $record['context']);
         } else {
             $this->logger->log(strtolower($record['level_name']), $record['message'], $record['context']);
         }
+=======
+        $message = $this->formatter !== null
+            ? (string) $this->formatter->format($record)
+            : $record->message;
+
+        $context = $this->includeExtra
+            ? [...$record->extra, ...$record->context]
+            : $record->context;
+
+        $this->logger->log($record->level->toPsrLogLevel(), $message, $context);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         return false === $this->bubble;
     }

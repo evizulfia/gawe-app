@@ -141,7 +141,14 @@ class IgnitionServiceProvider extends ServiceProvider
 
         $this->app->singleton(SolutionProviderRepositoryContract::class, fn () => $solutionProviderRepository);
 
+<<<<<<< HEAD
         $this->app->singleton(Ignition::class, fn () => (new Ignition()));
+=======
+        $this->app->singleton(
+            Ignition::class,
+            fn () => (new Ignition($this->app->make(Flare::class)))->applicationPath(base_path())
+        );
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     protected function registerRecorders(): void

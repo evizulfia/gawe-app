@@ -18,11 +18,18 @@ namespace Symfony\Component\Console\Completion;
  */
 class Suggestion
 {
+<<<<<<< HEAD
     private string $value;
 
     public function __construct(string $value)
     {
         $this->value = $value;
+=======
+    public function __construct(
+        private readonly string $value,
+        private readonly string $description = '',
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     public function getValue(): string

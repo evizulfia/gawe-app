@@ -14,12 +14,22 @@ namespace Symfony\Component\Mailer;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesTransportFactory;
+<<<<<<< HEAD
+=======
+use Symfony\Component\Mailer\Bridge\Azure\Transport\AzureTransportFactory;
+use Symfony\Component\Mailer\Bridge\Brevo\Transport\BrevoTransportFactory;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Symfony\Component\Mailer\Bridge\Google\Transport\GmailTransportFactory;
 use Symfony\Component\Mailer\Bridge\Mailchimp\Transport\MandrillTransportFactory;
 use Symfony\Component\Mailer\Bridge\Mailgun\Transport\MailgunTransportFactory;
 use Symfony\Component\Mailer\Bridge\Mailjet\Transport\MailjetTransportFactory;
 use Symfony\Component\Mailer\Bridge\OhMySmtp\Transport\OhMySmtpTransportFactory;
 use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkTransportFactory;
+<<<<<<< HEAD
+=======
+use Symfony\Component\Mailer\Bridge\Resend\Transport\ResendTransportFactory;
+use Symfony\Component\Mailer\Bridge\Scaleway\Transport\ScalewayTransportFactory;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Symfony\Component\Mailer\Bridge\Sendgrid\Transport\SendgridTransportFactory;
 use Symfony\Component\Mailer\Bridge\Sendinblue\Transport\SendinblueTransportFactory;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
@@ -43,11 +53,21 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class Transport
 {
     private const FACTORY_CLASSES = [
+<<<<<<< HEAD
+=======
+        AzureTransportFactory::class,
+        BrevoTransportFactory::class,
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         GmailTransportFactory::class,
         MailgunTransportFactory::class,
         MailjetTransportFactory::class,
         MandrillTransportFactory::class,
         PostmarkTransportFactory::class,
+<<<<<<< HEAD
+=======
+        ResendTransportFactory::class,
+        ScalewayTransportFactory::class,
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         SendgridTransportFactory::class,
         SendinblueTransportFactory::class,
         OhMySmtpTransportFactory::class,

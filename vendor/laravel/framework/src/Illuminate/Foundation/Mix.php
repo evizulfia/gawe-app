@@ -15,7 +15,7 @@ class Mix
      * @param  string  $manifestDirectory
      * @return \Illuminate\Support\HtmlString|string
      *
-     * @throws \Exception
+     * @throws \Illuminate\Foundation\MixManifestNotFoundException
      */
     public function __invoke($path, $manifestDirectory = '')
     {
@@ -49,7 +49,11 @@ class Mix
 
         if (! isset($manifests[$manifestPath])) {
             if (! is_file($manifestPath)) {
+<<<<<<< HEAD
                 throw new Exception('The Mix manifest does not exist.');
+=======
+                throw new MixManifestNotFoundException("Mix manifest not found at: {$manifestPath}");
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             }
 
             $manifests[$manifestPath] = json_decode(file_get_contents($manifestPath), true);

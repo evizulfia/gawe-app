@@ -21,9 +21,20 @@
 namespace Mockery\Generator\StringManipulation\Pass;
 
 use Mockery\Generator\MockConfiguration;
+<<<<<<< HEAD
+=======
+use function array_reduce;
+use function interface_exists;
+use function ltrim;
+use function str_replace;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class InterfacePass implements Pass
 {
+    /**
+     * @param  string $code
+     * @return string
+     */
     public function apply($code, MockConfiguration $config)
     {
         foreach ($config->getTargetInterfaces() as $i) {
@@ -33,9 +44,15 @@ class InterfacePass implements Pass
             }
         }
 
+<<<<<<< HEAD
         $interfaces = array_reduce((array) $config->getTargetInterfaces(), function ($code, $i) {
             return $code . ", \\" . ltrim($i->getName(), "\\");
         }, "");
+=======
+        $interfaces = array_reduce($config->getTargetInterfaces(), static function ($code, $i) {
+            return $code . ', \\' . ltrim($i->getName(), '\\');
+        }, '');
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $code = str_replace(
             "implements MockInterface",

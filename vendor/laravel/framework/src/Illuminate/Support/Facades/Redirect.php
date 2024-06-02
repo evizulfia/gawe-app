@@ -17,7 +17,16 @@ namespace Illuminate\Support\Facades;
  * @method static \Illuminate\Http\RedirectResponse to(string $path, int $status = 302, array $headers = [], bool $secure = null)
  * @method static \Illuminate\Routing\UrlGenerator getUrlGenerator()
  * @method static void setSession(\Illuminate\Session\Store $session)
+<<<<<<< HEAD
  * @method static void setIntendedUrl(string $url)
+=======
+ * @method static string|null getIntendedUrl()
+ * @method static \Illuminate\Routing\Redirector setIntendedUrl(string $url)
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Routing\Redirector
  */

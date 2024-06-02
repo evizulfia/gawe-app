@@ -161,7 +161,7 @@ class Session implements SessionInterface, \IteratorAggregate, \Countable
             }
         }
         foreach ($this->data as &$data) {
-            if (!empty($data)) {
+            if ($data) {
                 return false;
             }
         }

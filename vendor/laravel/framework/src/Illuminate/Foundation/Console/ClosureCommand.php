@@ -4,6 +4,12 @@ namespace Illuminate\Foundation\Console;
 
 use Closure;
 use Illuminate\Console\Command;
+<<<<<<< HEAD
+=======
+use Illuminate\Console\ManuallyFailedException;
+use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Traits\ForwardsCalls;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use ReflectionFunction;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,9 +57,15 @@ class ClosureCommand extends Command
             }
         }
 
-        return (int) $this->laravel->call(
-            $this->callback->bindTo($this, $this), $parameters
-        );
+        try {
+            return (int) $this->laravel->call(
+                $this->callback->bindTo($this, $this), $parameters
+            );
+        } catch (ManuallyFailedException $e) {
+            $this->components->error($e->getMessage());
+
+            return static::FAILURE;
+        }
     }
 
     /**

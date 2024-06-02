@@ -9,6 +9,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
+use Throwable;
 
 class DatabaseBatchRepository implements PrunableBatchRepository
 {
@@ -319,7 +320,15 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             $serialized = base64_decode($serialized);
         }
 
+<<<<<<< HEAD
         return unserialize($serialized);
+=======
+        try {
+            return unserialize($serialized);
+        } catch (Throwable) {
+            return [];
+        }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

@@ -208,9 +208,17 @@ class Mockery
     /**
      * Static fetching of a mock associated with a name or explicit class poser.
      *
+<<<<<<< HEAD
      * @param string $name
      *
      * @return \Mockery\Mock
+=======
+     * @template TFetchMock of object
+     *
+     * @param class-string<TFetchMock> $name
+     *
+     * @return null|(LegacyMockInterface&MockInterface&TFetchMock)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public static function fetchMock($name)
     {
@@ -312,7 +320,222 @@ class Mockery
      */
     public static function setContainer(Mockery\Container $container)
     {
+<<<<<<< HEAD
         return self::$_container = $container;
+=======
+        return new HasKey($key);
+    }
+
+    /**
+     * Return instance of HASVALUE matcher.
+     *
+     * @template THasValue
+     *
+     * @param THasValue $val
+     *
+     * @return HasValue
+     */
+    public static function hasValue($val)
+    {
+        return new HasValue($val);
+    }
+
+    /**
+     * Static and Semantic shortcut to Container::mock().
+     *
+     * @template TInstanceMock
+     *
+     * @param array<class-string<TInstanceMock>|TInstanceMock|array<mixed>> $args
+     *
+     * @return LegacyMockInterface&MockInterface&TInstanceMock
+     */
+    public static function instanceMock(...$args)
+    {
+        return self::getContainer()->mock(...$args);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     *
+     * @deprecated since 1.3.2 and will be removed in 2.0.
+     */
+    public static function isBuiltInType($type)
+    {
+        return \in_array($type, self::builtInTypes(), true);
+    }
+
+    /**
+     * Return instance of IsEqual matcher.
+     *
+     * @template TExpected
+     *
+     * @param TExpected $expected
+     */
+    public static function isEqual($expected): IsEqual
+    {
+        return new IsEqual($expected);
+    }
+
+    /**
+     * Return instance of IsSame matcher.
+     *
+     * @template TExpected
+     *
+     * @param TExpected $expected
+     */
+    public static function isSame($expected): IsSame
+    {
+        return new IsSame($expected);
+    }
+
+    /**
+     * Static shortcut to Container::mock().
+     *
+     * @template TMock of object
+     *
+     * @param array<class-string<TMock>|TMock|Closure(LegacyMockInterface&MockInterface&TMock):LegacyMockInterface&MockInterface&TMock|array<TMock>> $args
+     *
+     * @return LegacyMockInterface&MockInterface&TMock
+     */
+    public static function mock(...$args)
+    {
+        return self::getContainer()->mock(...$args);
+    }
+
+    /**
+     * Return instance of MUSTBE matcher.
+     *
+     * @template TExpected
+     *
+     * @param TExpected $expected
+     *
+     * @return MustBe
+     */
+    public static function mustBe($expected)
+    {
+        return new MustBe($expected);
+    }
+
+    /**
+     * Static shortcut to Container::mock(), first argument names the mock.
+     *
+     * @template TNamedMock
+     *
+     * @param array<class-string<TNamedMock>|TNamedMock|array<mixed>> $args
+     *
+     * @return LegacyMockInterface&MockInterface&TNamedMock
+     */
+    public static function namedMock(...$args)
+    {
+        $name = \array_shift($args);
+
+        $builder = new MockConfigurationBuilder();
+        $builder->setName($name);
+
+        \array_unshift($args, $builder);
+
+        return self::getContainer()->mock(...$args);
+    }
+
+    /**
+     * Return instance of NOT matcher.
+     *
+     * @template TNotExpected
+     *
+     * @param TNotExpected $expected
+     *
+     * @return Not
+     */
+    public static function not($expected)
+    {
+        return new Not($expected);
+    }
+
+    /**
+     * Return instance of NOTANYOF matcher.
+     *
+     * @template TNotAnyOf
+     *
+     * @param TNotAnyOf ...$args
+     *
+     * @return NotAnyOf
+     */
+    public static function notAnyOf(...$args)
+    {
+        return new NotAnyOf($args);
+    }
+
+    /**
+     * Return instance of CLOSURE matcher.
+     *
+     * @template TClosure of Closure
+     *
+     * @param TClosure $closure
+     *
+     * @return ClosureMatcher
+     */
+    public static function on($closure)
+    {
+        return new ClosureMatcher($closure);
+    }
+
+    /**
+     * Utility function to parse shouldReceive() arguments and generate
+     * expectations from such as needed.
+     *
+     * @template TReturnArgs
+     *
+     * @param TReturnArgs ...$args
+     * @param Closure     $add
+     *
+     * @return CompositeExpectation
+     */
+    public static function parseShouldReturnArgs(LegacyMockInterface $mock, $args, $add)
+    {
+        $composite = new CompositeExpectation();
+
+        foreach ($args as $arg) {
+            if (\is_string($arg)) {
+                $composite->add(self::buildDemeterChain($mock, $arg, $add));
+
+                continue;
+            }
+
+            if (\is_array($arg)) {
+                foreach ($arg as $k => $v) {
+                    $composite->add(self::buildDemeterChain($mock, $k, $add)->andReturn($v));
+                }
+            }
+        }
+
+        return $composite;
+    }
+
+    /**
+     * Return instance of PATTERN matcher.
+     *
+     * @template TPatter
+     *
+     * @param TPatter $expected
+     *
+     * @return Pattern
+     */
+    public static function pattern($expected)
+    {
+        return new Pattern($expected);
+    }
+
+    /**
+     * Register a file to be deleted on tearDown.
+     *
+     * @param string $fileName
+     */
+    public static function registerFileForCleanUp($fileName)
+    {
+        self::$_filesToCleanUp[] = $fileName;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -355,7 +578,50 @@ class Mockery
      */
     public static function andAnyOtherArgs()
     {
+<<<<<<< HEAD
         return new \Mockery\Matcher\AndAnyOtherArgs();
+=======
+        self::$_generator = $generator;
+    }
+
+    /**
+     * Setter for the $_loader static property.
+     */
+    public static function setLoader(Loader $loader)
+    {
+        self::$_loader = $loader;
+    }
+
+    /**
+     * Static and semantic shortcut for getting a mock from the container
+     * and applying the spy's expected behavior into it.
+     *
+     * @template TSpy
+     *
+     * @param array<class-string<TSpy>|TSpy|Closure(LegacyMockInterface&MockInterface&TSpy):LegacyMockInterface&MockInterface&TSpy|array<TSpy>> $args
+     *
+     * @return LegacyMockInterface&MockInterface&TSpy
+     */
+    public static function spy(...$args)
+    {
+        if ($args !== [] && $args[0] instanceof Closure) {
+            $args[0] = new ClosureWrapper($args[0]);
+        }
+
+        return self::getContainer()->mock(...$args)->shouldIgnoreMissing();
+    }
+
+    /**
+     * Return instance of SUBSET matcher.
+     *
+     * @param bool $strict - (Optional) True for strict comparison, false for loose
+     *
+     * @return Subset
+     */
+    public static function subset(array $part, $strict = true)
+    {
+        return new Subset($part, $strict);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -373,7 +639,12 @@ class Mockery
     /**
      * Return instance of DUCKTYPE matcher.
      *
+<<<<<<< HEAD
      * @param array ...$args
+=======
+     * @param string  $arg
+     * @param Closure $add
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @return \Mockery\Matcher\Ducktype
      */
@@ -453,7 +724,14 @@ class Mockery
      *
      * @param mixed $closure
      *
+<<<<<<< HEAD
      * @return \Mockery\Matcher\Closure
+=======
+     * @param TArray $argument
+     * @param int    $nesting
+     *
+     * @return TArray
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public static function on($closure)
     {
@@ -465,7 +743,14 @@ class Mockery
      *
      * @param mixed $expected
      *
+<<<<<<< HEAD
      * @return \Mockery\Matcher\MustBe
+=======
+     * @param TArgument $argument
+     * @param int       $nesting
+     *
+     * @return mixed
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public static function mustBe($expected)
     {
@@ -481,13 +766,47 @@ class Mockery
      */
     public static function not($expected)
     {
+<<<<<<< HEAD
         return new \Mockery\Matcher\Not($expected);
+=======
+        $targetCode = '<?php ';
+        $shortName = $fqn;
+
+        if (\strpos($fqn, '\\')) {
+            $parts = \explode('\\', $fqn);
+
+            $shortName = \trim(\array_pop($parts));
+            $namespace = \implode('\\', $parts);
+
+            $targetCode .= "namespace {$namespace};\n";
+        }
+
+        $targetCode .= \sprintf('%s %s {} ', $type, $shortName);
+
+        /*
+         * We could eval here, but it doesn't play well with the way
+         * PHPUnit tries to backup global state and the require definition
+         * loader
+         */
+        $fileName = \tempnam(\sys_get_temp_dir(), 'Mockery');
+
+        \file_put_contents($fileName, $targetCode);
+
+        require $fileName;
+
+        self::registerFileForCleanUp($fileName);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
      * Return instance of ANYOF matcher.
      *
+<<<<<<< HEAD
      * @param array ...$args
+=======
+     * @param object $object
+     * @param int    $nesting
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @return \Mockery\Matcher\AnyOf
      */
@@ -562,7 +881,7 @@ class Mockery
      * of any passed argument.
      *
      * @param mixed $argument
-     * @param int $depth
+     * @param int   $depth
      *
      * @return mixed
      */
@@ -617,7 +936,13 @@ class Mockery
      *
      * @param array $objects
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @param class-string<TMock> $demeterMockKey
+     *
+     * @return null|(LegacyMockInterface&MockInterface&TMock)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public static function formatObjects(array $objects = null)
     {
@@ -652,7 +977,7 @@ class Mockery
      * Utility function to turn public properties and public get* and is* method values into an array.
      *
      * @param object $object
-     * @param int $nesting
+     * @param int    $nesting
      *
      * @return array
      */

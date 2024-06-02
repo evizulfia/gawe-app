@@ -24,6 +24,7 @@ use Symfony\Component\Stopwatch\StopwatchEvent;
  */
 class TimeDataCollector extends DataCollector implements LateDataCollectorInterface
 {
+<<<<<<< HEAD
     private $kernel;
     private $stopwatch;
 
@@ -31,6 +32,13 @@ class TimeDataCollector extends DataCollector implements LateDataCollectorInterf
     {
         $this->kernel = $kernel;
         $this->stopwatch = $stopwatch;
+=======
+    public function __construct(
+        private readonly ?KernelInterface $kernel = null,
+        private readonly ?Stopwatch $stopwatch = null,
+    ) {
+        $this->data = ['events' => [], 'stopwatch_installed' => false, 'start_time' => 0];
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

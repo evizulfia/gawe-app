@@ -44,18 +44,39 @@ class Limit
     {
         $this->key = $key;
         $this->maxAttempts = $maxAttempts;
+<<<<<<< HEAD
         $this->decayMinutes = $decayMinutes;
+=======
+        $this->decaySeconds = $decaySeconds;
     }
 
     /**
      * Create a new rate limit.
      *
      * @param  int  $maxAttempts
+     * @param  int  $decaySeconds
      * @return static
      */
-    public static function perMinute($maxAttempts)
+    public static function perSecond($maxAttempts, $decaySeconds = 1)
     {
+        return new static('', $maxAttempts, $decaySeconds);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    }
+
+    /**
+     * Create a new rate limit.
+     *
+     * @param  int  $maxAttempts
+     * @param  int  $decayMinutes
+     * @return static
+     */
+    public static function perMinute($maxAttempts, $decayMinutes = 1)
+    {
+<<<<<<< HEAD
         return new static('', $maxAttempts);
+=======
+        return new static('', $maxAttempts, 60 * $decayMinutes);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

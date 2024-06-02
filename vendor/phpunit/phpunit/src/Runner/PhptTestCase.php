@@ -195,8 +195,22 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         $time         = $timer->stop()->asSeconds();
         $this->output = $jobResult['stdout'] ?? '';
 
+<<<<<<< HEAD
         if (isset($codeCoverage) && ($coverage = $this->cleanupForCoverage())) {
             $codeCoverage->append($coverage, $this, true, [], []);
+=======
+        if (CodeCoverage::instance()->isActive()) {
+            $coverage = $this->cleanupForCoverage();
+
+            CodeCoverage::instance()->codeCoverage()->start($this->filename, TestSize::large());
+
+            CodeCoverage::instance()->codeCoverage()->append(
+                $coverage,
+                $this->filename,
+                true,
+                TestStatus::unknown(),
+            );
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         }
 
         try {

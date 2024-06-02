@@ -148,6 +148,9 @@ final class ExecutionOrderDependency
 
     public function __construct(string $classOrCallableName, ?string $methodName = null, ?string $option = null)
     {
+        $this->deepClone    = $deepClone;
+        $this->shallowClone = $shallowClone;
+
         if ($classOrCallableName === '') {
             return;
         }
@@ -158,12 +161,15 @@ final class ExecutionOrderDependency
             $this->className  = $classOrCallableName;
             $this->methodName = !empty($methodName) ? $methodName : 'class';
         }
+<<<<<<< HEAD
 
         if ($option === 'clone') {
             $this->useDeepClone = true;
         } elseif ($option === 'shallowClone') {
             $this->useShallowClone = true;
         }
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     public function __toString(): string

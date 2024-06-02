@@ -48,12 +48,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Shell extends Application
 {
+<<<<<<< HEAD
     const VERSION = 'v0.11.1';
 
     const PROMPT = '>>> ';
     const BUFF_PROMPT = '... ';
     const REPLAY = '--> ';
     const RETVAL = '=> ';
+=======
+    const VERSION = 'v0.12.3';
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     private $config;
     private $cleaner;

@@ -2,6 +2,7 @@
 
 namespace Illuminate\Support\Traits;
 
+use BackedEnum;
 use CachingIterator;
 use Closure;
 use Exception;
@@ -159,7 +160,7 @@ trait EnumeratesValues
      * @param  (callable(int): TTimesValue)|null  $callback
      * @return static<int, TTimesValue>
      */
-    public static function times($number, callable $callback = null)
+    public static function times($number, ?callable $callback = null)
     {
         if ($number < 1) {
             return new static;
@@ -168,6 +169,28 @@ trait EnumeratesValues
         return static::range(1, $number)
             ->unless($callback == null)
             ->map($callback);
+    }
+
+    /**
+     * Get the average value of a given key.
+     *
+     * @param  (callable(TValue): float|int)|string|null  $callback
+     * @return float|int|null
+     */
+    public function avg($callback = null)
+    {
+        $callback = $this->valueRetriever($callback);
+
+        $reduced = $this->reduce(static function (&$reduce, $value) use ($callback) {
+            if (! is_null($resolved = $callback($value))) {
+                $reduce[0] += $resolved;
+                $reduce[1]++;
+            }
+
+            return $reduce;
+        }, [0, 0]);
+
+        return $reduced[1] ? $reduced[0] / $reduced[1] : null;
     }
 
     /**
@@ -387,9 +410,17 @@ trait EnumeratesValues
      */
     public function mapInto($class)
     {
+<<<<<<< HEAD
         return $this->map(function ($value, $key) use ($class) {
             return new $class($value, $key);
         });
+=======
+        if (is_subclass_of($class, BackedEnum::class)) {
+            return $this->map(fn ($value, $key) => $class::from($value));
+        }
+
+        return $this->map(fn ($value, $key) => new $class($value, $key));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -498,7 +529,7 @@ trait EnumeratesValues
      * @param  (callable($this): TWhenEmptyReturnType)|null  $default
      * @return $this|TWhenEmptyReturnType
      */
-    public function whenEmpty(callable $callback, callable $default = null)
+    public function whenEmpty(callable $callback, ?callable $default = null)
     {
         return $this->when($this->isEmpty(), $callback, $default);
     }
@@ -512,7 +543,7 @@ trait EnumeratesValues
      * @param  (callable($this): TWhenNotEmptyReturnType)|null  $default
      * @return $this|TWhenNotEmptyReturnType
      */
-    public function whenNotEmpty(callable $callback, callable $default = null)
+    public function whenNotEmpty(callable $callback, ?callable $default = null)
     {
         return $this->when($this->isNotEmpty(), $callback, $default);
     }
@@ -526,7 +557,7 @@ trait EnumeratesValues
      * @param  (callable($this): TUnlessEmptyReturnType)|null  $default
      * @return $this|TUnlessEmptyReturnType
      */
-    public function unlessEmpty(callable $callback, callable $default = null)
+    public function unlessEmpty(callable $callback, ?callable $default = null)
     {
         return $this->whenNotEmpty($callback, $default);
     }
@@ -540,7 +571,7 @@ trait EnumeratesValues
      * @param  (callable($this): TUnlessNotEmptyReturnType)|null  $default
      * @return $this|TUnlessNotEmptyReturnType
      */
-    public function unlessNotEmpty(callable $callback, callable $default = null)
+    public function unlessNotEmpty(callable $callback, ?callable $default = null)
     {
         return $this->whenEmpty($callback, $default);
     }

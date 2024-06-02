@@ -51,7 +51,17 @@ class VerificationDirector
         return $this->cloneApplyAndVerify("withNoArgs", array());
     }
 
+<<<<<<< HEAD
     public function withAnyArgs()
+=======
+    /**
+     * @param string $method
+     * @param array  $args
+     *
+     * @return self
+     */
+    protected function cloneApplyAndVerify($method, $args)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         return $this->cloneApplyAndVerify("withAnyArgs", array());
     }
@@ -86,6 +96,15 @@ class VerificationDirector
         return $this->cloneWithoutCountValidatorsApplyAndVerify("between", array($minimum, $maximum));
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @param string $method
+     * @param array  $args
+     *
+     * @return self
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     protected function cloneWithoutCountValidatorsApplyAndVerify($method, $args)
     {
         $expectation = clone $this->expectation;

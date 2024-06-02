@@ -38,22 +38,28 @@ class SymfonyStyle extends OutputStyle
 {
     public const MAX_LINE_LENGTH = 120;
 
+<<<<<<< HEAD
     private $input;
     private $output;
     private $questionHelper;
     private $progressBar;
+=======
+    private SymfonyQuestionHelper $questionHelper;
+    private ProgressBar $progressBar;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private int $lineLength;
     private $bufferedOutput;
 
-    public function __construct(InputInterface $input, OutputInterface $output)
-    {
-        $this->input = $input;
+    public function __construct(
+        private InputInterface $input,
+        private OutputInterface $output,
+    ) {
         $this->bufferedOutput = new TrimmedBufferOutput(\DIRECTORY_SEPARATOR === '\\' ? 4 : 2, $output->getVerbosity(), false, clone $output->getFormatter());
         // Windows cmd wraps lines as soon as the terminal width is reached, whether there are following chars or not.
         $width = (new Terminal())->getWidth() ?: self::MAX_LINE_LENGTH;
         $this->lineLength = min($width - (int) (\DIRECTORY_SEPARATOR === '\\'), self::MAX_LINE_LENGTH);
 
-        parent::__construct($this->output = $output);
+        parent::__construct($output);
     }
 
     /**

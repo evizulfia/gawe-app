@@ -218,8 +218,27 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
         $shouldReplace = [];
 
         foreach ($replace as $key => $value) {
+<<<<<<< HEAD
             $shouldReplace[':'.Str::ucfirst($key)] = Str::ucfirst($value);
             $shouldReplace[':'.Str::upper($key)] = Str::upper($value);
+=======
+            if ($value instanceof Closure) {
+                $line = preg_replace_callback(
+                    '/<'.$key.'>(.*?)<\/'.$key.'>/',
+                    fn ($args) => $value($args[1]),
+                    $line
+                );
+
+                continue;
+            }
+
+            if (is_object($value) && isset($this->stringableHandlers[get_class($value)])) {
+                $value = call_user_func($this->stringableHandlers[get_class($value)], $value);
+            }
+
+            $shouldReplace[':'.Str::ucfirst($key ?? '')] = Str::ucfirst($value ?? '');
+            $shouldReplace[':'.Str::upper($key ?? '')] = Str::upper($value ?? '');
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $shouldReplace[':'.$key] = $value;
         }
 

@@ -41,7 +41,11 @@ class Bus extends Facade
      * @param  array|string  $jobsToFake
      * @return \Illuminate\Support\Testing\Fakes\BusFake
      */
+<<<<<<< HEAD
     public static function fake($jobsToFake = [])
+=======
+    public static function fake($jobsToFake = [], ?BatchRepository $batchRepository = null)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         static::swap($fake = new BusFake(static::getFacadeRoot(), $jobsToFake));
 

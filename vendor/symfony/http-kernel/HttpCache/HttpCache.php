@@ -29,11 +29,18 @@ use Symfony\Component\HttpKernel\TerminableInterface;
  */
 class HttpCache implements HttpKernelInterface, TerminableInterface
 {
+<<<<<<< HEAD
     private $kernel;
     private $store;
     private $request;
     private $surrogate;
     private $surrogateCacheStrategy = null;
+=======
+    public const BODY_EVAL_BOUNDARY_LENGTH = 24;
+
+    private Request $request;
+    private ?ResponseCacheStrategyInterface $surrogateCacheStrategy = null;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private array $options = [];
     private array $traces = [];
 
@@ -79,11 +86,20 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
      *                            This setting is overridden by the stale-if-error HTTP Cache-Control extension
      *                            (see RFC 5861).
      */
+<<<<<<< HEAD
     public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, array $options = [])
     {
         $this->store = $store;
         $this->kernel = $kernel;
         $this->surrogate = $surrogate;
+=======
+    public function __construct(
+        private HttpKernelInterface $kernel,
+        private StoreInterface $store,
+        private ?SurrogateInterface $surrogate = null,
+        array $options = [],
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         // needed in case there is a fatal error because the backend is too slow to respond
         register_shutdown_function([$this->store, 'cleanup']);
@@ -383,7 +399,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
 
             // return the response and not the cache entry if the response is valid but not cached
             $etag = $response->getEtag();
-            if ($etag && \in_array($etag, $requestEtags) && !\in_array($etag, $cachedEtags)) {
+            if ($etag && \in_array($etag, $requestEtags, true) && !\in_array($etag, $cachedEtags, true)) {
                 return $response;
             }
 

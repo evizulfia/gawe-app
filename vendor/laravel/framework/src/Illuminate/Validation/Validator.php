@@ -210,6 +210,11 @@ class Validator implements ValidatorContract
         'Present',
         'Required',
         'RequiredIf',
+<<<<<<< HEAD
+=======
+        'RequiredIfAccepted',
+        'RequiredIfDeclined',
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         'RequiredUnless',
         'RequiredWith',
         'RequiredWithAll',
@@ -239,6 +244,11 @@ class Validator implements ValidatorContract
         'AcceptedIf',
         'DeclinedIf',
         'RequiredIf',
+<<<<<<< HEAD
+=======
+        'RequiredIfAccepted',
+        'RequiredIfDeclined',
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         'RequiredUnless',
         'RequiredWith',
         'RequiredWithAll',
@@ -516,7 +526,7 @@ class Validator implements ValidatorContract
      * @param  array|null  $keys
      * @return \Illuminate\Support\ValidatedInput|array
      */
-    public function safe(array $keys = null)
+    public function safe(?array $keys = null)
     {
         return is_array($keys)
                 ? (new ValidatedInput($this->validated()))->only($keys)
@@ -1350,7 +1360,7 @@ class Validator implements ValidatorContract
      * @param  callable|null  $formatter
      * @return $this
      */
-    public function setImplicitAttributesFormatter(callable $formatter = null)
+    public function setImplicitAttributesFormatter(?callable $formatter = null)
     {
         $this->implicitAttributesFormatter = $formatter;
 

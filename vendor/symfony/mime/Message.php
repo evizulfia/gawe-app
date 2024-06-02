@@ -21,13 +21,21 @@ use Symfony\Component\Mime\Part\TextPart;
  */
 class Message extends RawMessage
 {
+<<<<<<< HEAD
     private $headers;
     private $body;
 
     public function __construct(Headers $headers = null, AbstractPart $body = null)
     {
+=======
+    private Headers $headers;
+
+    public function __construct(
+        ?Headers $headers = null,
+        private ?AbstractPart $body = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->headers = $headers ? clone $headers : new Headers();
-        $this->body = $body;
     }
 
     public function __clone()
@@ -124,11 +132,11 @@ class Message extends RawMessage
 
     public function ensureValidity()
     {
-        if (!$this->headers->has('To') && !$this->headers->has('Cc') && !$this->headers->has('Bcc')) {
+        if (!$this->headers->get('To')?->getBody() && !$this->headers->get('Cc')?->getBody() && !$this->headers->get('Bcc')?->getBody()) {
             throw new LogicException('An email must have a "To", "Cc", or "Bcc" header.');
         }
 
-        if (!$this->headers->has('From') && !$this->headers->has('Sender')) {
+        if (!$this->headers->get('From')?->getBody() && !$this->headers->get('Sender')?->getBody()) {
             throw new LogicException('An email must have a "From" or a "Sender" header.');
         }
 

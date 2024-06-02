@@ -16,6 +16,7 @@ namespace Illuminate\Support\Facades;
  * @method static \Illuminate\Http\Request setRouteResolver(\Closure $callback)
  * @method static \Illuminate\Http\Request setUserResolver(\Closure $callback)
  * @method static \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[]|array|null file(string|null $key = null, mixed $default = null)
+<<<<<<< HEAD
  * @method static \Illuminate\Routing\Route|object|string route(string|null $param = null, string|null $default = null)
  * @method static \Illuminate\Session\Store session()
  * @method static \Illuminate\Session\Store|null getSession()
@@ -28,6 +29,14 @@ namespace Illuminate\Support\Facades;
  * @method static array only(array|mixed $keys)
  * @method static array segments()
  * @method static array toArray()
+=======
+ * @method static \Illuminate\Http\Request dump(mixed $keys = [])
+ * @method static never dd(mixed ...$args)
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method static array validate(array $rules, ...$params)
  * @method static array validateWithBag(string $errorBag, array $rules, ...$params)
  * @method static bool accepts(string|array $contentTypes)

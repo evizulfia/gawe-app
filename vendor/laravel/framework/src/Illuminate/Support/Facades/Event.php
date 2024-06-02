@@ -21,9 +21,28 @@ use Illuminate\Support\Testing\Fakes\EventFake;
  * @method static void flush(string $event)
  * @method static void forget(string $event)
  * @method static void forgetPushed()
+<<<<<<< HEAD
  * @method static void listen(\Closure|string|array $events, \Closure|string|array $listener = null)
  * @method static void push(string $event, array $payload = [])
  * @method static void subscribe(object|string $subscriber)
+=======
+ * @method static \Illuminate\Events\Dispatcher setQueueResolver(callable $resolver)
+ * @method static \Illuminate\Events\Dispatcher setTransactionManagerResolver(callable $resolver)
+ * @method static array getRawListeners()
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+ * @method static \Illuminate\Support\Testing\Fakes\EventFake except(array|string $eventsToDispatch)
+ * @method static void assertListening(string $expectedEvent, string|array $expectedListener)
+ * @method static void assertDispatched(string|\Closure $event, callable|int|null $callback = null)
+ * @method static void assertDispatchedTimes(string $event, int $times = 1)
+ * @method static void assertNotDispatched(string|\Closure $event, callable|null $callback = null)
+ * @method static void assertNothingDispatched()
+ * @method static \Illuminate\Support\Collection dispatched(string $event, callable|null $callback = null)
+ * @method static bool hasDispatched(string $event)
+ * @method static array dispatchedEvents()
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Events\Dispatcher
  */

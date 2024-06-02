@@ -43,8 +43,12 @@ class Table
     private bool $horizontal = false;
     private array $effectiveColumnWidths = [];
     private int $numberOfColumns;
+<<<<<<< HEAD
     private $output;
     private $style;
+=======
+    private TableStyle $style;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private array $columnStyles = [];
     private array $columnWidths = [];
     private array $columnMaxWidths = [];
@@ -52,10 +56,9 @@ class Table
 
     private static array $styles;
 
-    public function __construct(OutputInterface $output)
-    {
-        $this->output = $output;
-
+    public function __construct(
+        private OutputInterface $output,
+    ) {
         self::$styles ??= self::initStyles();
 
         $this->setStyle('default');
@@ -315,6 +318,58 @@ class Table
                     }
                 }
             }
+<<<<<<< HEAD
+=======
+        } elseif ($vertical) {
+            $formatter = $this->output->getFormatter();
+            $maxHeaderLength = array_reduce($this->headers[0] ?? [], static fn ($max, $header) => max($max, Helper::width(Helper::removeDecoration($formatter, $header))), 0);
+
+            foreach ($this->rows as $row) {
+                if ($row instanceof TableSeparator) {
+                    continue;
+                }
+
+                if ($rows) {
+                    $rows[] = [$divider];
+                }
+
+                $containsColspan = false;
+                foreach ($row as $cell) {
+                    if ($containsColspan = $isCellWithColspan($cell)) {
+                        break;
+                    }
+                }
+
+                $headers = $this->headers[0] ?? [];
+                $maxRows = max(\count($headers), \count($row));
+                for ($i = 0; $i < $maxRows; ++$i) {
+                    $cell = (string) ($row[$i] ?? '');
+
+                    $eol = str_contains($cell, "\r\n") ? "\r\n" : "\n";
+                    $parts = explode($eol, $cell);
+                    foreach ($parts as $idx => $part) {
+                        if ($headers && !$containsColspan) {
+                            if (0 === $idx) {
+                                $rows[] = [sprintf(
+                                    '<comment>%s%s</>: %s',
+                                    str_repeat(' ', $maxHeaderLength - Helper::width(Helper::removeDecoration($formatter, $headers[$i] ?? ''))),
+                                    $headers[$i] ?? '',
+                                    $part
+                                )];
+                            } else {
+                                $rows[] = [sprintf(
+                                    '%s  %s',
+                                    str_pad('', $maxHeaderLength, ' ', \STR_PAD_LEFT),
+                                    $part
+                                )];
+                            }
+                        } elseif ('' !== $cell) {
+                            $rows[] = [$part];
+                        }
+                    }
+                }
+            }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         } else {
             $rows = array_merge($this->headers, [$divider], $this->rows);
         }
@@ -625,7 +680,7 @@ class Table
 
         foreach ($unmergedRows as $unmergedRowKey => $unmergedRow) {
             // we need to know if $unmergedRow will be merged or inserted into $rows
-            if (isset($rows[$unmergedRowKey]) && \is_array($rows[$unmergedRowKey]) && ($this->getNumberOfColumns($rows[$unmergedRowKey]) + $this->getNumberOfColumns($unmergedRows[$unmergedRowKey]) <= $this->numberOfColumns)) {
+            if (isset($rows[$unmergedRowKey]) && \is_array($rows[$unmergedRowKey]) && ($this->getNumberOfColumns($rows[$unmergedRowKey]) + $this->getNumberOfColumns($unmergedRow) <= $this->numberOfColumns)) {
                 foreach ($unmergedRow as $cellKey => $cell) {
                     // insert cell into row at cellKey position
                     array_splice($rows[$unmergedRowKey], $cellKey, 0, [$cell]);
@@ -633,8 +688,8 @@ class Table
             } else {
                 $row = $this->copyRow($rows, $unmergedRowKey - 1);
                 foreach ($unmergedRow as $column => $cell) {
-                    if (!empty($cell)) {
-                        $row[$column] = $unmergedRow[$column];
+                    if ($cell) {
+                        $row[$column] = $cell;
                     }
                 }
                 array_splice($rows, $unmergedRowKey, 0, [$row]);

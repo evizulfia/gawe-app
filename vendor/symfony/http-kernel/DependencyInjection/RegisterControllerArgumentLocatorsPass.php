@@ -52,6 +52,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('controller.service_arguments', true) as $id => $tags) {
             $def = $container->getDefinition($id);
             $def->setPublic(true);
+            $def->setLazy(false);
             $class = $def->getClass();
             $autowire = $def->isAutowired();
             $bindings = $def->getBindings();
@@ -118,6 +119,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
 
                 // create a per-method map of argument-names to service/type-references
                 $args = [];
+                $erroredIds = 0;
                 foreach ($parameters as $p) {
                     /** @var \ReflectionParameter $p */
                     $type = ltrim($target = (string) ProxyHelper::getTypeHint($r, $p), '\\');
@@ -157,7 +159,29 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                         $invalidBehavior = ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE;
                     }
 
+<<<<<<< HEAD
                     if (Request::class === $type || SessionInterface::class === $type) {
+=======
+                    if (Request::class === $type || SessionInterface::class === $type || Response::class === $type) {
+                        continue;
+                    }
+
+                    if ($autowireAttributes) {
+                        $attribute = $autowireAttributes[0]->newInstance();
+                        $value = $parameterBag->resolveValue($attribute->value);
+
+                        if ($attribute instanceof AutowireCallable) {
+                            $args[$p->name] = $attribute->buildDefinition($value, $type, $p);
+                        } elseif ($value instanceof Reference) {
+                            $args[$p->name] = $type ? new TypedReference($value, $type, $invalidBehavior, $p->name) : new Reference($value, $invalidBehavior);
+                        } else {
+                            $args[$p->name] = new Reference('.value.'.$container->hash($value));
+                            $container->register((string) $args[$p->name], 'mixed')
+                                ->setFactory('current')
+                                ->addArgument([$value]);
+                        }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                         continue;
                     }
 
@@ -173,6 +197,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                             ->addError($message);
 
                         $args[$p->name] = new Reference($erroredId, ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE);
+                        ++$erroredIds;
                     } else {
                         $target = ltrim($target, '\\');
                         $args[$p->name] = $type ? new TypedReference($target, $type, $invalidBehavior, $p->name) : new Reference($target, $invalidBehavior);
@@ -180,7 +205,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                 }
                 // register the maps as a per-method service-locators
                 if ($args) {
-                    $controllers[$id.'::'.$r->name] = ServiceLocatorTagPass::register($container, $args);
+                    $controllers[$id.'::'.$r->name] = ServiceLocatorTagPass::register($container, $args, \count($args) !== $erroredIds ? $id.'::'.$r->name.'()' : null);
 
                     foreach ($publicAliases[$id] ?? [] as $alias) {
                         $controllers[$alias.'::'.$r->name] = clone $controllers[$id.'::'.$r->name];

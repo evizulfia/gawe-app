@@ -21,6 +21,12 @@
 namespace Mockery\Generator\StringManipulation\Pass;
 
 use Mockery\Generator\MockConfiguration;
+<<<<<<< HEAD
+=======
+use function strrpos;
+use function substr;
+use const PHP_VERSION_ID;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 /**
  * Internal classes can not be instantiated with the newInstanceWithoutArgs
@@ -28,11 +34,15 @@ use Mockery\Generator\MockConfiguration;
  * implements Serializable, we need to replace the standard unserialize method
  * definition with a dummy
  */
-class RemoveUnserializeForInternalSerializableClassesPass
+class RemoveUnserializeForInternalSerializableClassesPass implements Pass
 {
     const DUMMY_METHOD_DEFINITION_LEGACY = 'public function unserialize($string) {} ';
     const DUMMY_METHOD_DEFINITION = 'public function unserialize(string $data): void {} ';
 
+    /**
+     * @param  string $code
+     * @return string
+     */
     public function apply($code, MockConfiguration $config)
     {
         $target = $config->getTargetClass();

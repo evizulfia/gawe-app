@@ -22,32 +22,137 @@ namespace Mockery\Generator;
 
 class UndefinedTargetClass implements TargetClassInterface
 {
+    /**
+     * @var class-string
+     */
     private $name;
 
+    /**
+     * @param class-string $name
+     */
     public function __construct($name)
     {
         $this->name = $name;
     }
 
+<<<<<<< HEAD
+    public static function factory($name)
+    {
+        return new self($name);
+=======
+    /**
+     * @return class-string
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param  class-string $name
+     * @return self
+     */
     public static function factory($name)
     {
         return new self($name);
     }
 
+    /**
+     * @return list<class-string>
+     */
+    public function getAttributes()
+    {
+        return [];
+    }
+
+    /**
+     * @return list<self>
+     */
+    public function getInterfaces()
+    {
+        return [];
+    }
+
+    /**
+     * @return list<Method>
+     */
+    public function getMethods()
+    {
+        return [];
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    }
+
+    /**
+     * @return class-string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @return string
+     */
+    public function getNamespaceName()
+    {
+        $parts = explode('\\', ltrim($this->getName(), '\\'));
+        array_pop($parts);
+        return implode('\\', $parts);
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortName()
+    {
+        $parts = explode('\\', $this->getName());
+        return array_pop($parts);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasInternalAncestor()
+    {
+        return false;
+    }
+
+    /**
+     * @param  class-string $interface
+     * @return bool
+     */
+    public function implementsInterface($interface)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function inNamespace()
+    {
+        return $this->getNamespaceName() !== '';
+    }
+
+    /**
+     * @return bool
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function isAbstract()
     {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function isFinal()
     {
         return false;
     }
+<<<<<<< HEAD
 
     public function getMethods()
     {
@@ -91,4 +196,6 @@ class UndefinedTargetClass implements TargetClassInterface
     {
         return $this->name;
     }
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

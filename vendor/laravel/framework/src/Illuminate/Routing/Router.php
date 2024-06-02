@@ -129,7 +129,7 @@ class Router implements BindingRegistrar, RegistrarContract
      * @param  \Illuminate\Container\Container|null  $container
      * @return void
      */
-    public function __construct(Dispatcher $events, Container $container = null)
+    public function __construct(Dispatcher $events, ?Container $container = null)
     {
         $this->events = $events;
         $this->routes = new RouteCollection;
@@ -871,7 +871,28 @@ class Router implements BindingRegistrar, RegistrarContract
      */
     public function substituteImplicitBindings($route)
     {
+<<<<<<< HEAD
         ImplicitRouteBinding::resolveForRoute($this->container, $route);
+=======
+        $default = fn () => ImplicitRouteBinding::resolveForRoute($this->container, $route);
+
+        return call_user_func(
+            $this->implicitBindingCallback ?? $default, $this->container, $route, $default
+        );
+    }
+
+    /**
+     * Register a callback to run after implicit bindings are substituted.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function substituteImplicitBindingsUsing($callback)
+    {
+        $this->implicitBindingCallback = $callback;
+
+        return $this;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -1033,7 +1054,7 @@ class Router implements BindingRegistrar, RegistrarContract
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function model($key, $class, Closure $callback = null)
+    public function model($key, $class, ?Closure $callback = null)
     {
         $this->bind($key, RouteBinding::forModel($this->container, $class, $callback));
     }

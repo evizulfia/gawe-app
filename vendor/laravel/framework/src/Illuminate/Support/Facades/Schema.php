@@ -22,6 +22,14 @@ namespace Illuminate\Support\Facades;
  * @method static void morphUsingUuids()
  * @method static \Illuminate\Database\Connection getConnection()
  * @method static \Illuminate\Database\Schema\Builder setConnection(\Illuminate\Database\Connection $connection)
+<<<<<<< HEAD
+=======
+ * @method static void blueprintResolver(\Closure $resolver)
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Database\Schema\Builder
  */

@@ -71,13 +71,13 @@ class ErrorHandler
     private array $loggers = [
         \E_DEPRECATED => [null, LogLevel::INFO],
         \E_USER_DEPRECATED => [null, LogLevel::INFO],
-        \E_NOTICE => [null, LogLevel::WARNING],
-        \E_USER_NOTICE => [null, LogLevel::WARNING],
-        \E_STRICT => [null, LogLevel::WARNING],
-        \E_WARNING => [null, LogLevel::WARNING],
-        \E_USER_WARNING => [null, LogLevel::WARNING],
-        \E_COMPILE_WARNING => [null, LogLevel::WARNING],
-        \E_CORE_WARNING => [null, LogLevel::WARNING],
+        \E_NOTICE => [null, LogLevel::ERROR],
+        \E_USER_NOTICE => [null, LogLevel::ERROR],
+        \E_STRICT => [null, LogLevel::ERROR],
+        \E_WARNING => [null, LogLevel::ERROR],
+        \E_USER_WARNING => [null, LogLevel::ERROR],
+        \E_COMPILE_WARNING => [null, LogLevel::ERROR],
+        \E_CORE_WARNING => [null, LogLevel::ERROR],
         \E_USER_ERROR => [null, LogLevel::CRITICAL],
         \E_RECOVERABLE_ERROR => [null, LogLevel::CRITICAL],
         \E_COMPILE_ERROR => [null, LogLevel::CRITICAL],
@@ -434,7 +434,11 @@ class ErrorHandler
                 return true;
             }
         } else {
+<<<<<<< HEAD
             if (str_contains($message, '@anonymous')) {
+=======
+            if (\PHP_VERSION_ID < 80303 && str_contains($message, '@anonymous')) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 $backtrace = debug_backtrace(false, 5);
 
                 for ($i = 1; isset($backtrace[$i]); ++$i) {
@@ -451,6 +455,14 @@ class ErrorHandler
                 }
             }
 
+<<<<<<< HEAD
+=======
+            if (str_contains($message, "@anonymous\0")) {
+                $message = $this->parseAnonymousClass($message);
+                $logMessage = $this->levels[$type].': '.$message;
+            }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $errorAsException = new \ErrorException($logMessage, 0, $type, $file, $line);
 
             if ($throw || $this->tracedErrors & $type) {
@@ -599,6 +611,10 @@ class ErrorHandler
             set_exception_handler($h);
         }
         if (!$handler) {
+            if (null === $error && $exitCode = self::$exitCode) {
+                register_shutdown_function('register_shutdown_function', function () use ($exitCode) { exit($exitCode); });
+            }
+
             return;
         }
         if ($handler !== $h) {
@@ -634,8 +650,7 @@ class ErrorHandler
             // Ignore this re-throw
         }
 
-        if ($exit && self::$exitCode) {
-            $exitCode = self::$exitCode;
+        if ($exit && $exitCode = self::$exitCode) {
             register_shutdown_function('register_shutdown_function', function () use ($exitCode) { exit($exitCode); });
         }
     }

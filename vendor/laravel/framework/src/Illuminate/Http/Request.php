@@ -336,7 +336,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     }
 
     /**
-     * Replace the input for the current request.
+     * Replace the input values for the current request.
      *
      * @param  array  $input
      * @return $this
@@ -465,7 +465,12 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      *
      * @return static
      */
+<<<<<<< HEAD
     public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null): static
+=======
+    #[\Override]
+    public function duplicate(?array $query = null, ?array $request = null, ?array $attributes = null, ?array $cookies = null, ?array $files = null, ?array $server = null): static
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         return parent::duplicate($query, $request, $attributes, $cookies, $this->filterFiles($files), $server);
     }

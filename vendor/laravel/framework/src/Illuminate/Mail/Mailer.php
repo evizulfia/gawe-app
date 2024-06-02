@@ -95,7 +95,7 @@ class Mailer implements MailerContract, MailQueueContract
      * @param  \Illuminate\Contracts\Events\Dispatcher|null  $events
      * @return void
      */
-    public function __construct(string $name, Factory $views, TransportInterface $transport, Dispatcher $events = null)
+    public function __construct(string $name, Factory $views, TransportInterface $transport, ?Dispatcher $events = null)
     {
         $this->name = $name;
         $this->views = $views;
@@ -308,6 +308,24 @@ class Mailer implements MailerContract, MailQueueContract
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Send a new message synchronously using a view.
+     *
+     * @param  \Illuminate\Contracts\Mail\Mailable|string|array  $mailable
+     * @param  array  $data
+     * @param  \Closure|string|null  $callback
+     * @return \Illuminate\Mail\SentMessage|null
+     */
+    public function sendNow($mailable, array $data = [], $callback = null)
+    {
+        return $mailable instanceof MailableContract
+            ? $mailable->mailer($this->name)->send($this)
+            : $this->send($mailable, $data, $callback);
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Parse the given view name or array.
      *
      * @param  string|array  $view
@@ -549,11 +567,9 @@ class Mailer implements MailerContract, MailQueueContract
      */
     protected function dispatchSentEvent($message, $data = [])
     {
-        if ($this->events) {
-            $this->events->dispatch(
-                new MessageSent($message, $data)
-            );
-        }
+        $this->events?->dispatch(
+            new MessageSent($message, $data)
+        );
     }
 
     /**

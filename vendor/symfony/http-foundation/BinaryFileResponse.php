@@ -27,6 +27,7 @@ class BinaryFileResponse extends Response
 {
     protected static $trustXSendfileTypeHeader = false;
 
+<<<<<<< HEAD
     /**
      * @var File
      */
@@ -34,6 +35,14 @@ class BinaryFileResponse extends Response
     protected $offset = 0;
     protected $maxlen = -1;
     protected $deleteFileAfterSend = false;
+=======
+    protected File $file;
+    protected ?\SplTempFileObject $tempFileObject = null;
+    protected int $offset = 0;
+    protected int $maxlen = -1;
+    protected bool $deleteFileAfterSend = false;
+    protected int $chunkSize = 16 * 1024;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * @param \SplFileInfo|string $file               The file to stream
@@ -64,15 +73,18 @@ class BinaryFileResponse extends Response
      */
     public function setFile(\SplFileInfo|string $file, string $contentDisposition = null, bool $autoEtag = false, bool $autoLastModified = true): static
     {
+        $isTemporaryFile = $file instanceof \SplTempFileObject;
+        $this->tempFileObject = $isTemporaryFile ? $file : null;
+
         if (!$file instanceof File) {
             if ($file instanceof \SplFileInfo) {
-                $file = new File($file->getPathname());
+                $file = new File($file->getPathname(), !$isTemporaryFile);
             } else {
                 $file = new File((string) $file);
             }
         }
 
-        if (!$file->isReadable()) {
+        if (!$file->isReadable() && !$isTemporaryFile) {
             throw new FileException('File must be readable.');
         }
 
@@ -82,7 +94,7 @@ class BinaryFileResponse extends Response
             $this->setAutoEtag();
         }
 
-        if ($autoLastModified) {
+        if ($autoLastModified && !$isTemporaryFile) {
             $this->setAutoLastModified();
         }
 
@@ -120,7 +132,7 @@ class BinaryFileResponse extends Response
      */
     public function setAutoEtag(): static
     {
-        $this->setEtag(base64_encode(hash_file('sha256', $this->file->getPathname(), true)));
+        $this->setEtag(base64_encode(hash_file('xxh128', $this->file->getPathname(), true)));
 
         return $this;
     }
@@ -279,16 +291,58 @@ class BinaryFileResponse extends Response
             return $this;
         }
 
+<<<<<<< HEAD
         $out = fopen('php://output', 'w');
         $file = fopen($this->file->getPathname(), 'r');
+=======
+            $out = fopen('php://output', 'w');
+
+            if ($this->tempFileObject) {
+                $file = $this->tempFileObject;
+                $file->rewind();
+            } else {
+                $file = new \SplFileObject($this->file->getPathname(), 'r');
+            }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         stream_copy_to_stream($file, $out, $this->maxlen, $this->offset);
 
+<<<<<<< HEAD
         fclose($out);
         fclose($file);
 
         if ($this->deleteFileAfterSend && is_file($this->file->getPathname())) {
             unlink($this->file->getPathname());
+=======
+            if (0 !== $this->offset) {
+                $file->fseek($this->offset);
+            }
+
+            $length = $this->maxlen;
+            while ($length && !$file->eof()) {
+                $read = $length > $this->chunkSize || 0 > $length ? $this->chunkSize : $length;
+
+                if (false === $data = $file->fread($read)) {
+                    break;
+                }
+                while ('' !== $data) {
+                    $read = fwrite($out, $data);
+                    if (false === $read || connection_aborted()) {
+                        break 2;
+                    }
+                    if (0 < $length) {
+                        $length -= $read;
+                    }
+                    $data = substr($data, $read);
+                }
+            }
+
+            fclose($out);
+        } finally {
+            if (null === $this->tempFileObject && $this->deleteFileAfterSend && is_file($this->file->getPathname())) {
+                unlink($this->file->getPathname());
+            }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         }
 
         return $this;

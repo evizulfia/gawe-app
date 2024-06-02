@@ -4,8 +4,11 @@ namespace Illuminate\Redis\Connections;
 
 use Closure;
 use Illuminate\Contracts\Redis\Connection as ConnectionContract;
+<<<<<<< HEAD
 use Illuminate\Support\Arr;
 use Redis;
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use RedisException;
 
 /**
@@ -37,7 +40,7 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      * @param  array  $config
      * @return void
      */
-    public function __construct($client, callable $connector = null, array $config = [])
+    public function __construct($client, ?callable $connector = null, array $config = [])
     {
         $this->client = $client;
         $this->config = $config;
@@ -397,7 +400,7 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      * @param  callable|null  $callback
      * @return \Redis|array
      */
-    public function pipeline(callable $callback = null)
+    public function pipeline(?callable $callback = null)
     {
         $pipeline = $this->client()->pipeline();
 
@@ -412,7 +415,7 @@ class PhpRedisConnection extends Connection implements ConnectionContract
      * @param  callable|null  $callback
      * @return \Redis|array
      */
-    public function transaction(callable $callback = null)
+    public function transaction(?callable $callback = null)
     {
         $transaction = $this->client()->multi();
 

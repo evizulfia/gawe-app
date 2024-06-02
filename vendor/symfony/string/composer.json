@@ -23,10 +23,19 @@
         "symfony/polyfill-mbstring": "~1.0"
     },
     "require-dev": {
+<<<<<<< HEAD
         "symfony/error-handler": "^5.4|^6.0",
         "symfony/http-client": "^5.4|^6.0",
         "symfony/translation-contracts": "^2.0|^3.0",
         "symfony/var-exporter": "^5.4|^6.0"
+=======
+        "symfony/error-handler": "^6.4|^7.0",
+        "symfony/emoji": "^7.1",
+        "symfony/http-client": "^6.4|^7.0",
+        "symfony/intl": "^6.4|^7.0",
+        "symfony/translation-contracts": "^2.5|^3.0",
+        "symfony/var-exporter": "^6.4|^7.0"
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     },
     "conflict": {
         "symfony/translation-contracts": "<2.0"

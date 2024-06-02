@@ -26,7 +26,26 @@ class SQLiteGrammar extends Grammar
     protected $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
 
     /**
+<<<<<<< HEAD
      * Compile the query to determine if a table exists.
+=======
+     * Compile the query to determine the SQL text that describes the given object.
+     *
+     * @param  string  $name
+     * @param  string  $type
+     * @return string
+     */
+    public function compileSqlCreateStatement($name, $type = 'table')
+    {
+        return sprintf('select "sql" from sqlite_master where type = %s and name = %s',
+            $this->quoteString($type),
+            $this->quoteString(str_replace('.', '__', $name))
+        );
+    }
+
+    /**
+     * Compile the query to determine if the dbstat table is available.
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @return string
      */
@@ -43,7 +62,51 @@ class SQLiteGrammar extends Grammar
      */
     public function compileColumnListing($table)
     {
+<<<<<<< HEAD
         return 'pragma table_info('.$this->wrap(str_replace('.', '__', $table)).')';
+=======
+        return sprintf(
+            'select name, type, not "notnull" as "nullable", dflt_value as "default", pk as "primary", hidden as "extra" '
+            .'from pragma_table_xinfo(%s) order by cid asc',
+            $this->quoteString(str_replace('.', '__', $table))
+        );
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     *
+     * @param  string  $table
+     * @return string
+     */
+    public function compileIndexes($table)
+    {
+        return sprintf(
+            'select \'primary\' as name, group_concat(col) as columns, 1 as "unique", 1 as "primary" '
+            .'from (select name as col from pragma_table_info(%s) where pk > 0 order by pk, cid) group by name '
+            .'union select name, group_concat(col) as columns, "unique", origin = \'pk\' as "primary" '
+            .'from (select il.*, ii.name as col from pragma_index_list(%s) il, pragma_index_info(il.name) ii order by il.seq, ii.seqno) '
+            .'group by name, "unique", "primary"',
+            $table = $this->quoteString(str_replace('.', '__', $table)),
+            $table
+        );
+    }
+
+    /**
+     * Compile the query to determine the foreign keys.
+     *
+     * @param  string  $table
+     * @return string
+     */
+    public function compileForeignKeys($table)
+    {
+        return sprintf(
+            'select group_concat("from") as columns, "table" as foreign_table, '
+            .'group_concat("to") as foreign_columns, on_update, on_delete '
+            .'from (select * from pragma_foreign_key_list(%s) order by id desc, seq) '
+            .'group by id, "table", on_update, on_delete',
+            $this->quoteString(str_replace('.', '__', $table))
+        );
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

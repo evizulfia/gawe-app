@@ -1566,13 +1566,19 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * @param  array|null  $except
      * @return static
      */
-    public function replicate(array $except = null)
+    public function replicate(?array $except = null)
     {
         $defaults = [
             $this->getKeyName(),
             $this->getCreatedAtColumn(),
             $this->getUpdatedAtColumn(),
+<<<<<<< HEAD
         ];
+=======
+            ...$this->uniqueIds(),
+            'laravel_through_key',
+        ]));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $attributes = Arr::except(
             $this->getAttributes(), $except ? array_unique(array_merge($except, $defaults)) : $defaults
@@ -1588,6 +1594,20 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Clone the model into a new, non-existing instance without raising any events.
+     *
+     * @param  array|null  $except
+     * @return static
+     */
+    public function replicateQuietly(?array $except = null)
+    {
+        return static::withoutEvents(fn () => $this->replicate($except));
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Determine if two models have the same ID and belong to the same table.
      *
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
@@ -1951,7 +1971,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * @param  \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\Relation  $query
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return \Illuminate\Contracts\Database\Eloquent\Builder
      */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {

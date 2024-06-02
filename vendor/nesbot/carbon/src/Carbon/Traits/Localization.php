@@ -433,7 +433,11 @@ trait Localization
      *
      * @return $this|string
      */
+<<<<<<< HEAD
     public function locale(string $locale = null, ...$fallbackLocales)
+=======
+    public function locale(?string $locale = null, string ...$fallbackLocales): static|string
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if ($locale === null) {
             return $this->getTranslatorLocale();
@@ -704,10 +708,6 @@ trait Localization
      *
      * If null or omitted, current local translator is used.
      * If no local translator is in use, current global translator is used.
-     *
-     * @param null $translator
-     *
-     * @return string|null
      */
     protected function getTranslatorLocale($translator = null): ?string
     {

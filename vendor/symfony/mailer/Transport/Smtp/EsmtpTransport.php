@@ -29,6 +29,11 @@ class EsmtpTransport extends SmtpTransport
     private array $authenticators = [];
     private string $username = '';
     private string $password = '';
+<<<<<<< HEAD
+=======
+    private array $capabilities;
+    private bool $autoTls = true;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     public function __construct(string $host = 'localhost', int $port = 0, bool $tls = null, EventDispatcherInterface $dispatcher = null, LoggerInterface $logger = null)
     {
@@ -93,6 +98,32 @@ class EsmtpTransport extends SmtpTransport
         return $this->password;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @return $this
+     */
+    public function setAutoTls(bool $autoTls): static
+    {
+        $this->autoTls = $autoTls;
+
+        return $this;
+    }
+
+    public function isAutoTls(): bool
+    {
+        return $this->autoTls;
+    }
+
+    public function setAuthenticators(array $authenticators): void
+    {
+        $this->authenticators = [];
+        foreach ($authenticators as $authenticator) {
+            $this->addAuthenticator($authenticator);
+        }
+    }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function addAuthenticator(AuthenticatorInterface $authenticator): void
     {
         $this->authenticators[] = $authenticator;
@@ -115,7 +146,11 @@ class EsmtpTransport extends SmtpTransport
         // WARNING: !$stream->isTLS() is right, 100% sure :)
         // if you think that the ! should be removed, read the code again
         // if doing so "fixes" your issue then it probably means your SMTP server behaves incorrectly or is wrongly configured
+<<<<<<< HEAD
         if (!$stream->isTLS() && \defined('OPENSSL_VERSION_NUMBER') && \array_key_exists('STARTTLS', $capabilities)) {
+=======
+        if ($this->autoTls && !$stream->isTLS() && \defined('OPENSSL_VERSION_NUMBER') && \array_key_exists('STARTTLS', $this->capabilities)) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $this->executeCommand("STARTTLS\r\n", [220]);
 
             if (!$stream->startTLS()) {

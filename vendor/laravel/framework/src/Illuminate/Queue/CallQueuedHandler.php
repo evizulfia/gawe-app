@@ -13,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use ReflectionClass;
 use RuntimeException;
 
@@ -224,9 +225,17 @@ class CallQueuedHandler
         $class = $job->resolveName();
 
         try {
+<<<<<<< HEAD
             $shouldDelete = (new ReflectionClass($class))
                     ->getDefaultProperties()['deleteWhenMissingModels'] ?? false;
         } catch (Exception $e) {
+=======
+            $reflectionClass = new ReflectionClass($class);
+
+            $shouldDelete = $reflectionClass->getDefaultProperties()['deleteWhenMissingModels']
+                ?? count($reflectionClass->getAttributes(DeleteWhenMissingModels::class)) !== 0;
+        } catch (Exception) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $shouldDelete = false;
         }
 

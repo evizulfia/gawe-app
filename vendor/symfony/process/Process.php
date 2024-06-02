@@ -15,6 +15,7 @@ use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
+use Symfony\Component\Process\Exception\ProcessStartFailedException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Pipes\PipesInterface;
@@ -68,12 +69,22 @@ class Process implements \IteratorAggregate
     private $stdout;
     private $stderr;
     private $process;
+<<<<<<< HEAD
     private $status = self::STATUS_READY;
     private $incrementalOutputOffset = 0;
     private $incrementalErrorOutputOffset = 0;
     private $tty = false;
     private $pty;
     private $options = ['suppress_errors' => true, 'bypass_shell' => true];
+=======
+    private string $status = self::STATUS_READY;
+    private int $incrementalOutputOffset = 0;
+    private int $incrementalErrorOutputOffset = 0;
+    private bool $tty = false;
+    private bool $pty;
+    private array $options = ['suppress_errors' => true, 'bypass_shell' => true];
+    private array $ignoredSignals = [];
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     private $useFileHandles = false;
     /** @var PipesInterface */
@@ -234,11 +245,11 @@ class Process implements \IteratorAggregate
      *
      * @return int The exit status code
      *
-     * @throws RuntimeException         When process can't be launched
-     * @throws RuntimeException         When process is already running
-     * @throws ProcessTimedOutException When process timed out
-     * @throws ProcessSignaledException When process stopped after receiving signal
-     * @throws LogicException           In case a callback is provided and output has been disabled
+     * @throws ProcessStartFailedException When process can't be launched
+     * @throws RuntimeException            When process is already running
+     * @throws ProcessTimedOutException    When process timed out
+     * @throws ProcessSignaledException    When process stopped after receiving signal
+     * @throws LogicException              In case a callback is provided and output has been disabled
      *
      * @final
      */
@@ -285,9 +296,9 @@ class Process implements \IteratorAggregate
      * @param callable|null $callback A PHP callback to run whenever there is some
      *                                output available on STDOUT or STDERR
      *
-     * @throws RuntimeException When process can't be launched
-     * @throws RuntimeException When process is already running
-     * @throws LogicException   In case a callback is provided and output has been disabled
+     * @throws ProcessStartFailedException When process can't be launched
+     * @throws RuntimeException            When process is already running
+     * @throws LogicException              In case a callback is provided and output has been disabled
      */
     public function start(callable $callback = null, array $env = [])
     {
@@ -308,12 +319,16 @@ class Process implements \IteratorAggregate
         $env += '\\' === \DIRECTORY_SEPARATOR ? array_diff_ukey($this->getDefaultEnv(), $env, 'strcasecmp') : $this->getDefaultEnv();
 
         if (\is_array($commandline = $this->commandline)) {
+<<<<<<< HEAD
             $commandline = implode(' ', array_map([$this, 'escapeArgument'], $commandline));
 
             if ('\\' !== \DIRECTORY_SEPARATOR) {
                 // exec is mandatory to deal with sending a signal to the process
                 $commandline = 'exec '.$commandline;
             }
+=======
+            $commandline = array_values(array_map(strval(...), $commandline));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         } else {
             $commandline = $this->replacePlaceholders($commandline, $env);
         }
@@ -323,6 +338,11 @@ class Process implements \IteratorAggregate
         } elseif (!$this->useFileHandles && $this->isSigchildEnabled()) {
             // last exit code is output on the fourth pipe and caught to work around --enable-sigchild
             $descriptors[3] = ['pipe', 'w'];
+
+            if (\is_array($commandline)) {
+                // exec is mandatory to deal with sending a signal to the process
+                $commandline = 'exec '.$this->buildShellCommandline($commandline);
+            }
 
             // See https://unix.stackexchange.com/questions/71205/background-process-pipe-input
             $commandline = '{ ('.$commandline.') <&3 3<&- 3>/dev/null & } 3<&0;';
@@ -344,10 +364,41 @@ class Process implements \IteratorAggregate
             throw new RuntimeException(sprintf('The provided cwd "%s" does not exist.', $this->cwd));
         }
 
+<<<<<<< HEAD
         $this->process = @proc_open($commandline, $descriptors, $this->processPipes->pipes, $this->cwd, $envPairs, $this->options);
 
         if (!\is_resource($this->process)) {
             throw new RuntimeException('Unable to launch a new process.');
+=======
+        $lastError = null;
+        set_error_handler(function ($type, $msg) use (&$lastError) {
+            $lastError = $msg;
+
+            return true;
+        });
+
+        $oldMask = [];
+
+        if ($this->ignoredSignals && \function_exists('pcntl_sigprocmask')) {
+            // we block signals we want to ignore, as proc_open will use fork / posix_spawn which will copy the signal mask this allow to block
+            // signals in the child process
+            pcntl_sigprocmask(\SIG_BLOCK, $this->ignoredSignals, $oldMask);
+        }
+
+        try {
+            $process = @proc_open($commandline, $descriptors, $this->processPipes->pipes, $this->cwd, $envPairs, $this->options);
+        } finally {
+            if ($this->ignoredSignals && \function_exists('pcntl_sigprocmask')) {
+                // we restore the signal mask here to avoid any side effects
+                pcntl_sigprocmask(\SIG_SETMASK, $oldMask);
+            }
+
+            restore_error_handler();
+        }
+
+        if (!\is_resource($process)) {
+            throw new ProcessStartFailedException($this, $lastError);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         }
         $this->status = self::STATUS_STARTED;
 
@@ -371,8 +422,8 @@ class Process implements \IteratorAggregate
      * @param callable|null $callback A PHP callback to run whenever there is some
      *                                output available on STDOUT or STDERR
      *
-     * @throws RuntimeException When process can't be launched
-     * @throws RuntimeException When process is already running
+     * @throws ProcessStartFailedException When process can't be launched
+     * @throws RuntimeException            When process is already running
      *
      * @see start()
      *
@@ -946,7 +997,11 @@ class Process implements \IteratorAggregate
      */
     public function getCommandLine(): string
     {
+<<<<<<< HEAD
         return \is_array($this->commandline) ? implode(' ', array_map([$this, 'escapeArgument'], $this->commandline)) : $this->commandline;
+=======
+        return $this->buildShellCommandline($this->commandline);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -1198,17 +1253,35 @@ class Process implements \IteratorAggregate
     }
 
     /**
+     * Defines a list of posix signals that will not be propagated to the process.
+     *
+     * @param list<\SIG*> $signals
+     */
+    public function setIgnoredSignals(array $signals): void
+    {
+        if ($this->isRunning()) {
+            throw new RuntimeException('Setting ignored signals while the process is running is not possible.');
+        }
+
+        $this->ignoredSignals = $signals;
+    }
+
+    /**
      * Returns whether TTY is supported on the current operating system.
      */
     public static function isTtySupported(): bool
     {
         static $isTtySupported;
 
+<<<<<<< HEAD
         if (null === $isTtySupported) {
             $isTtySupported = (bool) @proc_open('echo 1 >/dev/null', [['file', '/dev/tty', 'r'], ['file', '/dev/tty', 'w'], ['file', '/dev/tty', 'w']], $pipes);
         }
 
         return $isTtySupported;
+=======
+        return $isTtySupported ??= ('/' === \DIRECTORY_SEPARATOR && stream_isatty(\STDOUT) && @is_writable('/dev/tty'));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -1439,6 +1512,11 @@ class Process implements \IteratorAggregate
      */
     private function doSignal(int $signal, bool $throwException): bool
     {
+        // Signal seems to be send when sigchild is enable, this allow blocking the signal correctly in this case
+        if ($this->isSigchildEnabled() && \in_array($signal, $this->ignoredSignals)) {
+            return false;
+        }
+
         if (null === $pid = $this->getPid()) {
             if ($throwException) {
                 throw new LogicException('Cannot send signal on a non running process.');
@@ -1481,8 +1559,18 @@ class Process implements \IteratorAggregate
         return true;
     }
 
-    private function prepareWindowsCommandLine(string $cmd, array &$env): string
+    private function buildShellCommandline(string|array $commandline): string
     {
+        if (\is_string($commandline)) {
+            return $commandline;
+        }
+
+        return implode(' ', array_map($this->escapeArgument(...), $commandline));
+    }
+
+    private function prepareWindowsCommandLine(string|array $cmd, array &$env): string
+    {
+        $cmd = $this->buildShellCommandline($cmd);
         $uid = uniqid('', true);
         $varCount = 0;
         $varCache = [];

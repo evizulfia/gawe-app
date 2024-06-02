@@ -54,9 +54,44 @@
     "config": {
         "preferred-install": "dist"
     },
+<<<<<<< HEAD
     "extra": {
         "branch-alias": {
             "dev-master": "1.4.x-dev"
         }
+=======
+    "scripts": {
+        "check": [
+            "@composer validate",
+            "@ecs",
+            "@test"
+        ],
+        "docs": "vendor/bin/phpdoc -d library -t docs/api",
+        "ecs": [
+            "@ecs:fix",
+            "@ecs:check"
+        ],
+        "ecs:check": "ecs check --clear-cache || true",
+        "ecs:fix": "ecs check --clear-cache --fix",
+        "phive": [
+            "tools/phive update --force-accept-unsigned",
+            "tools/phive purge"
+        ],
+        "phpunit": "vendor/bin/phpunit --do-not-cache-result --colors=always",
+        "phpunit:coverage": "@phpunit --coverage-clover=coverage.xml",
+        "psalm": "tools/psalm --no-cache --show-info=true",
+        "psalm:alter": "tools/psalm --no-cache --alter --allow-backwards-incompatible-changes=false --safe-types",
+        "psalm:baseline": "@psalm --no-diff --set-baseline=psalm-baseline.xml",
+        "psalm:dry-run": "@psalm:alter --issues=all --dry-run",
+        "psalm:fix": "@psalm:alter --issues=UnnecessaryVarAnnotation,MissingPureAnnotation,MissingImmutableAnnotation",
+        "psalm:security": "@psalm --no-diff --taint-analysis",
+        "psalm:shepherd": "@psalm --no-diff --shepherd --stats --output-format=github",
+        "test": [
+            "@phpunit --stop-on-defect",
+            "@psalm",
+            "@psalm:security",
+            "@psalm:dry-run"
+        ]
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 }

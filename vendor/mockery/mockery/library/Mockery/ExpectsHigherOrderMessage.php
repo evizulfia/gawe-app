@@ -27,7 +27,14 @@ class ExpectsHigherOrderMessage extends HigherOrderMessage
         parent::__construct($mock, "shouldReceive");
     }
     /**
+<<<<<<< HEAD
      * @return \Mockery\Expectation
+=======
+     * @param string $method
+     * @param array  $args
+     *
+     * @return Expectation|ExpectationInterface|HigherOrderMessage
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public function __call($method, $args)
     {

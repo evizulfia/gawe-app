@@ -38,10 +38,14 @@ trait TranslatorTrait
         return $this->locale ?: (class_exists(\Locale::class) ? \Locale::getDefault() : 'en');
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritdoc}
      */
     public function trans(?string $id, array $parameters = [], string $domain = null, string $locale = null): string
+=======
+    public function trans(?string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if (null === $id || '' === $id) {
             return '';

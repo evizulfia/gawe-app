@@ -22,14 +22,23 @@ class RouteConfigurator
     use Traits\HostTrait;
     use Traits\RouteTrait;
 
+<<<<<<< HEAD
     protected $parentConfigurator;
 
     public function __construct(RouteCollection $collection, RouteCollection $route, string $name = '', CollectionConfigurator $parentConfigurator = null, array $prefixes = null)
     {
+=======
+    public function __construct(
+        RouteCollection $collection,
+        RouteCollection $route,
+        string $name = '',
+        protected ?CollectionConfigurator $parentConfigurator = null, // for GC control
+        ?array $prefixes = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->collection = $collection;
         $this->route = $route;
         $this->name = $name;
-        $this->parentConfigurator = $parentConfigurator; // for GC control
         $this->prefixes = $prefixes;
     }
 

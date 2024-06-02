@@ -638,6 +638,34 @@ class Collection extends BaseCollection implements QueueableCollection
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Get an array with the values of a given key.
+     *
+     * @param  string|array<array-key, string>|null  $value
+     * @param  string|null  $key
+     * @return \Illuminate\Support\Collection<array-key, mixed>
+     */
+    public function pluck($value, $key = null)
+    {
+        return $this->toBase()->pluck($value, $key);
+    }
+
+    /**
+     * Zip the collection together with one or more arrays.
+     *
+     * @template TZipValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue>  ...$items
+     * @return \Illuminate\Support\Collection<int, \Illuminate\Support\Collection<int, TModel|TZipValue>>
+     */
+    public function zip($items)
+    {
+        return $this->toBase()->zip(...func_get_args());
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the comparison function to detect duplicates.
      *
      * @param  bool  $strict

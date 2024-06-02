@@ -42,13 +42,14 @@ class InputOption
     public const VALUE_IS_ARRAY = 8;
 
     /**
-     * The option may have either positive or negative value (e.g. --ansi or --no-ansi).
+     * The option allows passing a negated variant (e.g. --ansi or --no-ansi).
      */
     public const VALUE_NEGATABLE = 16;
 
     private string $name;
-    private string|array|null $shortcut;
+    private ?string $shortcut;
     private int $mode;
+<<<<<<< HEAD
     private string|int|bool|array|null|float $default;
     private string $description;
 
@@ -61,11 +62,31 @@ class InputOption
      */
     public function __construct(string $name, string|array $shortcut = null, int $mode = null, string $description = '', string|bool|int|float|array $default = null)
     {
+=======
+    private string|int|bool|array|float|null $default;
+
+    /**
+     * @param string|array|null                                                             $shortcut        The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
+     * @param int-mask-of<InputOption::*>|null                                              $mode            The option mode: One of the VALUE_* constants
+     * @param string|bool|int|float|array|null                                              $default         The default value (must be null for self::VALUE_NONE)
+     * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     *
+     * @throws InvalidArgumentException If option mode is invalid or incompatible
+     */
+    public function __construct(
+        string $name,
+        string|array|null $shortcut = null,
+        ?int $mode = null,
+        private string $description = '',
+        string|bool|int|float|array|null $default = null,
+        private array|\Closure $suggestedValues = [],
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         if (str_starts_with($name, '--')) {
             $name = substr($name, 2);
         }
 
-        if (empty($name)) {
+        if (!$name) {
             throw new InvalidArgumentException('An option name cannot be empty.');
         }
 
@@ -95,7 +116,10 @@ class InputOption
         $this->name = $name;
         $this->shortcut = $shortcut;
         $this->mode = $mode;
+<<<<<<< HEAD
         $this->description = $description;
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         if ($this->isArray() && !$this->acceptValue()) {
             throw new InvalidArgumentException('Impossible to have an option mode VALUE_IS_ARRAY if the option does not accept a value.');
@@ -163,12 +187,24 @@ class InputOption
         return self::VALUE_IS_ARRAY === (self::VALUE_IS_ARRAY & $this->mode);
     }
 
+    /**
+     * Returns true if the option allows passing a negated variant.
+     *
+     * @return bool true if mode is self::VALUE_NEGATABLE, false otherwise
+     */
     public function isNegatable(): bool
     {
         return self::VALUE_NEGATABLE === (self::VALUE_NEGATABLE & $this->mode);
     }
 
+<<<<<<< HEAD
     public function setDefault(string|bool|int|float|array $default = null)
+=======
+    /**
+     * Sets the default value.
+     */
+    public function setDefault(string|bool|int|float|array|null $default): void
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if (self::VALUE_NONE === (self::VALUE_NONE & $this->mode) && null !== $default) {
             throw new LogicException('Cannot set a default value when using InputOption::VALUE_NONE mode.');
@@ -201,6 +237,33 @@ class InputOption
         return $this->description;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Returns true if the option has values for input completion.
+     */
+    public function hasCompletion(): bool
+    {
+        return [] !== $this->suggestedValues;
+    }
+
+    /**
+     * Supplies suggestions when command resolves possible completion options for input.
+     *
+     * @see Command::complete()
+     */
+    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        $values = $this->suggestedValues;
+        if ($values instanceof \Closure && !\is_array($values = $values($input))) {
+            throw new LogicException(sprintf('Closure for option "%s" must return an array. Got "%s".', $this->name, get_debug_type($values)));
+        }
+        if ($values) {
+            $suggestions->suggestValues($values);
+        }
+    }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * Checks whether the given option equals this one.
      */

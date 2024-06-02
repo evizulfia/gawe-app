@@ -41,6 +41,51 @@ class ServeCommand extends Command
     protected $portOffset = 0;
 
     /**
+<<<<<<< HEAD
+=======
+     * The list of lines that are pending to be output.
+     *
+     * @var string
+     */
+    protected $outputBuffer = '';
+
+    /**
+     * The list of requests being handled and their start time.
+     *
+     * @var array<int, \Illuminate\Support\Carbon>
+     */
+    protected $requestsPool;
+
+    /**
+     * Indicates if the "Server running on..." output message has been displayed.
+     *
+     * @var bool
+     */
+    protected $serverRunningHasBeenDisplayed = false;
+
+    /**
+     * The environment variables that should be passed from host machine to the PHP server process.
+     *
+     * @var string[]
+     */
+    public static $passthroughVariables = [
+        'APP_ENV',
+        'HERD_PHP_81_INI_SCAN_DIR',
+        'HERD_PHP_82_INI_SCAN_DIR',
+        'HERD_PHP_83_INI_SCAN_DIR',
+        'IGNITION_LOCAL_SITES_PATH',
+        'LARAVEL_SAIL',
+        'PATH',
+        'PHP_CLI_SERVER_WORKERS',
+        'PHP_IDE_CONFIG',
+        'SYSTEMROOT',
+        'XDEBUG_CONFIG',
+        'XDEBUG_MODE',
+        'XDEBUG_SESSION',
+    ];
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Execute the console command.
      *
      * @return int
@@ -202,6 +247,136 @@ class ServeCommand extends Command
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Returns a "callable" to handle the process output.
+     *
+     * @return callable(string, string): void
+     */
+    protected function handleProcessOutput()
+    {
+        return function ($type, $buffer) {
+            $this->outputBuffer .= $buffer;
+
+            $this->flushOutputBuffer();
+        };
+    }
+
+    /**
+     * Flush the output buffer.
+     *
+     * @return void
+     */
+    protected function flushOutputBuffer()
+    {
+        $lines = str($this->outputBuffer)->explode("\n");
+
+        $this->outputBuffer = (string) $lines->pop();
+
+        $lines
+            ->map(fn ($line) => trim($line))
+            ->filter()
+            ->each(function ($line) {
+                if (str($line)->contains('Development Server (http')) {
+                    if ($this->serverRunningHasBeenDisplayed === false) {
+                        $this->serverRunningHasBeenDisplayed = true;
+
+                        $this->components->info("Server running on [http://{$this->host()}:{$this->port()}].");
+                        $this->comment('  <fg=yellow;options=bold>Press Ctrl+C to stop the server</>');
+
+                        $this->newLine();
+                    }
+
+                    return;
+                }
+
+                if (str($line)->contains(' Accepted')) {
+                    $requestPort = $this->getRequestPortFromLine($line);
+
+                    $this->requestsPool[$requestPort] = [
+                        $this->getDateFromLine($line),
+                        false,
+                    ];
+                } elseif (str($line)->contains([' [200]: GET '])) {
+                    $requestPort = $this->getRequestPortFromLine($line);
+
+                    $this->requestsPool[$requestPort][1] = trim(explode('[200]: GET', $line)[1]);
+                } elseif (str($line)->contains(' Closing')) {
+                    $requestPort = $this->getRequestPortFromLine($line);
+
+                    if (empty($this->requestsPool[$requestPort])) {
+                        $this->requestsPool[$requestPort] = [
+                            $this->getDateFromLine($line),
+                            false,
+                        ];
+                    }
+
+                    [$startDate, $file] = $this->requestsPool[$requestPort];
+
+                    $formattedStartedAt = $startDate->format('Y-m-d H:i:s');
+
+                    unset($this->requestsPool[$requestPort]);
+
+                    [$date, $time] = explode(' ', $formattedStartedAt);
+
+                    $this->output->write("  <fg=gray>$date</> $time");
+
+                    $runTime = $this->getDateFromLine($line)->diffInSeconds($startDate);
+
+                    if ($file) {
+                        $this->output->write($file = " $file");
+                    }
+
+                    $dots = max(terminal()->width() - mb_strlen($formattedStartedAt) - mb_strlen($file) - mb_strlen($runTime) - 9, 0);
+
+                    $this->output->write(' '.str_repeat('<fg=gray>.</>', $dots));
+                    $this->output->writeln(" <fg=gray>~ {$runTime}s</>");
+                } elseif (str($line)->contains(['Closed without sending a request', 'Failed to poll event'])) {
+                    // ...
+                } elseif (! empty($line)) {
+                    if (str($line)->startsWith('[')) {
+                        $line = str($line)->after('] ');
+                    }
+
+                    $this->output->writeln("  <fg=gray>$line</>");
+                }
+            });
+    }
+
+    /**
+     * Get the date from the given PHP server output.
+     *
+     * @param  string  $line
+     * @return \Illuminate\Support\Carbon
+     */
+    protected function getDateFromLine($line)
+    {
+        $regex = env('PHP_CLI_SERVER_WORKERS', 1) > 1
+            ? '/^\[\d+]\s\[([a-zA-Z0-9: ]+)\]/'
+            : '/^\[([^\]]+)\]/';
+
+        $line = str_replace('  ', ' ', $line);
+
+        preg_match($regex, $line, $matches);
+
+        return Carbon::createFromFormat('D M d H:i:s Y', $matches[1]);
+    }
+
+    /**
+     * Get the request port from the given PHP server output.
+     *
+     * @param  string  $line
+     * @return int
+     */
+    protected function getRequestPortFromLine($line)
+    {
+        preg_match('/:(\d+)\s(?:(?:\w+$)|(?:\[.*))/', $line, $matches);
+
+        return (int) $matches[1];
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the console command options.
      *
      * @return array

@@ -154,17 +154,6 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     }
 
     /**
-     * Get the average value of a given key.
-     *
-     * @param  (callable(TValue): float|int)|string|null  $callback
-     * @return float|int|null
-     */
-    public function avg($callback = null)
-    {
-        return $this->collect()->avg($callback);
-    }
-
-    /**
      * Get the median of a given key.
      *
      * @param  string|array<array-key, string>|null  $key
@@ -401,7 +390,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  (callable(TValue): bool)|null  $callback
      * @return static
      */
-    public function filter(callable $callback = null)
+    public function filter(?callable $callback = null)
     {
         if (is_null($callback)) {
             $callback = function ($value) {
@@ -427,7 +416,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  TFirstDefault|(\Closure(): TFirstDefault)  $default
      * @return TValue|TFirstDefault
      */
-    public function first(callable $callback = null, $default = null)
+    public function first(?callable $callback = null, $default = null)
     {
         $iterator = $this->getIterator();
 
@@ -672,7 +661,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @param  TLastDefault|(\Closure(): TLastDefault)  $default
      * @return TValue|TLastDefault
      */
-    public function last(callable $callback = null, $default = null)
+    public function last(?callable $callback = null, $default = null)
     {
         $needle = $placeholder = new stdClass;
 
@@ -1452,6 +1441,41 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Throttle the values, releasing them at most once per the given seconds.
+     *
+     * @return static<TKey, TValue>
+     */
+    public function throttle(float $seconds)
+    {
+        return new static(function () use ($seconds) {
+            $microseconds = $seconds * 1_000_000;
+
+            foreach ($this as $key => $value) {
+                $fetchedAt = $this->preciseNow();
+
+                yield $key => $value;
+
+                $sleep = $microseconds - ($this->preciseNow() - $fetchedAt);
+
+                $this->usleep((int) $sleep);
+            }
+        });
+    }
+
+    /**
+     * Flatten a multi-dimensional associative array with dots.
+     *
+     * @return static
+     */
+    public function dot()
+    {
+        return $this->passthru('dot', []);
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Convert a flatten "dot" notation array into an expanded array.
      *
      * @return static
@@ -1641,5 +1665,33 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     protected function now()
     {
         return time();
+    }
+
+    /**
+     * Get the precise current time.
+     *
+     * @return float
+     */
+    protected function preciseNow()
+    {
+        return class_exists(Carbon::class)
+            ? Carbon::now()->getPreciseTimestamp()
+            : microtime(true) * 1_000_000;
+    }
+
+    /**
+     * Sleep for the given amount of microseconds.
+     *
+     * @return void
+     */
+    protected function usleep(int $microseconds)
+    {
+        if ($microseconds <= 0) {
+            return;
+        }
+
+        class_exists(Sleep::class)
+            ? Sleep::usleep($microseconds)
+            : usleep($microseconds);
     }
 }

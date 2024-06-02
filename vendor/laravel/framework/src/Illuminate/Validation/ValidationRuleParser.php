@@ -123,7 +123,7 @@ class ValidationRuleParser
 
         if ($rule instanceof NestedRules) {
             return $rule->compile(
-                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data)
+                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data), $this->data
             )->rules[$attribute];
         }
 
@@ -148,7 +148,9 @@ class ValidationRuleParser
             if (Str::startsWith($key, $attribute) || (bool) preg_match('/^'.$pattern.'\z/', $key)) {
                 foreach (Arr::flatten((array) $rules) as $rule) {
                     if ($rule instanceof NestedRules) {
-                        $compiled = $rule->compile($key, $value, $data);
+                        $context = Arr::get($this->data, Str::beforeLast($key, '.'));
+
+                        $compiled = $rule->compile($key, $value, $data, $context);
 
                         $this->implicitAttributes = array_merge_recursive(
                             $compiled->implicitAttributes,

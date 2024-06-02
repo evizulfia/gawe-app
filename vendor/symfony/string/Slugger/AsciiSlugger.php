@@ -11,6 +11,10 @@
 
 namespace Symfony\Component\String\Slugger;
 
+<<<<<<< HEAD
+=======
+use Symfony\Component\Emoji\EmojiTransliterator;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Symfony\Component\String\AbstractUnicodeString;
 use Symfony\Component\String\UnicodeString;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
@@ -54,7 +58,6 @@ class AsciiSlugger implements SluggerInterface, LocaleAwareInterface
         'zh' => 'Han-Latin',
     ];
 
-    private ?string $defaultLocale;
     private \Closure|array $symbolsMap = [
         'en' => ['@' => 'at', '&' => 'and'],
     ];
@@ -66,9 +69,16 @@ class AsciiSlugger implements SluggerInterface, LocaleAwareInterface
      */
     private array $transliterators = [];
 
+<<<<<<< HEAD
     public function __construct(string $defaultLocale = null, array|\Closure $symbolsMap = null)
     {
         $this->defaultLocale = $defaultLocale;
+=======
+    public function __construct(
+        private ?string $defaultLocale = null,
+        array|\Closure|null $symbolsMap = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->symbolsMap = $symbolsMap ?? $this->symbolsMap;
     }
 
@@ -93,7 +103,23 @@ class AsciiSlugger implements SluggerInterface, LocaleAwareInterface
      */
     public function slug(string $string, string $separator = '-', string $locale = null): AbstractUnicodeString
     {
+<<<<<<< HEAD
         $locale = $locale ?? $this->defaultLocale;
+=======
+        if (false !== $emoji && !class_exists(EmojiTransliterator::class)) {
+            throw new \LogicException(sprintf('You cannot use the "%s()" method as the "symfony/emoji" package is not installed. Try running "composer require symfony/emoji".', __METHOD__));
+        }
+
+        $new = clone $this;
+        $new->emoji = $emoji;
+
+        return $new;
+    }
+
+    public function slug(string $string, string $separator = '-', ?string $locale = null): AbstractUnicodeString
+    {
+        $locale ??= $this->defaultLocale;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $transliterator = [];
         if ($locale && ('de' === $locale || 0 === strpos($locale, 'de_'))) {

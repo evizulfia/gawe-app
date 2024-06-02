@@ -22,9 +22,24 @@ namespace Mockery\Generator;
 
 class MockDefinition
 {
+<<<<<<< HEAD
+=======
+    /**
+     * @var string
+     */
+    protected $code;
+
+    /**
+     * @var MockConfiguration
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     protected $config;
     protected $code;
 
+    /**
+     * @param  string                   $code
+     * @throws InvalidArgumentException
+     */
     public function __construct(MockConfiguration $config, $code)
     {
         if (!$config->getName()) {
@@ -34,18 +49,38 @@ class MockDefinition
         $this->code = $code;
     }
 
+<<<<<<< HEAD
     public function getConfig()
     {
         return $this->config;
     }
 
+=======
+    /**
+     * @return string
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function getClassName()
     {
         return $this->config->getName();
     }
 
+    /**
+     * @return string
+     */
     public function getCode()
     {
         return $this->code;
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * @return MockConfiguration
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

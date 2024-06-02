@@ -36,7 +36,11 @@ trait CreatesMatchingTest
             return;
         }
 
+<<<<<<< HEAD
         $this->call('make:test', [
+=======
+        return $this->call('make:test', [
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             'name' => Str::of($path)->after($this->laravel['path'])->beforeLast('.php')->append('Test')->replace('\\', '/'),
             '--pest' => $this->option('pest'),
         ]);

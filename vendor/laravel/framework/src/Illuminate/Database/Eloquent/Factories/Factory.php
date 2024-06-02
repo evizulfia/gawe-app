@@ -225,6 +225,17 @@ abstract class Factory
      */
     public function createMany(iterable $records)
     {
+<<<<<<< HEAD
+=======
+        $records ??= ($this->count ?? 1);
+
+        $this->count = null;
+
+        if (is_numeric($records)) {
+            $records = array_fill(0, $records, []);
+        }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         return new EloquentCollection(
             collect($records)->map(function ($record) {
                 return $this->state($record)->create();

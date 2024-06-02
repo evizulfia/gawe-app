@@ -61,9 +61,16 @@ class SesTransport extends AbstractTransport
     }
 
     /**
+<<<<<<< HEAD
      * Get the string representation of the transport.
      *
      * @return string
+=======
+     * Extract the SES list management options, if applicable.
+     *
+     * @param  \Symfony\Component\Mailer\SentMessage  $message
+     * @return array|null
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public function __toString(): string
     {

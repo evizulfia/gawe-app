@@ -1,12 +1,14 @@
-name: Laravel CI
+name: Laravel CI and Merge
 
 on:
   push:
     branches:
-      - '*'
-  pull_request:
-    branches:
-      - '*'
+      - "*"
+  workflow_dispatch:
+    inputs:
+      target-branch:
+        description: 'Target branch to merge into'
+        required: true
 
 jobs:
   build:
@@ -34,14 +36,22 @@ jobs:
         run: |
           npm install
 
-      - name: Copy .env and generate key
+      - name: Copy .env.example to .env
         run: |
           cp .env.example .env
           php artisan key:generate
 
+      - name: Copy .env.testing to .env
+        run: cp .env.testing .env
+
+      - name: Generate APP_KEY for testing environment
+        run: php artisan key:generate --env=testing
+
+      - name: Run Laravel migrations
+        run: php artisan migrate --force --env=testing
+
       - name: Run Laravel tests
-        run: |
-          php artisan test
+        run: php artisan test --env=testing
 
       - name: Debugging Info
         run: |
@@ -49,3 +59,29 @@ jobs:
           node -v
           npm -v
           composer -V
+
+  merge:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Merge master into target branch
+        run: |
+          git checkout ${{ github.event.inputs['target-branch'] }}
+          git merge master -m "Merged 'master' into ${{ github.event.inputs['target-branch'] }}"
+
+      - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push origin ${{ github.event.inputs['target-branch'] }}

@@ -38,7 +38,11 @@ class Flare
 
     protected ContextProviderDetector $contextDetector;
 
+<<<<<<< HEAD
     protected ?Closure $previousExceptionHandler = null;
+=======
+    protected mixed $previousExceptionHandler = null;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /** @var null|callable */
     protected $previousErrorHandler = null;
@@ -179,15 +183,16 @@ class Flare
 
     public function registerExceptionHandler(): self
     {
-        /** @phpstan-ignore-next-line */
         $this->previousExceptionHandler = set_exception_handler([$this, 'handleException']);
 
         return $this;
     }
 
-    public function registerErrorHandler(): self
+    public function registerErrorHandler(?int $errorLevels = null): self
     {
-        $this->previousErrorHandler = set_error_handler([$this, 'handleError']);
+        $this->previousErrorHandler = $errorLevels
+            ? set_error_handler([$this, 'handleError'], $errorLevels)
+            : set_error_handler([$this, 'handleError']);
 
         return $this;
     }
@@ -260,8 +265,8 @@ class Flare
         if ($this->previousErrorHandler) {
             return call_user_func(
                 $this->previousErrorHandler,
-                $message,
                 $code,
+                $message,
                 $file,
                 $line
             );
@@ -275,13 +280,21 @@ class Flare
         return $this;
     }
 
+<<<<<<< HEAD
     public function report(Throwable $throwable, callable $callback = null): ?Report
+=======
+    public function report(Throwable $throwable, callable $callback = null, Report $report = null, ?bool $handled = null): ?Report
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if (! $this->shouldSendReport($throwable)) {
             return null;
         }
 
         $report = $this->createReport($throwable);
+
+        if ($handled) {
+            $report->handled();
+        }
 
         if (! is_null($callback)) {
             call_user_func($callback, $report);
@@ -290,6 +303,11 @@ class Flare
         $this->sendReportToApi($report);
 
         return $report;
+    }
+
+    public function reportHandled(Throwable $throwable): ?Report
+    {
+        return $this->report($throwable, null, null, true);
     }
 
     protected function shouldSendReport(Throwable $throwable): bool
@@ -402,6 +420,7 @@ class Flare
                 ? new $singleMiddleware
                 : $singleMiddleware;
         }, $this->middleware);
+
 
         $report = (new Pipeline())
             ->send($report)

@@ -113,7 +113,41 @@ trait BuildsQueries
     {
         $column = $column ?? $this->defaultKeyName();
 
+<<<<<<< HEAD
         $alias = $alias ?? $column;
+=======
+    /**
+     * Chunk the results of a query by comparing IDs in descending order.
+     *
+     * @param  int  $count
+     * @param  callable  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkByIdDesc($count, callable $callback, $column = null, $alias = null)
+    {
+        return $this->orderedChunkById($count, $callback, $column, $alias, descending: true);
+    }
+
+    /**
+     * Chunk the results of a query by comparing IDs in a given order.
+     *
+     * @param  int  $count
+     * @param  callable  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @param  bool  $descending
+     * @return bool
+     *
+     * @throws \RuntimeException
+     */
+    public function orderedChunkById($count, callable $callback, $column = null, $alias = null, $descending = false)
+    {
+        $column ??= $this->defaultKeyName();
+
+        $alias ??= $column;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $lastId = null;
 
@@ -338,13 +372,26 @@ trait BuildsQueries
         $orders = $this->ensureOrderForCursorPagination(! is_null($cursor) && $cursor->pointsToPreviousItems());
 
         if (! is_null($cursor)) {
+<<<<<<< HEAD
             $addCursorConditions = function (self $builder, $previousColumn, $i) use (&$addCursorConditions, $cursor, $orders) {
                 if (! is_null($previousColumn)) {
+=======
+            // Reset the union bindings so we can add the cursor where in the correct position...
+            $this->setBindings([], 'union');
+
+            $addCursorConditions = function (self $builder, $previousColumn, $originalColumn, $i) use (&$addCursorConditions, $cursor, $orders) {
+                $unionBuilders = $builder->getUnionBuilders();
+
+                if (! is_null($previousColumn)) {
+                    $originalColumn ??= $this->getOriginalColumnNameForCursorPagination($this, $previousColumn);
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                     $builder->where(
                         $this->getOriginalColumnNameForCursorPagination($this, $previousColumn),
                         '=',
                         $cursor->parameter($previousColumn)
                     );
+<<<<<<< HEAD
                 }
 
                 $builder->where(function (self $builder) use ($addCursorConditions, $cursor, $orders, $i) {
@@ -352,19 +399,65 @@ trait BuildsQueries
 
                     $builder->where(
                         $this->getOriginalColumnNameForCursorPagination($this, $column),
+=======
+
+                    $unionBuilders->each(function ($unionBuilder) use ($previousColumn, $cursor) {
+                        $unionBuilder->where(
+                            $this->getOriginalColumnNameForCursorPagination($unionBuilder, $previousColumn),
+                            '=',
+                            $cursor->parameter($previousColumn)
+                        );
+
+                        $this->addBinding($unionBuilder->getRawBindings()['where'], 'union');
+                    });
+                }
+
+                $builder->where(function (self $secondBuilder) use ($addCursorConditions, $cursor, $orders, $i, $unionBuilders) {
+                    ['column' => $column, 'direction' => $direction] = $orders[$i];
+
+                    $originalColumn = $this->getOriginalColumnNameForCursorPagination($this, $column);
+
+                    $secondBuilder->where(
+                        Str::contains($originalColumn, ['(', ')']) ? new Expression($originalColumn) : $originalColumn,
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                         $direction === 'asc' ? '>' : '<',
                         $cursor->parameter($column)
                     );
 
                     if ($i < $orders->count() - 1) {
-                        $builder->orWhere(function (self $builder) use ($addCursorConditions, $column, $i) {
-                            $addCursorConditions($builder, $column, $i + 1);
+                        $secondBuilder->orWhere(function (self $thirdBuilder) use ($addCursorConditions, $column, $originalColumn, $i) {
+                            $addCursorConditions($thirdBuilder, $column, $originalColumn, $i + 1);
                         });
                     }
+<<<<<<< HEAD
+=======
+
+                    $unionBuilders->each(function ($unionBuilder) use ($column, $direction, $cursor, $i, $orders, $addCursorConditions) {
+                        $unionWheres = $unionBuilder->getRawBindings()['where'];
+
+                        $originalColumn = $this->getOriginalColumnNameForCursorPagination($unionBuilder, $column);
+                        $unionBuilder->where(function ($unionBuilder) use ($column, $direction, $cursor, $i, $orders, $addCursorConditions, $originalColumn, $unionWheres) {
+                            $unionBuilder->where(
+                                $originalColumn,
+                                $direction === 'asc' ? '>' : '<',
+                                $cursor->parameter($column)
+                            );
+
+                            if ($i < $orders->count() - 1) {
+                                $unionBuilder->orWhere(function (self $fourthBuilder) use ($addCursorConditions, $column, $originalColumn, $i) {
+                                    $addCursorConditions($fourthBuilder, $column, $originalColumn, $i + 1);
+                                });
+                            }
+
+                            $this->addBinding($unionWheres, 'union');
+                            $this->addBinding($unionBuilder->getRawBindings()['where'], 'union');
+                        });
+                    });
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 });
             };
 
-            $addCursorConditions($this, null, 0);
+            $addCursorConditions($this, null, null, 0);
         }
 
         $this->limit($perPage + 1);

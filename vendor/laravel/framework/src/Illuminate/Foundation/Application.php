@@ -35,7 +35,11 @@ class Application extends Container implements ApplicationContract, CachesConfig
      *
      * @var string
      */
+<<<<<<< HEAD
     const VERSION = '9.1.0';
+=======
+    const VERSION = '11.9.2';
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * The base path for the Laravel installation.
@@ -82,7 +86,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * All of the registered service providers.
      *
-     * @var \Illuminate\Support\ServiceProvider[]
+     * @var array<string, \Illuminate\Support\ServiceProvider>
      */
     protected $serviceProviders = [];
 
@@ -181,6 +185,42 @@ class Application extends Container implements ApplicationContract, CachesConfig
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Begin configuring a new Laravel application instance.
+     *
+     * @param  string|null  $basePath
+     * @return \Illuminate\Foundation\Configuration\ApplicationBuilder
+     */
+    public static function configure(?string $basePath = null)
+    {
+        $basePath = match (true) {
+            is_string($basePath) => $basePath,
+            default => static::inferBasePath(),
+        };
+
+        return (new Configuration\ApplicationBuilder(new static($basePath)))
+            ->withKernels()
+            ->withEvents()
+            ->withCommands()
+            ->withProviders();
+    }
+
+    /**
+     * Infer the application's base directory from the environment.
+     *
+     * @return string
+     */
+    public static function inferBasePath()
+    {
+        return match (true) {
+            isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],
+            default => dirname(array_keys(ClassLoader::getRegisteredLoaders())[0]),
+        };
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the version number of the application.
      *
      * @return string
@@ -460,8 +500,20 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function storagePath($path = '')
     {
+<<<<<<< HEAD
         return ($this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'storage')
                             .($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+=======
+        if (isset($_ENV['LARAVEL_STORAGE_PATH'])) {
+            return $this->joinPaths($this->storagePath ?: $_ENV['LARAVEL_STORAGE_PATH'], $path);
+        }
+
+        if (isset($_SERVER['LARAVEL_STORAGE_PATH'])) {
+            return $this->joinPaths($this->storagePath ?: $_SERVER['LARAVEL_STORAGE_PATH'], $path);
+        }
+
+        return $this->joinPaths($this->storagePath ?: $this->basePath('storage'), $path);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -720,7 +772,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getProvider($provider)
     {
-        return array_values($this->getProviders($provider))[0] ?? null;
+        $name = is_string($provider) ? $provider : get_class($provider);
+
+        return $this->serviceProviders[$name] ?? null;
     }
 
     /**
@@ -757,9 +811,11 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     protected function markAsRegistered($provider)
     {
-        $this->serviceProviders[] = $provider;
+        $class = get_class($provider);
 
-        $this->loadedProviders[get_class($provider)] = true;
+        $this->serviceProviders[$class] = $provider;
+
+        $this->loadedProviders[$class] = true;
     }
 
     /**
@@ -1178,7 +1234,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * Get the service providers that have been loaded.
      *
-     * @return array
+     * @return array<string, boolean>
      */
     public function getLoadedProviders()
     {

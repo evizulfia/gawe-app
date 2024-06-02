@@ -22,10 +22,32 @@ namespace Mockery\Generator\StringManipulation\Pass;
 
 use Mockery\Generator\Method;
 use Mockery\Generator\Parameter;
+<<<<<<< HEAD
 use Mockery\Generator\MockConfiguration;
+=======
+use function array_values;
+use function count;
+use function enum_exists;
+use function get_class;
+use function implode;
+use function in_array;
+use function is_object;
+use function preg_match;
+use function sprintf;
+use function strpos;
+use function strrpos;
+use function strtolower;
+use function substr;
+use function var_export;
+use const PHP_VERSION_ID;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class MethodDefinitionPass implements Pass
 {
+    /**
+     * @param  string $code
+     * @return string
+     */
     public function apply($code, MockConfiguration $config)
     {
         foreach ($config->getMethodsToMock() as $method) {

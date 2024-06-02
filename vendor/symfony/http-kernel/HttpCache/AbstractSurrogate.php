@@ -23,19 +23,22 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 abstract class AbstractSurrogate implements SurrogateInterface
 {
+<<<<<<< HEAD
     protected $contentTypes;
     protected $phpEscapeMap = [
         ['<?', '<%', '<s', '<S'],
         ['<?php echo "<?"; ?>', '<?php echo "<%"; ?>', '<?php echo "<s"; ?>', '<?php echo "<S"; ?>'],
     ];
 
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * @param array $contentTypes An array of content-type that should be parsed for Surrogate information
      *                            (default: text/html, text/xml, application/xhtml+xml, and application/xml)
      */
-    public function __construct(array $contentTypes = ['text/html', 'text/xml', 'application/xhtml+xml', 'application/xml'])
-    {
-        $this->contentTypes = $contentTypes;
+    public function __construct(
+        protected array $contentTypes = ['text/html', 'text/xml', 'application/xhtml+xml', 'application/xml'],
+    ) {
     }
 
     /**

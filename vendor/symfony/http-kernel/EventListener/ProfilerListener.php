@@ -31,6 +31,7 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
  */
 class ProfilerListener implements EventSubscriberInterface
 {
+<<<<<<< HEAD
     private $profiler;
     private $matcher;
     private bool $onlyException;
@@ -40,6 +41,11 @@ class ProfilerListener implements EventSubscriberInterface
     private \SplObjectStorage $profiles;
     private $requestStack;
     private ?string $collectParameter;
+=======
+    private ?\Throwable $exception = null;
+    /** @var \SplObjectStorage<Request, Profile> */
+    private \SplObjectStorage $profiles;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /** @var \SplObjectStorage<Request, Request|null> */
     private \SplObjectStorage $parents;
 
@@ -47,16 +53,25 @@ class ProfilerListener implements EventSubscriberInterface
      * @param bool $onlyException    True if the profiler only collects data when an exception occurs, false otherwise
      * @param bool $onlyMainRequests True if the profiler only collects data when the request is the main request, false otherwise
      */
+<<<<<<< HEAD
     public function __construct(Profiler $profiler, RequestStack $requestStack, RequestMatcherInterface $matcher = null, bool $onlyException = false, bool $onlyMainRequests = false, string $collectParameter = null)
     {
         $this->profiler = $profiler;
         $this->matcher = $matcher;
         $this->onlyException = $onlyException;
         $this->onlyMainRequests = $onlyMainRequests;
+=======
+    public function __construct(
+        private Profiler $profiler,
+        private RequestStack $requestStack,
+        private ?RequestMatcherInterface $matcher = null,
+        private bool $onlyException = false,
+        private bool $onlyMainRequests = false,
+        private ?string $collectParameter = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->profiles = new \SplObjectStorage();
         $this->parents = new \SplObjectStorage();
-        $this->requestStack = $requestStack;
-        $this->collectParameter = $collectParameter;
     }
 
     /**

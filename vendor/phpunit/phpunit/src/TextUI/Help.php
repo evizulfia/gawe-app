@@ -177,7 +177,11 @@ final class Help
         foreach (self::HELP_TEXT as $options) {
             foreach ($options as $option) {
                 if (isset($option['arg'])) {
+<<<<<<< HEAD
                     $this->maxArgLength = max($this->maxArgLength, isset($option['arg']) ? strlen($option['arg']) : 0);
+=======
+                    $this->lengthOfLongestOptionName = max($this->lengthOfLongestOptionName, strlen($option['arg']));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 }
             }
         }

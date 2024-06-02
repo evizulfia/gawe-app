@@ -97,9 +97,17 @@ class Builder implements BuilderContract
         'dump',
         'exists',
         'explain',
+<<<<<<< HEAD
         'getBindings',
         'getConnection',
         'getGrammar',
+=======
+        'getbindings',
+        'getconnection',
+        'getgrammar',
+        'getrawbindings',
+        'implode',
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         'insert',
         'insertGetId',
         'insertOrIgnore',
@@ -124,6 +132,13 @@ class Builder implements BuilderContract
      * @var array
      */
     protected $removedScopes = [];
+
+    /**
+     * The callbacks that should be invoked after retrieving data from the database.
+     *
+     * @var array
+     */
+    protected $afterQueryCallbacks = [];
 
     /**
      * Create a new Eloquent query builder instance.
@@ -190,7 +205,7 @@ class Builder implements BuilderContract
      * @param  array|null  $scopes
      * @return $this
      */
-    public function withoutGlobalScopes(array $scopes = null)
+    public function withoutGlobalScopes(?array $scopes = null)
     {
         if (! is_array($scopes)) {
             $scopes = array_keys($this->scopes);
@@ -470,6 +485,32 @@ class Builder implements BuilderContract
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Find a model by its primary key or call a callback.
+     *
+     * @param  mixed  $id
+     * @param  \Closure|array|string  $columns
+     * @param  \Closure|null  $callback
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|static[]|static|mixed
+     */
+    public function findOr($id, $columns = ['*'], ?Closure $callback = null)
+    {
+        if ($columns instanceof Closure) {
+            $callback = $columns;
+
+            $columns = ['*'];
+        }
+
+        if (! is_null($model = $this->find($id, $columns))) {
+            return $model;
+        }
+
+        return $callback();
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the first record matching the attributes or instantiate it.
      *
      * @param  array  $attributes
@@ -541,7 +582,7 @@ class Builder implements BuilderContract
      * @param  \Closure|null  $callback
      * @return \Illuminate\Database\Eloquent\Model|static|mixed
      */
-    public function firstOr($columns = ['*'], Closure $callback = null)
+    public function firstOr($columns = ['*'], ?Closure $callback = null)
     {
         if ($columns instanceof Closure) {
             $callback = $columns;
@@ -617,7 +658,9 @@ class Builder implements BuilderContract
             $models = $builder->eagerLoadRelations($models);
         }
 
-        return $builder->getModel()->newCollection($models);
+        return $this->applyAfterQueryCallbacks(
+            $builder->getModel()->newCollection($models)
+        );
     }
 
     /**
@@ -747,6 +790,34 @@ class Builder implements BuilderContract
     }
 
     /**
+     * Register a closure to be invoked after the query is executed.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function afterQuery(Closure $callback)
+    {
+        $this->afterQueryCallbacks[] = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Invoke the "after query" modification callbacks.
+     *
+     * @param  mixed  $result
+     * @return mixed
+     */
+    public function applyAfterQueryCallbacks($result)
+    {
+        foreach ($this->afterQueryCallbacks as $afterQueryCallback) {
+            $result = $afterQueryCallback($result) ?: $result;
+        }
+
+        return $result;
+    }
+
+    /**
      * Get a lazy collection for the given query.
      *
      * @return \Illuminate\Support\LazyCollection
@@ -754,8 +825,10 @@ class Builder implements BuilderContract
     public function cursor()
     {
         return $this->applyScopes()->query->cursor()->map(function ($record) {
-            return $this->newModelInstance()->newFromBuilder($record);
-        });
+            $model = $this->newModelInstance()->newFromBuilder($record);
+
+            return $this->applyAfterQueryCallbacks($this->newModelInstance()->newCollection([$model]))->first();
+        })->reject(fn ($model) => is_null($model));
     }
 
     /**
@@ -790,9 +863,11 @@ class Builder implements BuilderContract
             return $results;
         }
 
-        return $results->map(function ($value) use ($column) {
-            return $this->model->newFromBuilder([$column => $value])->{$column};
-        });
+        return $this->applyAfterQueryCallbacks(
+            $results->map(function ($value) use ($column) {
+                return $this->model->newFromBuilder([$column => $value])->{$column};
+            })
+        );
     }
 
     /**
@@ -1448,6 +1523,36 @@ class Builder implements BuilderContract
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Execute the given Closure within a transaction savepoint if needed.
+     *
+     * @template TModelValue
+     *
+     * @param  \Closure(): TModelValue  $scope
+     * @return TModelValue
+     */
+    public function withSavepointIfNeeded(Closure $scope): mixed
+    {
+        return $this->getQuery()->getConnection()->transactionLevel() > 0
+            ? $this->getQuery()->getConnection()->transaction($scope)
+            : $scope();
+    }
+
+    /**
+     * Get the Eloquent builder instances that are used in the union of the query.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getUnionBuilders()
+    {
+        return isset($this->query->unions)
+            ? collect($this->query->unions)->pluck('query')
+            : collect();
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the underlying query builder instance.
      *
      * @return \Illuminate\Database\Query\Builder

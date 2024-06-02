@@ -7,6 +7,13 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Database\SqlServerConnection;
+<<<<<<< HEAD
+=======
+use PDOException;
+use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Throwable;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class MigrateCommand extends BaseCommand
 {
@@ -115,6 +122,109 @@ class MigrateCommand extends BaseCommand
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Determine if the migrator repository exists.
+     *
+     * @return bool
+     */
+    protected function repositoryExists()
+    {
+        return retry(2, fn () => $this->migrator->repositoryExists(), 0, function ($e) {
+            try {
+                if ($e->getPrevious() instanceof SQLiteDatabaseDoesNotExistException) {
+                    return $this->createMissingSqliteDatabase($e->getPrevious()->path);
+                }
+
+                $connection = $this->migrator->resolveConnection($this->option('database'));
+
+                if (
+                    $e->getPrevious() instanceof PDOException &&
+                    $e->getPrevious()->getCode() === 1049 &&
+                    in_array($connection->getDriverName(), ['mysql', 'mariadb'])) {
+                    return $this->createMissingMysqlDatabase($connection);
+                }
+
+                return false;
+            } catch (Throwable) {
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Create a missing SQLite database.
+     *
+     * @param  string  $path
+     * @return bool
+     *
+     * @throws \RuntimeException
+     */
+    protected function createMissingSqliteDatabase($path)
+    {
+        if ($this->option('force')) {
+            return touch($path);
+        }
+
+        if ($this->option('no-interaction')) {
+            return false;
+        }
+
+        $this->components->warn('The SQLite database configured for this application does not exist: '.$path);
+
+        if (! confirm('Would you like to create it?', default: true)) {
+            $this->components->info('Operation cancelled. No database was created.');
+
+            throw new RuntimeException('Database was not created. Aborting migration.');
+        }
+
+        return touch($path);
+    }
+
+    /**
+     * Create a missing MySQL database.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException
+     */
+    protected function createMissingMysqlDatabase($connection)
+    {
+        if ($this->laravel['config']->get("database.connections.{$connection->getName()}.database") !== $connection->getDatabaseName()) {
+            return false;
+        }
+
+        if (! $this->option('force') && $this->option('no-interaction')) {
+            return false;
+        }
+
+        if (! $this->option('force') && ! $this->option('no-interaction')) {
+            $this->components->warn("The database '{$connection->getDatabaseName()}' does not exist on the '{$connection->getName()}' connection.");
+
+            if (! confirm('Would you like to create it?', default: true)) {
+                $this->components->info('Operation cancelled. No database was created.');
+
+                throw new RuntimeException('Database was not created. Aborting migration.');
+            }
+        }
+
+        try {
+            $this->laravel['config']->set("database.connections.{$connection->getName()}.database", null);
+
+            $this->laravel['db']->purge();
+
+            $freshConnection = $this->migrator->resolveConnection($this->option('database'));
+
+            return tap($freshConnection->unprepared("CREATE DATABASE IF NOT EXISTS `{$connection->getDatabaseName()}`"), function () {
+                $this->laravel['db']->purge();
+            });
+        } finally {
+            $this->laravel['config']->set("database.connections.{$connection->getName()}.database", $connection->getDatabaseName());
+        }
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Load the schema state to seed the initial database schema structure.
      *
      * @return void

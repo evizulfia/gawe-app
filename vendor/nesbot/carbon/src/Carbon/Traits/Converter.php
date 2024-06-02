@@ -622,6 +622,7 @@ trait Converter
             $interval = CarbonInterval::make("$interval ".static::pluralUnit($unit));
         }
 
+<<<<<<< HEAD
         $period = (new CarbonPeriod())->setDateClass(static::class)->setStartDate($this);
 
         if ($interval) {
@@ -632,9 +633,27 @@ trait Converter
             $period->setRecurrences($end);
         } elseif ($end) {
             $period->setEndDate($end);
+=======
+        $isDefaultInterval = !$interval;
+        $interval ??= CarbonInterval::day();
+        $class = $this->isMutable() ? CarbonPeriod::class : CarbonPeriodImmutable::class;
+
+        if (\is_int($end) || (\is_string($end) && ctype_digit($end))) {
+            $end = (int) $end;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         }
 
-        return $period;
+        $end ??= 1;
+
+        if (!\is_int($end)) {
+            $end = $this->resolveCarbon($end);
+        }
+
+        return new $class(
+            raw: [$this, CarbonInterval::make($interval), $end],
+            dateClass: static::class,
+            isDefaultInterval: $isDefaultInterval,
+        );
     }
 
     /**

@@ -82,7 +82,20 @@ final class InputBag extends ParameterBag
     }
 
     /**
+<<<<<<< HEAD
      * {@inheritdoc}
+=======
+     * Returns the parameter value converted to an enum.
+     *
+     * @template T of \BackedEnum
+     *
+     * @param class-string<T> $class
+     * @param ?T              $default
+     *
+     * @return ?T
+     *
+     * @psalm-return ($default is null ? T|null : T)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     public function filter(string $key, mixed $default = null, int $filter = \FILTER_DEFAULT, mixed $options = []): mixed
     {

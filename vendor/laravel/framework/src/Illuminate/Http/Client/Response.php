@@ -292,7 +292,6 @@ class Response implements ArrayAccess
     /**
      * Throw an exception if a server or client error occurred.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      *
      * @throws \Illuminate\Http\Client\RequestException
@@ -315,7 +314,11 @@ class Response implements ArrayAccess
     /**
      * Throw an exception if a server or client error occurred and the given condition evaluates to true.
      *
+<<<<<<< HEAD
      * @param  bool  $condition
+=======
+     * @param  \Closure|bool  $condition
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * @return $this
      *
      * @throws \Illuminate\Http\Client\RequestException

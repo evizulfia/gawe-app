@@ -3,6 +3,13 @@
 namespace Spatie\Backtrace;
 
 use Closure;
+<<<<<<< HEAD
+=======
+use Laravel\SerializableClosure\Support\ClosureStream;
+use Spatie\Backtrace\Arguments\ArgumentReducers;
+use Spatie\Backtrace\Arguments\ReduceArgumentsAction;
+use Spatie\Backtrace\Arguments\Reducers\ArgumentReducer;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Throwable;
 
 class Backtrace
@@ -144,15 +151,44 @@ class Backtrace
         $frames = [];
 
         foreach ($rawFrames as $rawFrame) {
-            $frames[] = new Frame(
+            $textSnippet = null;
+
+            if (
+                class_exists(ClosureStream::class)
+                && substr($currentFile, 0, strlen(ClosureStream::STREAM_PROTO)) === ClosureStream::STREAM_PROTO
+            ) {
+                $textSnippet = $currentFile;
+                $currentFile = ClosureStream::STREAM_PROTO.'://function()';
+                $currentLine -= 1;
+            }
+
+            $frame = new Frame(
                 $currentFile,
                 $currentLine,
                 $rawFrame['args'] ?? null,
                 $rawFrame['function'] ?? null,
                 $rawFrame['class'] ?? null,
-                $this->isApplicationFrame($currentFile)
+                $this->isApplicationFrame($currentFile),
+                $textSnippet
             );
 
+<<<<<<< HEAD
+=======
+            $frames[] = $frame;
+
+            $arguments = $this->withArguments
+                ? $rawFrame['args'] ?? null
+                : null;
+
+            if ($this->reduceArguments) {
+                $arguments = $reduceArgumentsAction->execute(
+                    $rawFrame['class'] ?? null,
+                    $rawFrame['function'] ?? null,
+                    $arguments
+                );
+            }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $currentFile = $rawFrame['file'] ?? 'unknown';
             $currentLine = $rawFrame['line'] ?? 0;
         }

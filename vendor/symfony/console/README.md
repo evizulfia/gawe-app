@@ -7,6 +7,7 @@ interfaces.
 Sponsor
 -------
 
+<<<<<<< HEAD
 The Console component for Symfony 5.4/6.0 is [backed][1] by [Les-Tilleuls.coop][2].
 
 Les-Tilleuls.coop is a team of 50+ Symfony experts who can help you design, develop and
@@ -15,6 +16,9 @@ consulting, coaching, training and audits. We also are highly skilled in JS, Go 
 We are a worker cooperative!
 
 Help Symfony by [sponsoring][3] its development!
+=======
+Help Symfony by [sponsoring][1] its development!
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 Resources
 ---------
@@ -31,6 +35,4 @@ Credits
 `Resources/bin/hiddeninput.exe` is a third party binary provided within this
 component. Find sources and license at https://github.com/Seldaek/hidden-input.
 
-[1]: https://symfony.com/backers
-[2]: https://les-tilleuls.coop
-[3]: https://symfony.com/sponsor
+[1]: https://symfony.com/sponsor

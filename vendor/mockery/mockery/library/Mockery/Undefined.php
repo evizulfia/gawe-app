@@ -26,7 +26,12 @@ class Undefined
      * Call capturing to merely return this same object.
      *
      * @param string $method
+<<<<<<< HEAD
      * @param array $args
+=======
+     * @param array  $args
+     *
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * @return self
      */
     public function __call($method, array $args)

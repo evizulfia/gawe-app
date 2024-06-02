@@ -29,6 +29,7 @@ use Symfony\Component\CssSelector\Parser\TokenStream;
  */
 class HashHandler implements HandlerInterface
 {
+<<<<<<< HEAD
     private $patterns;
     private $escaping;
 
@@ -36,6 +37,12 @@ class HashHandler implements HandlerInterface
     {
         $this->patterns = $patterns;
         $this->escaping = $escaping;
+=======
+    public function __construct(
+        private TokenizerPatterns $patterns,
+        private TokenizerEscaping $escaping,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

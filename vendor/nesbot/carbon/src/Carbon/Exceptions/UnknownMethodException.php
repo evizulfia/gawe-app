@@ -23,7 +23,11 @@ class UnknownMethodException extends BaseBadMethodCallException implements BadMe
      * @param int            $code
      * @param Exception|null $previous
      */
+<<<<<<< HEAD
     public function __construct($method, $code = 0, Exception $previous = null)
+=======
+    public function __construct($method, $code = 0, ?Throwable $previous = null)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         parent::__construct("Method $method does not exist.", $code, $previous);
     }

@@ -333,6 +333,16 @@ class Response
 
         // headers
         foreach ($this->headers->allPreserveCaseWithoutCookies() as $name => $values) {
+<<<<<<< HEAD
+=======
+            // As recommended by RFC 8297, PHP automatically copies headers from previous 103 responses, we need to deal with that if headers changed
+            $previousValues = $this->sentHeaders[$name] ?? null;
+            if ($previousValues === $values) {
+                // Header already sent in a previous response, it will be automatically copied in this response by PHP
+                continue;
+            }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $replace = 0 === strcasecmp($name, 'Content-Type');
             foreach ($values as $value) {
                 header($name.': '.$value, $replace, $this->statusCode);
@@ -760,7 +770,7 @@ class Response
     /**
      * Sets the number of seconds after which the response should no longer be considered fresh.
      *
-     * This methods sets the Cache-Control max-age directive.
+     * This method sets the Cache-Control max-age directive.
      *
      * @return $this
      *
@@ -776,7 +786,7 @@ class Response
     /**
      * Sets the number of seconds after which the response should no longer be considered fresh by shared caches.
      *
-     * This methods sets the Cache-Control s-maxage directive.
+     * This method sets the Cache-Control s-maxage directive.
      *
      * @return $this
      *

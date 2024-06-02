@@ -77,14 +77,18 @@ abstract class AbstractTranslator extends Translation\Translator
         return static::$singletons[$key];
     }
 
-    public function __construct($locale, MessageFormatterInterface $formatter = null, $cacheDir = null, $debug = false)
+    public function __construct($locale, ?MessageFormatterInterface $formatter = null, $cacheDir = null, $debug = false)
     {
+<<<<<<< HEAD
         parent::setLocale($locale);
         $this->initializing = true;
         $this->directories = [__DIR__.'/Lang'];
         $this->addLoader('array', new ArrayLoader());
         parent::__construct($locale, $formatter, $cacheDir, $debug);
         $this->initializing = false;
+=======
+        $this->initialize($locale, $formatter, $cacheDir, $debug);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -378,6 +382,28 @@ abstract class AbstractTranslator extends Translation\Translator
         return [
             'locale' => $this->getLocale(),
         ];
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'locale' => $this->getLocale(),
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->initialize($data['locale'] ?? 'en');
+    }
+
+    private function initialize($locale, ?MessageFormatterInterface $formatter = null, $cacheDir = null, $debug = false): void
+    {
+        parent::setLocale($locale);
+        $this->initializing = true;
+        $this->directories = [__DIR__.'/Lang'];
+        $this->addLoader('array', new ArrayLoader());
+        parent::__construct($locale, new MessageFormatterMapper($formatter), $cacheDir, $debug);
+        $this->initializing = false;
     }
 
     private static function compareChunkLists($referenceChunks, $chunks)

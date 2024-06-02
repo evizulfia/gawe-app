@@ -48,6 +48,58 @@ abstract class Component
     public $attributes;
 
     /**
+<<<<<<< HEAD
+=======
+     * The view factory instance, if any.
+     *
+     * @var \Illuminate\Contracts\View\Factory|null
+     */
+    protected static $factory;
+
+    /**
+     * The component resolver callback.
+     *
+     * @var (\Closure(string, array): Component)|null
+     */
+    protected static $componentsResolver;
+
+    /**
+     * The cache of blade view names, keyed by contents.
+     *
+     * @var array<string, string>
+     */
+    protected static $bladeViewCache = [];
+
+    /**
+     * The cache of public property names, keyed by class.
+     *
+     * @var array
+     */
+    protected static $propertyCache = [];
+
+    /**
+     * The cache of public method names, keyed by class.
+     *
+     * @var array
+     */
+    protected static $methodCache = [];
+
+    /**
+     * The cache of constructor parameters, keyed by class.
+     *
+     * @var array<class-string, array<int, string>>
+     */
+    protected static $constructorParametersCache = [];
+
+    /**
+     * The cache of ignored parameter names.
+     *
+     * @var array
+     */
+    protected static $ignoredParameterNames = [];
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the view / view contents that represent the component.
      *
      * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\Support\Htmlable|\Closure|string
@@ -88,6 +140,30 @@ abstract class Component
     /**
      * Create a Blade view with the raw component string content.
      *
+<<<<<<< HEAD
+=======
+     * @param  string  $contents
+     * @return string
+     */
+    protected function extractBladeViewFromString($contents)
+    {
+        $key = sprintf('%s::%s', static::class, $contents);
+
+        if (isset(static::$bladeViewCache[$key])) {
+            return static::$bladeViewCache[$key];
+        }
+
+        if ($this->factory()->exists($contents)) {
+            return static::$bladeViewCache[$key] = $contents;
+        }
+
+        return static::$bladeViewCache[$key] = $this->createBladeViewFromString($this->factory(), $contents);
+    }
+
+    /**
+     * Create a Blade view with the raw component string content.
+     *
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * @param  \Illuminate\Contracts\View\Factory  $factory
      * @param  string  $contents
      * @return string
@@ -292,4 +368,106 @@ abstract class Component
     {
         return true;
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Get the evaluated view contents for the given view.
+     *
+     * @param  string|null  $view
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function view($view, $data = [], $mergeData = [])
+    {
+        return $this->factory()->make($view, $data, $mergeData);
+    }
+
+    /**
+     * Get the view factory instance.
+     *
+     * @return \Illuminate\Contracts\View\Factory
+     */
+    protected function factory()
+    {
+        if (is_null(static::$factory)) {
+            static::$factory = Container::getInstance()->make('view');
+        }
+
+        return static::$factory;
+    }
+
+    /**
+     * Get the cached set of anonymous component constructor parameter names to exclude.
+     *
+     * @return array
+     */
+    public static function ignoredParameterNames()
+    {
+        if (! isset(static::$ignoredParameterNames[static::class])) {
+            $constructor = (new ReflectionClass(
+                static::class
+            ))->getConstructor();
+
+            if (! $constructor) {
+                return static::$ignoredParameterNames[static::class] = [];
+            }
+
+            static::$ignoredParameterNames[static::class] = collect($constructor->getParameters())
+                ->map->getName()
+                ->all();
+        }
+
+        return static::$ignoredParameterNames[static::class];
+    }
+
+    /**
+     * Flush the component's cached state.
+     *
+     * @return void
+     */
+    public static function flushCache()
+    {
+        static::$bladeViewCache = [];
+        static::$constructorParametersCache = [];
+        static::$methodCache = [];
+        static::$propertyCache = [];
+    }
+
+    /**
+     * Forget the component's factory instance.
+     *
+     * @return void
+     */
+    public static function forgetFactory()
+    {
+        static::$factory = null;
+    }
+
+    /**
+     * Forget the component's resolver callback.
+     *
+     * @return void
+     *
+     * @internal
+     */
+    public static function forgetComponentsResolver()
+    {
+        static::$componentsResolver = null;
+    }
+
+    /**
+     * Set the callback that should be used to resolve components within views.
+     *
+     * @param  \Closure(string $component, array $data): Component  $resolver
+     * @return void
+     *
+     * @internal
+     */
+    public static function resolveComponentsUsing($resolver)
+    {
+        static::$componentsResolver = $resolver;
+    }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

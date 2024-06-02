@@ -21,8 +21,15 @@
 namespace Mockery\Generator\StringManipulation\Pass;
 
 use Mockery\Generator\MockConfiguration;
+<<<<<<< HEAD
 
 class InstanceMockPass
+=======
+use function strrpos;
+use function substr;
+
+class InstanceMockPass implements Pass
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 {
     const INSTANCE_MOCK_CODE = <<<MOCK
 
@@ -65,6 +72,10 @@ class InstanceMockPass
     }
 MOCK;
 
+    /**
+     * @param  string $code
+     * @return string
+     */
     public function apply($code, MockConfiguration $config)
     {
         if ($config->isInstanceMock()) {

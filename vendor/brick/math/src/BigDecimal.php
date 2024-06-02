@@ -25,7 +25,11 @@ final class BigDecimal extends BigNumber
      *
      * @var string
      */
+<<<<<<< HEAD
     private $value;
+=======
+    private readonly string $value;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * The scale (number of digits after the decimal point) of this decimal number.
@@ -34,7 +38,11 @@ final class BigDecimal extends BigNumber
      *
      * @var int
      */
+<<<<<<< HEAD
     private $scale;
+=======
+    private readonly int $scale;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * Protected constructor. Use a factory method to obtain an instance.
@@ -49,6 +57,7 @@ final class BigDecimal extends BigNumber
     }
 
     /**
+<<<<<<< HEAD
      * Creates a BigDecimal of the given value.
      *
      * @param BigNumber|int|float|string $value
@@ -60,8 +69,13 @@ final class BigDecimal extends BigNumber
      * @psalm-pure
      */
     public static function of($value) : BigNumber
+=======
+     * @psalm-pure
+     */
+    protected static function from(BigNumber $number): static
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
-        return parent::of($value)->toBigDecimal();
+        return $number->toBigDecimal();
     }
 
     /**
@@ -245,14 +259,18 @@ final class BigDecimal extends BigNumber
      *
      * @param BigNumber|int|float|string $that         The divisor.
      * @param int|null                   $scale        The desired scale, or null to use the scale of this number.
-     * @param int                        $roundingMode An optional rounding mode.
+     * @param RoundingMode               $roundingMode An optional rounding mode, defaults to UNNECESSARY.
      *
      * @return BigDecimal
      *
      * @throws \InvalidArgumentException If the scale or rounding mode is invalid.
      * @throws MathException             If the number is invalid, is zero, or rounding was necessary.
      */
+<<<<<<< HEAD
     public function dividedBy($that, ?int $scale = null, int $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+=======
+    public function dividedBy(BigNumber|int|float|string $that, ?int $scale = null, RoundingMode $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $that = BigDecimal::of($that);
 
@@ -354,7 +372,7 @@ final class BigDecimal extends BigNumber
     }
 
     /**
-     * Returns the quotient of the division of this number by this given one.
+     * Returns the quotient of the division of this number by the given one.
      *
      * The quotient has a scale of `0`.
      *
@@ -381,7 +399,7 @@ final class BigDecimal extends BigNumber
     }
 
     /**
-     * Returns the remainder of the division of this number by this given one.
+     * Returns the remainder of the division of this number by the given one.
      *
      * The remainder has a scale of `max($this->scale, $that->scale)`.
      *
@@ -417,6 +435,8 @@ final class BigDecimal extends BigNumber
      * @param BigNumber|int|float|string $that The divisor. Must be convertible to a BigDecimal.
      *
      * @return BigDecimal[] An array containing the quotient and the remainder.
+     *
+     * @psalm-return array{BigDecimal, BigDecimal}
      *
      * @throws MathException If the divisor is not a valid decimal number, or is zero.
      */
@@ -710,10 +730,14 @@ final class BigDecimal extends BigNumber
         return BigRational::create($numerator, $denominator, false);
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritdoc}
      */
     public function toScale(int $scale, int $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+=======
+    public function toScale(int $scale, RoundingMode $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if ($scale === $this->scale) {
             return $this;
@@ -787,6 +811,7 @@ final class BigDecimal extends BigNumber
     }
 
     /**
+<<<<<<< HEAD
      * This method is required by interface Serializable and SHOULD NOT be accessed directly.
      *
      * @internal
@@ -823,6 +848,8 @@ final class BigDecimal extends BigNumber
     }
 
     /**
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Puts the internal values of the given decimal numbers on the same scale.
      *
      * @param BigDecimal $x The first decimal number.

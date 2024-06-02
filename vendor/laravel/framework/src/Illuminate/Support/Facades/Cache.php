@@ -4,7 +4,25 @@ namespace Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Cache\TaggedCache tags(array|mixed $names)
+<<<<<<< HEAD
  * @method static \Illuminate\Contracts\Cache\Lock lock(string $name, int $seconds = 0, mixed $owner = null)
+=======
+ * @method static bool supportsTags()
+ * @method static int|null getDefaultCacheTime()
+ * @method static \Illuminate\Cache\Repository setDefaultCacheTime(int|null $seconds)
+ * @method static \Illuminate\Contracts\Cache\Store getStore()
+ * @method static \Illuminate\Cache\Repository setStore(\Illuminate\Contracts\Cache\Store $store)
+ * @method static \Illuminate\Contracts\Events\Dispatcher getEventDispatcher()
+ * @method static void setEventDispatcher(\Illuminate\Contracts\Events\Dispatcher $events)
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+ * @method static mixed macroCall(string $method, array $parameters)
+ * @method static bool flush()
+ * @method static string getPrefix()
+ * @method static \Illuminate\Contracts\Cache\Lock lock(string $name, int $seconds = 0, string|null $owner = null)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method static \Illuminate\Contracts\Cache\Lock restoreLock(string $name, string $owner)
  * @method static \Illuminate\Contracts\Cache\Repository  store(string|null $name = null)
  * @method static \Illuminate\Contracts\Cache\Store getStore()

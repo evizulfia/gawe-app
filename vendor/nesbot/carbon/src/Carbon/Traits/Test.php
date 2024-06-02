@@ -184,8 +184,24 @@ trait Test
 
     protected static function mockConstructorParameters(&$time, $tz)
     {
+<<<<<<< HEAD
         /** @var \Carbon\CarbonImmutable|\Carbon\Carbon $testInstance */
         $testInstance = clone static::getMockedTestNow($tz);
+=======
+        $clock = $this->clock?->unwrap();
+        $now = $clock instanceof Factory
+            ? $clock->getTestNow()
+            : $this->nowFromClock($timezone);
+        $testInstance = $now ?? self::getMockedTestNowClone($timezone);
+
+        if (!$testInstance) {
+            return;
+        }
+
+        if ($testInstance instanceof DateTimeInterface) {
+            $testInstance = $testInstance->setTimezone($timezone ?? date_default_timezone_get());
+        }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         if (static::hasRelativeKeywords($time)) {
             $testInstance = $testInstance->modify($time);

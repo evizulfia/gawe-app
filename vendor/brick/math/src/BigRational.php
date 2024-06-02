@@ -23,14 +23,22 @@ final class BigRational extends BigNumber
      *
      * @var BigInteger
      */
+<<<<<<< HEAD
     private $numerator;
+=======
+    private readonly BigInteger $numerator;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * The denominator. Always strictly positive.
      *
      * @var BigInteger
      */
+<<<<<<< HEAD
     private $denominator;
+=======
+    private readonly BigInteger $denominator;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * Protected constructor. Use a factory method to obtain an instance.
@@ -59,6 +67,7 @@ final class BigRational extends BigNumber
     }
 
     /**
+<<<<<<< HEAD
      * Creates a BigRational of the given value.
      *
      * @param BigNumber|int|float|string $value
@@ -70,8 +79,13 @@ final class BigRational extends BigNumber
      * @psalm-pure
      */
     public static function of($value) : BigNumber
+=======
+     * @psalm-pure
+     */
+    protected static function from(BigNumber $number): static
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
-        return parent::of($value)->toBigRational();
+        return $number->toBigRational();
     }
 
     /**
@@ -205,6 +219,8 @@ final class BigRational extends BigNumber
      * Returns the quotient and remainder of the division of the numerator by the denominator.
      *
      * @return BigInteger[]
+     *
+     * @psalm-return array{BigInteger, BigInteger}
      */
     public function quotientAndRemainder() : array
     {
@@ -412,10 +428,14 @@ final class BigRational extends BigNumber
         return $this;
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritdoc}
      */
     public function toScale(int $scale, int $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+=======
+    public function toScale(int $scale, RoundingMode $roundingMode = RoundingMode::UNNECESSARY) : BigDecimal
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         return $this->numerator->toBigDecimal()->dividedBy($this->denominator, $scale, $roundingMode);
     }
@@ -484,6 +504,7 @@ final class BigRational extends BigNumber
         $this->numerator = $data['numerator'];
         $this->denominator = $data['denominator'];
     }
+<<<<<<< HEAD
 
     /**
      * This method is required by interface Serializable and SHOULD NOT be accessed directly.
@@ -520,4 +541,6 @@ final class BigRational extends BigNumber
         $this->numerator   = BigInteger::of($numerator);
         $this->denominator = BigInteger::of($denominator);
     }
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

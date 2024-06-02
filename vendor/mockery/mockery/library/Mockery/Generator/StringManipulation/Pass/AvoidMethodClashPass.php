@@ -23,9 +23,21 @@ namespace Mockery\Generator\StringManipulation\Pass;
 use Mockery\Generator\Method;
 use Mockery\Generator\Parameter;
 use Mockery\Generator\MockConfiguration;
+<<<<<<< HEAD
+=======
+use function array_map;
+use function in_array;
+use function preg_replace;
+use function sprintf;
+use function str_replace;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class AvoidMethodClashPass implements Pass
 {
+    /**
+     * @param  string $code
+     * @return string
+     */
     public function apply($code, MockConfiguration $config)
     {
         $names = array_map(function ($method) {

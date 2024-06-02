@@ -17,6 +17,13 @@ use Spatie\LaravelIgnition\Solutions\SolutionProviders\TableNotFoundSolutionProv
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\UndefinedViewVariableSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\UnknownValidationSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\ViewNotFoundSolutionProvider;
+<<<<<<< HEAD
+=======
+use Spatie\LaravelIgnition\Solutions\SolutionProviders\OpenAiSolutionProvider;
+use Spatie\LaravelIgnition\Solutions\SolutionProviders\SailNetworkSolutionProvider;
+use Spatie\LaravelIgnition\Solutions\SolutionProviders\UnknownMariadbCollationSolutionProvider;
+use Spatie\LaravelIgnition\Solutions\SolutionProviders\UnknownMysql8CollationSolutionProvider;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 return [
 
@@ -108,6 +115,13 @@ return [
         MissingLivewireComponentSolutionProvider::class,
         UndefinedViewVariableSolutionProvider::class,
         GenericLaravelExceptionSolutionProvider::class,
+<<<<<<< HEAD
+=======
+        OpenAiSolutionProvider::class,
+        SailNetworkSolutionProvider::class,
+        UnknownMysql8CollationSolutionProvider::class,
+        UnknownMariadbCollationSolutionProvider::class,
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     ],
 
     /*

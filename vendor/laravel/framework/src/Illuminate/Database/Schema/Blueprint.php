@@ -86,7 +86,7 @@ class Blueprint
      * @param  string  $prefix
      * @return void
      */
-    public function __construct($table, Closure $callback = null, $prefix = '')
+    public function __construct($table, ?Closure $callback = null, $prefix = '')
     {
         $this->table = $table;
         $this->prefix = $prefix;
@@ -280,6 +280,52 @@ class Blueprint
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Specify the storage engine that should be used for the table.
+     *
+     * @param  string  $engine
+     * @return void
+     */
+    public function engine($engine)
+    {
+        $this->engine = $engine;
+    }
+
+    /**
+     * Specify that the InnoDB storage engine should be used for the table (MySQL only).
+     *
+     * @return void
+     */
+    public function innoDb()
+    {
+        $this->engine('InnoDB');
+    }
+
+    /**
+     * Specify the character set that should be used for the table.
+     *
+     * @param  string  $charset
+     * @return void
+     */
+    public function charset($charset)
+    {
+        $this->charset = $charset;
+    }
+
+    /**
+     * Specify the collation that should be used for the table.
+     *
+     * @param  string  $collation
+     * @return void
+     */
+    public function collation($collation)
+    {
+        $this->collation = $collation;
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Indicate that the table needs to be temporary.
      *
      * @return void

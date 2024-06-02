@@ -30,6 +30,7 @@ use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
  */
 class ErrorListener implements EventSubscriberInterface
 {
+<<<<<<< HEAD
     protected $controller;
     protected $logger;
     protected $debug;
@@ -41,6 +42,17 @@ class ErrorListener implements EventSubscriberInterface
         $this->logger = $logger;
         $this->debug = $debug;
         $this->exceptionsMapping = $exceptionsMapping;
+=======
+    /**
+     * @param array<class-string, array{log_level: string|null, status_code: int<100,599>|null}> $exceptionsMapping
+     */
+    public function __construct(
+        protected string|object|array|null $controller,
+        protected ?LoggerInterface $logger = null,
+        protected bool $debug = false,
+        protected array $exceptionsMapping = [],
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     public function logKernelException(ExceptionEvent $event)
@@ -61,12 +73,21 @@ class ErrorListener implements EventSubscriberInterface
             }
             if (!$throwable instanceof HttpExceptionInterface || $throwable->getStatusCode() !== $config['status_code']) {
                 $headers = $throwable instanceof HttpExceptionInterface ? $throwable->getHeaders() : [];
-                $throwable = new HttpException($config['status_code'], $throwable->getMessage(), $throwable, $headers);
+                $throwable = HttpException::fromStatusCode($config['status_code'], $throwable->getMessage(), $throwable, $headers);
                 $event->setThrowable($throwable);
             }
             break;
         }
 
+<<<<<<< HEAD
+=======
+        // There's no specific status code defined in the configuration for this exception
+        if (!$throwable instanceof HttpExceptionInterface && $withHttpStatus = $this->getInheritedAttribute($throwable::class, WithHttpStatus::class)) {
+            $throwable = HttpException::fromStatusCode($withHttpStatus->statusCode, $throwable->getMessage(), $throwable, $withHttpStatus->headers);
+            $event->setThrowable($throwable);
+        }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $e = FlattenException::createFromThrowable($throwable);
 
         $this->logException($throwable, sprintf('Uncaught PHP Exception %s: "%s" at %s line %s', $e->getClass(), $e->getMessage(), $e->getFile(), $e->getLine()), $logLevel);
@@ -75,6 +96,10 @@ class ErrorListener implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event)
     {
         if (null === $this->controller) {
+            return;
+        }
+
+        if (!$this->debug && $event->isKernelTerminating()) {
             return;
         }
 
@@ -160,6 +185,19 @@ class ErrorListener implements EventSubscriberInterface
                 $this->logger->error($message, ['exception' => $exception]);
             }
         }
+<<<<<<< HEAD
+=======
+
+        if ($withLogLevel = $this->getInheritedAttribute($throwable::class, WithLogLevel::class)) {
+            return $withLogLevel->level;
+        }
+
+        if (!$throwable instanceof HttpExceptionInterface || $throwable->getStatusCode() >= 500) {
+            return LogLevel::CRITICAL;
+        }
+
+        return LogLevel::ERROR;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -176,5 +214,46 @@ class ErrorListener implements EventSubscriberInterface
         $request->setMethod('GET');
 
         return $request;
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T> $attribute
+     *
+     * @return T|null
+     */
+    private function getInheritedAttribute(string $class, string $attribute): ?object
+    {
+        $class = new \ReflectionClass($class);
+        $interfaces = [];
+        $attributeReflector = null;
+        $parentInterfaces = [];
+        $ownInterfaces = [];
+
+        do {
+            if ($attributes = $class->getAttributes($attribute, \ReflectionAttribute::IS_INSTANCEOF)) {
+                $attributeReflector = $attributes[0];
+                $parentInterfaces = class_implements($class->name);
+                break;
+            }
+
+            $interfaces[] = class_implements($class->name);
+        } while ($class = $class->getParentClass());
+
+        while ($interfaces) {
+            $ownInterfaces = array_diff_key(array_pop($interfaces), $parentInterfaces);
+            $parentInterfaces += $ownInterfaces;
+
+            foreach ($ownInterfaces as $interface) {
+                $class = new \ReflectionClass($interface);
+
+                if ($attributes = $class->getAttributes($attribute, \ReflectionAttribute::IS_INSTANCEOF)) {
+                    $attributeReflector = $attributes[0];
+                }
+            }
+        }
+
+        return $attributeReflector?->newInstance();
     }
 }

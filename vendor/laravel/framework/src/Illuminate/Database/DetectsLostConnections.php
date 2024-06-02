@@ -19,6 +19,7 @@ trait DetectsLostConnections
 
         return Str::contains($message, [
             'server has gone away',
+            'Server has gone away',
             'no connection to the server',
             'Lost connection',
             'is dead or not enabled',
@@ -57,6 +58,26 @@ trait DetectsLostConnections
             'The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.',
             'SQLSTATE[08006] [7] could not translate host name',
             'TCP Provider: Error code 0x274C',
+<<<<<<< HEAD
+=======
+            'SQLSTATE[HY000] [2002] No such file or directory',
+            'SSL: Operation timed out',
+            'Reason: Server is in script upgrade mode. Only administrator can connect at this time.',
+            'Unknown $curl_error_code: 77',
+            'SSL: Handshake timed out',
+            'SQLSTATE[08006] [7] SSL error: sslv3 alert unexpected message',
+            'SQLSTATE[08006] [7] unrecognized SSL error code:',
+            'SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it',
+            'SQLSTATE[HY000] [2002] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond',
+            'SQLSTATE[HY000] [2002] Network is unreachable',
+            'SQLSTATE[HY000] [2002] The requested address is not valid in its context',
+            'SQLSTATE[HY000] [2002] A socket operation was attempted to an unreachable network',
+            'SQLSTATE[HY000]: General error: 3989',
+            'went away',
+            'No such file or directory',
+            'server is shutting down',
+            'failed to connect to',
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         ]);
     }
 }

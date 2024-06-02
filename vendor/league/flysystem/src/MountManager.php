@@ -6,6 +6,11 @@ namespace League\Flysystem;
 
 use Throwable;
 
+<<<<<<< HEAD
+=======
+use function compact;
+use function method_exists;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use function sprintf;
 
 class MountManager implements FilesystemOperator
@@ -326,9 +331,19 @@ class MountManager implements FilesystemOperator
         string $destination
     ): void {
         try {
+<<<<<<< HEAD
             $visibility = $visibility ?? $sourceFilesystem->visibility($sourcePath);
             $stream = $sourceFilesystem->readStream($sourcePath);
             $destinationFilesystem->writeStream($destinationPath, $stream, compact('visibility'));
+=======
+            if ($visibility == null && $retainVisibility) {
+                $visibility = $sourceFilesystem->visibility($sourcePath);
+                $config = $config->extend(compact('visibility'));
+            }
+
+            $stream = $sourceFilesystem->readStream($sourcePath);
+            $destinationFilesystem->writeStream($destinationPath, $stream, $config->toArray());
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         } catch (UnableToRetrieveMetadata | UnableToReadFile | UnableToWriteFile $exception) {
             throw UnableToCopyFile::fromLocationTo($source, $destination, $exception);
         }

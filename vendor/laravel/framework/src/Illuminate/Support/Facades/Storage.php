@@ -36,12 +36,34 @@ use Illuminate\Filesystem\Filesystem;
  * @method static string getVisibility(string $path)
  * @method static string path(string $path)
  * @method static string temporaryUrl(string $path, \DateTimeInterface $expiration, array $options = [])
+<<<<<<< HEAD
  * @method static string url(string $path)
  * @method static string|false mimeType(string $path)
  * @method static string|false putFile(string $path, \Illuminate\Http\File|\Illuminate\Http\UploadedFile|string $file, mixed $options = [])
  * @method static string|false putFileAs(string $path, \Illuminate\Http\File|\Illuminate\Http\UploadedFile|string $file, string $name, mixed $options = [])
  * @method static void macro(string $name, object|callable $macro)
  * @method static void buildTemporaryUrlsUsing(\Closure $callback)
+=======
+ * @method static array temporaryUploadUrl(string $path, \DateTimeInterface $expiration, array $options = [])
+ * @method static \League\Flysystem\FilesystemOperator getDriver()
+ * @method static \League\Flysystem\FilesystemAdapter getAdapter()
+ * @method static array getConfig()
+ * @method static void buildTemporaryUrlsUsing(\Closure $callback)
+ * @method static \Illuminate\Filesystem\FilesystemAdapter|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
+ * @method static \Illuminate\Filesystem\FilesystemAdapter|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+ * @method static mixed macroCall(string $method, array $parameters)
+ * @method static bool has(string $location)
+ * @method static string read(string $location)
+ * @method static \League\Flysystem\DirectoryListing listContents(string $location, bool $deep = false)
+ * @method static int fileSize(string $path)
+ * @method static string visibility(string $path)
+ * @method static void write(string $location, string $contents, array $config = [])
+ * @method static void createDirectory(string $location, array $config = [])
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Filesystem\FilesystemManager
  */

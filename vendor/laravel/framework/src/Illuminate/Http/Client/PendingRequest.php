@@ -176,7 +176,11 @@ class PendingRequest
      * @param  \Illuminate\Http\Client\Factory|null  $factory
      * @return void
      */
+<<<<<<< HEAD
     public function __construct(Factory $factory = null)
+=======
+    public function __construct(?Factory $factory = null, $middleware = [])
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->factory = $factory;
         $this->middleware = new Collection;
@@ -545,6 +549,48 @@ class PendingRequest
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Throw an exception if a server or client error occurs.
+     *
+     * @param  callable|null  $callback
+     * @return $this
+     */
+    public function throw(?callable $callback = null)
+    {
+        $this->throwCallback = $callback ?: fn () => null;
+
+        return $this;
+    }
+
+    /**
+     * Throw an exception if a server or client error occurred and the given condition evaluates to true.
+     *
+     * @param  callable|bool  $condition
+     * @return $this
+     */
+    public function throwIf($condition)
+    {
+        if (is_callable($condition)) {
+            $this->throwIfCallback = $condition;
+        }
+
+        return $condition ? $this->throw(func_get_args()[1] ?? null) : $this;
+    }
+
+    /**
+     * Throw an exception if a server or client error occurred and the given condition evaluates to false.
+     *
+     * @param  bool  $condition
+     * @return $this
+     */
+    public function throwUnless($condition)
+    {
+        return $this->throwIf(! $condition);
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Dump the request before sending.
      *
      * @return $this
@@ -584,6 +630,8 @@ class PendingRequest
      * @param  string  $url
      * @param  array|string|null  $query
      * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function get(string $url, $query = null)
     {
@@ -598,6 +646,8 @@ class PendingRequest
      * @param  string  $url
      * @param  array|string|null  $query
      * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function head(string $url, $query = null)
     {
@@ -612,6 +662,8 @@ class PendingRequest
      * @param  string  $url
      * @param  array  $data
      * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function post(string $url, $data = [])
     {
@@ -626,6 +678,8 @@ class PendingRequest
      * @param  string  $url
      * @param  array  $data
      * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function patch($url, $data = [])
     {
@@ -640,6 +694,8 @@ class PendingRequest
      * @param  string  $url
      * @param  array  $data
      * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function put($url, $data = [])
     {
@@ -654,6 +710,8 @@ class PendingRequest
      * @param  string  $url
      * @param  array  $data
      * @return \Illuminate\Http\Client\Response
+     *
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function delete($url, $data = [])
     {
@@ -690,6 +748,7 @@ class PendingRequest
      * @return \Illuminate\Http\Client\Response
      *
      * @throws \Exception
+     * @throws \Illuminate\Http\Client\ConnectionException
      */
     public function send(string $method, string $url, array $options = [])
     {
@@ -785,6 +844,66 @@ class PendingRequest
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Handle the response of an asynchronous request.
+     *
+     * @param  \Illuminate\Http\Client\Response  $response
+     * @param  string  $method
+     * @param  string  $url
+     * @param  array  $options
+     * @param  int  $attempt
+     * @return mixed
+     */
+    protected function handlePromiseResponse(Response|ConnectionException|TransferException $response, $method, $url, $options, $attempt)
+    {
+        if ($response instanceof Response && $response->successful()) {
+            return $response;
+        }
+
+        if ($response instanceof RequestException) {
+            $response = $this->populateResponse($this->newResponse($response->getResponse()));
+        }
+
+        try {
+            $shouldRetry = $this->retryWhenCallback ? call_user_func(
+                $this->retryWhenCallback,
+                $response instanceof Response ? $response->toException() : $response,
+                $this
+            ) : true;
+        } catch (Exception $exception) {
+            return $exception;
+        }
+
+        if ($attempt < $this->tries && $shouldRetry) {
+            $options['delay'] = value(
+                $this->retryDelay,
+                $attempt,
+                $response instanceof Response ? $response->toException() : $response
+            );
+
+            return $this->makePromise($method, $url, $options, $attempt + 1);
+        }
+
+        if ($response instanceof Response &&
+            $this->throwCallback &&
+            ($this->throwIfCallback === null || call_user_func($this->throwIfCallback, $response))) {
+            try {
+                $response->throw($this->throwCallback);
+            } catch (Exception $exception) {
+                return $exception;
+            }
+        }
+
+        if ($this->tries > 1 && $this->retryThrow) {
+            return $response instanceof Response ? $response->toException() : $response;
+        }
+
+        return $response;
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Send a request either synchronously or asynchronously.
      *
      * @param  string  $method
@@ -879,7 +998,7 @@ class PendingRequest
      */
     protected function getReusableClient()
     {
-        return $this->client = $this->client ?: $this->createClient($this->buildHandlerStack());
+        return $this->client ??= $this->createClient($this->buildHandlerStack());
     }
 
     /**

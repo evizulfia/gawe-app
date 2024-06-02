@@ -37,6 +37,10 @@ class ResponseCacheStrategy implements ResponseCacheStrategyInterface
     private int $embeddedResponses = 0;
     private bool $isNotCacheableResponseEmbedded = false;
     private int $age = 0;
+<<<<<<< HEAD
+=======
+    private \DateTimeInterface|false|null $lastModified = null;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private array $flagDirectives = [
         'no-cache' => null,
         'no-store' => null,

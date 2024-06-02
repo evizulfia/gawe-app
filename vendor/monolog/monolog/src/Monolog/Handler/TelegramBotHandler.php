@@ -84,11 +84,22 @@ class TelegramBotHandler extends AbstractProcessingHandler
     public function __construct(
         string $apiKey,
         string $channel,
+<<<<<<< HEAD
         $level = Logger::DEBUG,
         bool $bubble = true,
         string $parseMode = null,
         bool $disableWebPagePreview = null,
         bool $disableNotification = null
+=======
+        $level = Level::Debug,
+        bool   $bubble = true,
+        ?string $parseMode = null,
+        ?bool   $disableWebPagePreview = null,
+        ?bool   $disableNotification = null,
+        bool   $splitLongMessages = false,
+        bool   $delayBetweenMessages = false,
+        int    $topic = null
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     ) {
         if (!extension_loaded('curl')) {
             throw new MissingExtensionException('The curl extension is needed to use the TelegramBotHandler');
@@ -103,7 +114,14 @@ class TelegramBotHandler extends AbstractProcessingHandler
         $this->disableNotification($disableNotification);
     }
 
+<<<<<<< HEAD
     public function setParseMode(string $parseMode = null): self
+=======
+    /**
+     * @return $this
+     */
+    public function setParseMode(string|null $parseMode = null): self
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if ($parseMode !== null && !in_array($parseMode, self::AVAILABLE_PARSE_MODES)) {
             throw new \InvalidArgumentException('Unknown parseMode, use one of these: ' . implode(', ', self::AVAILABLE_PARSE_MODES) . '.');
@@ -114,14 +132,28 @@ class TelegramBotHandler extends AbstractProcessingHandler
         return $this;
     }
 
+<<<<<<< HEAD
     public function disableWebPagePreview(bool $disableWebPagePreview = null): self
+=======
+    /**
+     * @return $this
+     */
+    public function disableWebPagePreview(bool|null $disableWebPagePreview = null): self
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->disableWebPagePreview = $disableWebPagePreview;
 
         return $this;
     }
 
+<<<<<<< HEAD
     public function disableNotification(bool $disableNotification = null): self
+=======
+    /**
+     * @return $this
+     */
+    public function disableNotification(bool|null $disableNotification = null): self
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->disableNotification = $disableNotification;
 

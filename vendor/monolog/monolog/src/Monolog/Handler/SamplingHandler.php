@@ -90,7 +90,11 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
      *
      * @return HandlerInterface
      */
+<<<<<<< HEAD
     public function getHandler(array $record = null)
+=======
+    public function getHandler(LogRecord|null $record = null): HandlerInterface
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if (!$this->handler instanceof HandlerInterface) {
             $this->handler = ($this->handler)($record, $this);

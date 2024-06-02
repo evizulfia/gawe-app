@@ -3,6 +3,11 @@
 namespace Illuminate\Foundation\Http\Middleware;
 
 use Closure;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class TrimStrings extends TransformsRequest
 {
@@ -49,11 +54,46 @@ class TrimStrings extends TransformsRequest
      */
     protected function transform($key, $value)
     {
+<<<<<<< HEAD
         if (in_array($key, $this->except, true)) {
             return $value;
         }
 
         return is_string($value) ? preg_replace('~^\s+|\s+$~iu', '', $value) : $value;
+=======
+        $except = array_merge($this->except, static::$neverTrim);
+
+        if ($this->shouldSkip($key, $except) || ! is_string($value)) {
+            return $value;
+        }
+
+        return Str::trim($value);
+    }
+
+    /**
+     * Determine if the given key should be skipped.
+     *
+     * @param  string  $key
+     * @param  array  $except
+     * @return bool
+     */
+    protected function shouldSkip($key, $except)
+    {
+        return in_array($key, $except, true);
+    }
+
+    /**
+     * Indicate that the given attributes should never be trimmed.
+     *
+     * @param  array|string  $attributes
+     * @return void
+     */
+    public static function except($attributes)
+    {
+        static::$neverTrim = array_values(array_unique(
+            array_merge(static::$neverTrim, Arr::wrap($attributes))
+        ));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

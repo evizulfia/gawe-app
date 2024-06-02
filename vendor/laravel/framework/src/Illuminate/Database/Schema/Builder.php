@@ -131,9 +131,82 @@ class Builder
     {
         $table = $this->connection->getTablePrefix().$table;
 
+<<<<<<< HEAD
         return count($this->connection->selectFromWriteConnection(
             $this->grammar->compileTableExists(), [$table]
         )) > 0;
+=======
+        foreach ($this->getTables(false) as $value) {
+            if (strtolower($table) === strtolower($value['name'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if the given view exists.
+     *
+     * @param  string  $view
+     * @return bool
+     */
+    public function hasView($view)
+    {
+        $view = $this->connection->getTablePrefix().$view;
+
+        foreach ($this->getViews() as $value) {
+            if (strtolower($view) === strtolower($value['name'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the tables that belong to the database.
+     *
+     * @return array
+     */
+    public function getTables()
+    {
+        return $this->connection->getPostProcessor()->processTables(
+            $this->connection->selectFromWriteConnection($this->grammar->compileTables())
+        );
+    }
+
+    /**
+     * Get the names of the tables that belong to the database.
+     *
+     * @return array
+     */
+    public function getTableListing()
+    {
+        return array_column($this->getTables(), 'name');
+    }
+
+    /**
+     * Get the views that belong to the database.
+     *
+     * @return array
+     */
+    public function getViews()
+    {
+        return $this->connection->getPostProcessor()->processViews(
+            $this->connection->selectFromWriteConnection($this->grammar->compileViews())
+        );
+    }
+
+    /**
+     * Get the user-defined types that belong to the database.
+     *
+     * @return array
+     */
+    public function getTypes()
+    {
+        throw new LogicException('This database driver does not support user-defined types.');
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -181,7 +254,17 @@ class Builder
     {
         $table = $this->connection->getTablePrefix().$table;
 
+<<<<<<< HEAD
         return $this->connection->getDoctrineColumn($table, $column)->getType()->getName();
+=======
+        foreach ($columns as $value) {
+            if (strtolower($value['name']) === strtolower($column)) {
+                return $fullDefinition ? $value['type'] : $value['type_name'];
+            }
+        }
+
+        throw new InvalidArgumentException("There is no column with name '$column' on table '$table'.");
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -371,7 +454,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @return \Illuminate\Database\Schema\Blueprint
      */
-    protected function createBlueprint($table, Closure $callback = null)
+    protected function createBlueprint($table, ?Closure $callback = null)
     {
         $prefix = $this->connection->getConfig('prefix_indexes')
                     ? $this->connection->getConfig('prefix')

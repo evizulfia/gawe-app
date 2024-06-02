@@ -434,4 +434,55 @@ abstract class ServiceProvider
     {
         return $this instanceof DeferrableProvider;
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Get the default providers for a Laravel application.
+     *
+     * @return \Illuminate\Support\DefaultProviders
+     */
+    public static function defaultProviders()
+    {
+        return new DefaultProviders;
+    }
+
+    /**
+     * Add the given provider to the application's provider bootstrap file.
+     *
+     * @param  string  $provider
+     * @param  string  $path
+     * @return bool
+     */
+    public static function addProviderToBootstrapFile(string $provider, ?string $path = null)
+    {
+        $path ??= app()->getBootstrapProvidersPath();
+
+        if (! file_exists($path)) {
+            return false;
+        }
+
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($path, true);
+        }
+
+        $providers = collect(require $path)
+            ->merge([$provider])
+            ->unique()
+            ->sort()
+            ->values()
+            ->map(fn ($p) => '    '.$p.'::class,')
+            ->implode(PHP_EOL);
+
+        $content = '<?php
+
+return [
+'.$providers.'
+];';
+
+        file_put_contents($path, $content.PHP_EOL);
+
+        return true;
+    }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

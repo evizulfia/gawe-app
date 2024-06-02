@@ -25,7 +25,11 @@ class NativeCalculator extends Calculator
      *
      * @var int
      */
+<<<<<<< HEAD
     private $maxDigits;
+=======
+    private readonly int $maxDigits;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * Class constructor.
@@ -34,18 +38,11 @@ class NativeCalculator extends Calculator
      */
     public function __construct()
     {
-        switch (PHP_INT_SIZE) {
-            case 4:
-                $this->maxDigits = 9;
-                break;
-
-            case 8:
-                $this->maxDigits = 18;
-                break;
-
-            default:
-                throw new \RuntimeException('The platform is not 32-bit or 64-bit as expected.');
-        }
+        $this->maxDigits = match (PHP_INT_SIZE) {
+            4 => 9,
+            8 => 18,
+            default => throw new \RuntimeException('The platform is not 32-bit or 64-bit as expected.')
+        };
     }
 
     /**
@@ -183,10 +180,8 @@ class NativeCalculator extends Calculator
             if (is_int($nb)) {
                 // the only division that may overflow is PHP_INT_MIN / -1,
                 // which cannot happen here as we've already handled a divisor of -1 above.
+                $q = intdiv($na, $nb);
                 $r = $na % $nb;
-                $q = ($na - $r) / $nb;
-
-                assert(is_int($q));
 
                 return [
                     (string) $q,
@@ -583,10 +578,14 @@ class NativeCalculator extends Calculator
     /**
      * Compares two non-signed large numbers.
      *
+<<<<<<< HEAD
      * @param string $a The first operand.
      * @param string $b The second operand.
      *
      * @return int [-1, 0, 1]
+=======
+     * @psalm-return -1|0|1
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
     private function doCmp(string $a, string $b) : int
     {
@@ -599,7 +598,7 @@ class NativeCalculator extends Calculator
             return $cmp;
         }
 
-        return \strcmp($a, $b) <=> 0; // enforce [-1, 0, 1]
+        return \strcmp($a, $b) <=> 0; // enforce -1|0|1
     }
 
     /**

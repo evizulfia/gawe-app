@@ -1,4 +1,219 @@
+<<<<<<< HEAD
 # Change Log
+=======
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.6.12] - 2024-05-15
+
+### Changed
+
+- [1420: Update `psalm-baseline.xml` ](https://github.com/mockery/mockery/pull/1420)
+- [1419: Update e2e-test.sh](https://github.com/mockery/mockery/pull/1419)
+- [1413: Upgrade `phar` tools and `phive.xml` configuration](https://github.com/mockery/mockery/pull/1413)
+
+### Fixed
+
+- [1415: Fix mocking anonymous classes](https://github.com/mockery/mockery/pull/1415)
+- [1411: Mocking final classes reports unresolvable type by PHPStan](https://github.com/mockery/mockery/issues/1411)
+- [1410: Fix PHP Doc Comments](https://github.com/mockery/mockery/pull/1410)
+
+### Security
+
+- [1417: Bump `Jinja2` from `3.1.3` to `3.1.4` fix CVE-2024-34064](https://github.com/mockery/mockery/pull/1417)
+- [1412: Bump `idna` from `3.6` to `3.7` fix CVE-2024-3651](https://github.com/mockery/mockery/pull/1412)
+
+## [1.6.11] - 2024-03-21
+
+### Fixed
+
+- [1407: Fix constants map generics doc comments](https://github.com/mockery/mockery/pull/1407)
+- [1406: Fix reserved words used to name a class, interface or trait](https://github.com/mockery/mockery/pull/1406)
+- [1403: Fix regression - partial construction with trait methods](https://github.com/mockery/mockery/pull/1403)
+- [1401: Improve `Mockery::mock()` parameter type compatibility with array typehints](https://github.com/mockery/mockery/pull/1401)
+
+## [1.6.10] - 2024-03-19
+
+### Added
+
+- [1398: [PHP 8.4] Fixes for implicit nullability deprecation](https://github.com/mockery/mockery/pull/1398)
+
+### Fixed
+
+- [1397: Fix mock method $args parameter type](https://github.com/mockery/mockery/pull/1397)
+- [1396: Fix `1.6.8` release](https://github.com/mockery/mockery/pull/1396)
+
+## [1.6.9] - 2024-03-12
+
+- [1394: Revert v1.6.8 release](https://github.com/mockery/mockery/pull/1394)
+
+## [1.6.8] - 2024-03-12
+
+- [1393: Changelog v1.6.8](https://github.com/mockery/mockery/pull/1393)
+- [1392: Refactor remaining codebase](https://github.com/mockery/mockery/pull/1392)
+- [1391: Update actions to use Node 20](https://github.com/mockery/mockery/pull/1391)
+- [1390: Update `ReadTheDocs` dependencies](https://github.com/mockery/mockery/pull/1390)
+- [1389: Refactor `library/Mockery/Matcher/*`](https://github.com/mockery/mockery/pull/1389)
+- [1388: Refactor `library/Mockery/Loader/*`](https://github.com/mockery/mockery/pull/1388)
+- [1387: Refactor `library/Mockery/CountValidator/*`](https://github.com/mockery/mockery/pull/1387)
+- [1386: Add PHPUnit 10+ attributes](https://github.com/mockery/mockery/pull/1386)
+- [1385: Update composer dependencies and clean up](https://github.com/mockery/mockery/pull/1385)
+- [1384: Update `psalm-baseline.xml`](https://github.com/mockery/mockery/pull/1384)
+- [1383: Refactor `library/helpers.php`](https://github.com/mockery/mockery/pull/1383)
+- [1382: Refactor `library/Mockery/VerificationExpectation.php`](https://github.com/mockery/mockery/pull/1382)
+- [1381: Refactor `library/Mockery/VerificationDirector.php`](https://github.com/mockery/mockery/pull/1381)
+- [1380: Refactor `library/Mockery/QuickDefinitionsConfiguration.php`](https://github.com/mockery/mockery/pull/1380)
+- [1379: Refactor `library/Mockery/Undefined.php`](https://github.com/mockery/mockery/pull/1379)
+- [1378: Refactor `library/Mockery/Reflector.php`](https://github.com/mockery/mockery/pull/1378)
+- [1377: Refactor `library/Mockery/ReceivedMethodCalls.php`](https://github.com/mockery/mockery/pull/1377)
+- [1376: Refactor `library/Mockery.php`](https://github.com/mockery/mockery/pull/1376)
+- [1375: Refactor `library/Mockery/MockInterface.php`](https://github.com/mockery/mockery/pull/1375)
+- [1374: Refactor `library/Mockery/MethodCall.php`](https://github.com/mockery/mockery/pull/1374)
+- [1373: Refactor `library/Mockery/LegacyMockInterface.php`](https://github.com/mockery/mockery/pull/1373)
+- [1372: Refactor `library/Mockery/Instantiator.php`](https://github.com/mockery/mockery/pull/1372)
+- [1371: Refactor `library/Mockery/HigherOrderMessage.php`](https://github.com/mockery/mockery/pull/1371)
+- [1370: Refactor `library/Mockery/ExpectsHigherOrderMessage.php`](https://github.com/mockery/mockery/pull/1370)
+- [1369: Refactor `library/Mockery/ExpectationInterface.php`](https://github.com/mockery/mockery/pull/1369)
+- [1368: Refactor `library/Mockery/ExpectationDirector.php`](https://github.com/mockery/mockery/pull/1368)
+- [1367: Refactor `library/Mockery/Expectation.php`](https://github.com/mockery/mockery/pull/1367)
+- [1366: Refactor `library/Mockery/Exception.php`](https://github.com/mockery/mockery/pull/1366)
+- [1365: Refactor `library/Mockery/Container.php`](https://github.com/mockery/mockery/pull/1365)
+- [1364: Refactor `library/Mockery/Configuration.php`](https://github.com/mockery/mockery/pull/1364)
+- [1363: Refactor `library/Mockery/CompositeExpectation.php`](https://github.com/mockery/mockery/pull/1363)
+- [1362: Refactor `library/Mockery/ClosureWrapper.php`](https://github.com/mockery/mockery/pull/1362)
+- [1361: Refactor `library/Mockery.php`](https://github.com/mockery/mockery/pull/1361)
+- [1360: Refactor Container](https://github.com/mockery/mockery/pull/1360)
+- [1355: Fix the namespace in the SubsetTest class](https://github.com/mockery/mockery/pull/1355)
+- [1354: Add array-like objects support to hasKey/hasValue matchers](https://github.com/mockery/mockery/pull/1354)
+
+## [1.6.7] - 2023-12-09
+
+### Added
+
+- [#1338: Support PHPUnit constraints as matchers](https://github.com/mockery/mockery/pull/1338)
+- [#1336: Add factory methods for `IsEqual` and `IsSame` matchers](https://github.com/mockery/mockery/pull/1336)
+
+### Fixed
+
+- [#1346: Fix test namespaces](https://github.com/mockery/mockery/pull/1346)
+- [#1343: Update documentation default theme and build version](https://github.com/mockery/mockery/pull/1343)
+- [#1329: Prevent `shouldNotReceive` from getting overridden by invocation count methods](https://github.com/mockery/mockery/pull/1329)
+
+### Changed
+
+- [#1351: Update psalm-baseline.xml](https://github.com/mockery/mockery/pull/1351)
+- [#1350: Changelog v1.6.7](https://github.com/mockery/mockery/pull/1350)
+- [#1349: Cleanup](https://github.com/mockery/mockery/pull/1349)
+- [#1348: Update makefile](https://github.com/mockery/mockery/pull/1348)
+- [#1347: Bump phars dependencies](https://github.com/mockery/mockery/pull/1347)
+- [#1344: Disabled travis-ci and sensiolabs webhooks](https://github.com/mockery/mockery/issues/1344)
+- [#1342: Add `.readthedocs.yml` configuration](https://github.com/mockery/mockery/pull/1342)
+- [#1340: docs: Remove misplaced semicolumn from code snippet](https://github.com/mockery/mockery/pull/1340)
+
+## 1.6.6 (2023-08-08)
+
+- [#1327: Changelog v1.6.6](https://github.com/mockery/mockery/pull/1327)
+- [#1325: Keep the file that caused an error for inspection](https://github.com/mockery/mockery/pull/1325)
+- [#1324: Fix Regression - Replace `+` Array Union Operator with `array_merge`](https://github.com/mockery/mockery/pull/1324)
+
+## 1.6.5 (2023-08-05)
+
+- [#1322: Changelog v1.6.5](https://github.com/mockery/mockery/pull/1322)
+- [#1321: Autoload Test Fixtures Based on PHP Runtime Version](https://github.com/mockery/mockery/pull/1321)
+- [#1320: Clean up mocks on destruct](https://github.com/mockery/mockery/pull/1320)
+- [#1318: Fix misspelling in docs](https://github.com/mockery/mockery/pull/1318)
+- [#1316: Fix compatibility issues with PHP 7.3](https://github.com/mockery/mockery/pull/1316)
+- [#1315: Fix PHP 7.3 issues](https://github.com/mockery/mockery/issues/1315)
+- [#1314: Add Security Policy](https://github.com/mockery/mockery/pull/1314)
+- [#1313: Type declaration for `iterable|object`.](https://github.com/mockery/mockery/pull/1313)
+- [#1312: Mock disjunctive normal form types](https://github.com/mockery/mockery/pull/1312)
+- [#1299: Test PHP `8.3` language features](https://github.com/mockery/mockery/pull/1299)
+
+## 1.6.4 (2023-07-19)
+
+- [#1308: Changelog v1.6.4](https://github.com/mockery/mockery/pull/1308)
+- [#1307: Revert `src` to `library` for `1.6.x`](https://github.com/mockery/mockery/pull/1307)
+
+## 1.6.3 (2023-07-18)
+
+- [#1304: Remove `extra.branch-alias` and update composer information](https://github.com/mockery/mockery/pull/1304)
+- [#1303: Update `.gitattributes`](https://github.com/mockery/mockery/pull/1303)
+- [#1302: Changelog v1.6.3](https://github.com/mockery/mockery/pull/1302)
+- [#1301: Fix mocking classes with `new` initializers in method and attribute params on PHP 8.1](https://github.com/mockery/mockery/pull/1301)
+- [#1298: Update default repository branch to latest release branch](https://github.com/mockery/mockery/issues/1298)
+- [#1297: Update `Makefile` for contributors](https://github.com/mockery/mockery/pull/1297)
+- [#1294: Correct return types of Mock for phpstan](https://github.com/mockery/mockery/pull/1294)
+- [#1290: Rename directory `library` to `src`](https://github.com/mockery/mockery/pull/1290)
+- [#1288: Update codecov workflow](https://github.com/mockery/mockery/pull/1288)
+- [#1287: Update psalm configuration and workflow](https://github.com/mockery/mockery/pull/1287)
+- [#1286: Update phpunit workflow](https://github.com/mockery/mockery/pull/1286)
+- [#1285: Enforce the minimum required PHP version](https://github.com/mockery/mockery/pull/1285)
+- [#1283: Update license and copyright information](https://github.com/mockery/mockery/pull/1283)
+- [#1282: Create `COPYRIGHT.md` file](https://github.com/mockery/mockery/pull/1282)
+- [#1279: Bump `vimeo/psalm` from `5.9.0` to `5.12.0`](https://github.com/mockery/mockery/pull/1279)
+
+## 1.6.2 (2023-06-07)
+
+- [#1276: Add `IsEqual` Argument Matcher](https://github.com/mockery/mockery/pull/1276)
+- [#1275: Add `IsSame` Argument Matcher](https://github.com/mockery/mockery/pull/1275)
+- [#1274: Update composer branch alias](https://github.com/mockery/mockery/pull/1274)
+- [#1271: Support PHP 8.2 `true` Literal Type](https://github.com/mockery/mockery/pull/1271)
+- [#1270: Support PHP 8.0 `false` Literal Type](https://github.com/mockery/mockery/pull/1270)
+
+## 1.6.1 (2023-06-05)
+
+- [#1267 Drops support for PHP <7.4](https://github.com/mockery/mockery/pull/1267)
+- [#1192 Updated changelog for version 1.5.1 to include changes from #1180](https://github.com/mockery/mockery/pull/1192)
+- [#1196 Update example in README.md](https://github.com/mockery/mockery/pull/1196)
+- [#1199 Fix function parameter default enum value](https://github.com/mockery/mockery/pull/1199)
+- [#1205 Deal with null type in PHP8.2](https://github.com/mockery/mockery/pull/1205)
+- [#1208 Import MockeryTestCase fully qualified class name](https://github.com/mockery/mockery/pull/1208)
+- [#1210 Add support for target class attributes](https://github.com/mockery/mockery/pull/1210)
+- [#1212 docs: Add missing comma](https://github.com/mockery/mockery/pull/1212)
+- [#1216 Fixes code generation for intersection types](https://github.com/mockery/mockery/pull/1216)
+- [#1217 Add MockeryExceptionInterface](https://github.com/mockery/mockery/pull/1217)
+- [#1218 tidy: avoids require](https://github.com/mockery/mockery/pull/1218)
+- [#1222 Add .editorconfig](https://github.com/mockery/mockery/pull/1222)
+- [#1225 Switch to PSR-4 autoload](https://github.com/mockery/mockery/pull/1225)
+- [#1226 Refactoring risky tests](https://github.com/mockery/mockery/pull/1226)
+- [#1230 Add vimeo/psalm and psalm/plugin-phpunit](https://github.com/mockery/mockery/pull/1230)
+- [#1232 Split PHPUnit TestSuites for PHP 8.2](https://github.com/mockery/mockery/pull/1232)
+- [#1233 Bump actions/checkout to v3](https://github.com/mockery/mockery/pull/1233)
+- [#1234 Bump nick-invision/retry to v2](https://github.com/mockery/mockery/pull/1234)
+- [#1235 Setup Codecov for code coverage](https://github.com/mockery/mockery/pull/1235)
+- [#1236 Add Psalm CI Check](https://github.com/mockery/mockery/pull/1236)
+- [#1237 Unignore composer.lock file](https://github.com/mockery/mockery/pull/1237)
+- [#1239 Prevent CI run duplication](https://github.com/mockery/mockery/pull/1239)
+- [#1241 Add PHPUnit workflow for PHP 8.3](https://github.com/mockery/mockery/pull/1241)
+- [#1244 Improve ClassAttributesPass for Dynamic Properties](https://github.com/mockery/mockery/pull/1244)
+- [#1245 Deprecate hamcrest/hamcrest-php package](https://github.com/mockery/mockery/pull/1245)
+- [#1246 Add BUG_REPORT.yml Issue template](https://github.com/mockery/mockery/pull/1246)
+- [#1250 Deprecate PHP <=8.0](https://github.com/mockery/mockery/issues/1250)
+- [#1253 Prevent array to string conversion when serialising a Subset matcher](https://github.com/mockery/mockery/issues/1253)
+
+## 1.6.0 (2023-06-05) [DELETED]
+
+This tag was deleted due to a mistake with the composer.json PHP version
+constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
+
+## 1.3.6 (2022-09-07)
+
+- PHP 8.2 | Fix "Use of "parent" in callables is deprecated" notice #1169
+
+## 1.5.1 (2022-09-07)
+
+- [PHP 8.2] Various tests: explicitly declare properties #1170
+- [PHP 8.2] Fix "Use of "parent" in callables is deprecated" notice #1169
+- [PHP 8.1] Support intersection types #1164
+- Handle final `__toString` methods #1162
+- Only count assertions on expectations which can fail a test #1180
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 ## 1.5.0 (2022-01-20)
 

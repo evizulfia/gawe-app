@@ -120,7 +120,7 @@ trait InteractsWithInput
      * @param  callable|null  $default
      * @return $this|mixed
      */
-    public function whenHas($key, callable $callback, callable $default = null)
+    public function whenHas($key, callable $callback, ?callable $default = null)
     {
         if ($this->has($key)) {
             return $callback(data_get($this->all(), $key)) ?: $this;
@@ -198,7 +198,7 @@ trait InteractsWithInput
      * @param  callable|null  $default
      * @return $this|mixed
      */
-    public function whenFilled($key, callable $callback, callable $default = null)
+    public function whenFilled($key, callable $callback, ?callable $default = null)
     {
         if ($this->filled($key)) {
             return $callback(data_get($this->all(), $key)) ?: $this;
@@ -225,7 +225,32 @@ trait InteractsWithInput
     }
 
     /**
+<<<<<<< HEAD
      * Determine if the given input key is an empty string for "has".
+=======
+     * Apply the callback if the request is missing the given input item key.
+     *
+     * @param  string  $key
+     * @param  callable  $callback
+     * @param  callable|null  $default
+     * @return $this|mixed
+     */
+    public function whenMissing($key, callable $callback, ?callable $default = null)
+    {
+        if ($this->missing($key)) {
+            return $callback(data_get($this->all(), $key)) ?: $this;
+        }
+
+        if ($default) {
+            return $default();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Determine if the given input key is an empty string for "filled".
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @param  string  $key
      * @return bool

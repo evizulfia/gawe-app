@@ -21,12 +21,23 @@ use Symfony\Component\Console\Exception\LogicException;
  */
 class InputArgument
 {
+    /**
+     * Providing an argument is required (e.g. just 'app:foo' is not allowed).
+     */
     public const REQUIRED = 1;
+
+    /**
+     * Providing an argument is optional (e.g. 'app:foo' and 'app:foo bar' are both allowed). This is the default behavior of arguments.
+     */
     public const OPTIONAL = 2;
+
+    /**
+     * The argument accepts multiple values and turn them into an array (e.g. 'app:foo bar baz' will result in value ['bar', 'baz']).
+     */
     public const IS_ARRAY = 4;
 
-    private string $name;
     private int $mode;
+<<<<<<< HEAD
     private string|int|bool|array|null|float $default;
     private string $description;
 
@@ -40,15 +51,37 @@ class InputArgument
      */
     public function __construct(string $name, int $mode = null, string $description = '', string|bool|int|float|array $default = null)
     {
+=======
+    private string|int|bool|array|float|null $default;
+
+    /**
+     * @param string                                                                        $name            The argument name
+     * @param int-mask-of<InputArgument::*>|null                                            $mode            The argument mode: a bit mask of self::REQUIRED, self::OPTIONAL and self::IS_ARRAY
+     * @param string                                                                        $description     A description text
+     * @param string|bool|int|float|array|null                                              $default         The default value (for self::OPTIONAL mode only)
+     * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     *
+     * @throws InvalidArgumentException When argument mode is not valid
+     */
+    public function __construct(
+        private string $name,
+        ?int $mode = null,
+        private string $description = '',
+        string|bool|int|float|array|null $default = null,
+        private \Closure|array $suggestedValues = [],
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         if (null === $mode) {
             $mode = self::OPTIONAL;
-        } elseif ($mode > 7 || $mode < 1) {
+        } elseif ($mode >= (self::IS_ARRAY << 1) || $mode < 1) {
             throw new InvalidArgumentException(sprintf('Argument mode "%s" is not valid.', $mode));
         }
 
-        $this->name = $name;
         $this->mode = $mode;
+<<<<<<< HEAD
         $this->description = $description;
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $this->setDefault($default);
     }
@@ -83,8 +116,6 @@ class InputArgument
 
     /**
      * Sets the default value.
-     *
-     * @throws LogicException When incorrect default value is given
      */
     public function setDefault(string|bool|int|float|array $default = null)
     {
@@ -111,6 +142,33 @@ class InputArgument
         return $this->default;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Returns true if the argument has values for input completion.
+     */
+    public function hasCompletion(): bool
+    {
+        return [] !== $this->suggestedValues;
+    }
+
+    /**
+     * Supplies suggestions when command resolves possible completion options for input.
+     *
+     * @see Command::complete()
+     */
+    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        $values = $this->suggestedValues;
+        if ($values instanceof \Closure && !\is_array($values = $values($input))) {
+            throw new LogicException(sprintf('Closure for argument "%s" must return an array. Got "%s".', $this->name, get_debug_type($values)));
+        }
+        if ($values) {
+            $suggestions->suggestValues($values);
+        }
+    }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * Returns the description text.
      */

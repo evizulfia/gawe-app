@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+<<<<<<< HEAD
+=======
+7.1
+---
+
+ * Add `localeLower()`, `localeUpper()`, `localeTitle()` methods to `AbstractUnicodeString`
+
+6.2
+---
+
+  * Add support for emoji in `AsciiSlugger`
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 5.4
 ---
 

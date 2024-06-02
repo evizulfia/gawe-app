@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Backtrace;
+namespace Spatie\Backtrace\CodeSnippets;
 
 use RuntimeException;
 
@@ -26,27 +26,21 @@ class CodeSnippet
         return $this;
     }
 
-    public function get(string $fileName): array
+    public function get(SnippetProvider $provider): array
     {
-        if (! file_exists($fileName)) {
-            return [];
-        }
-
         try {
-            $file = new File($fileName);
-
-            [$startLineNumber, $endLineNumber] = $this->getBounds($file->numberOfLines());
+            [$startLineNumber, $endLineNumber] = $this->getBounds($provider->numberOfLines());
 
             $code = [];
 
-            $line = $file->getLine($startLineNumber);
+            $line = $provider->getLine($startLineNumber);
 
             $currentLineNumber = $startLineNumber;
 
             while ($currentLineNumber <= $endLineNumber) {
                 $code[$currentLineNumber] = rtrim(substr($line, 0, 250));
 
-                $line = $file->getNextLine();
+                $line = $provider->getNextLine();
                 $currentLineNumber++;
             }
 
@@ -56,6 +50,20 @@ class CodeSnippet
         }
     }
 
+<<<<<<< HEAD:vendor/spatie/backtrace/src/CodeSnippet.php
+=======
+    public function getAsString(SnippetProvider $provider): string
+    {
+        $snippet = $this->get($provider);
+
+        $snippetStrings = array_map(function (string $line, string $number) {
+            return "{$number} {$line}";
+        }, $snippet, array_keys($snippet));
+
+        return implode(PHP_EOL, $snippetStrings);
+    }
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec:vendor/spatie/backtrace/src/CodeSnippets/CodeSnippet.php
     protected function getBounds(int $totalNumberOfLineInFile): array
     {
         $startLine = max($this->surroundingLine - floor($this->snippetLineCount / 2), 1);

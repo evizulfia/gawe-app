@@ -101,6 +101,36 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Compile a "JSON overlaps" statement into SQL.
+     *
+     * @param  string  $column
+     * @param  string  $value
+     * @return string
+     */
+    protected function compileJsonOverlaps($column, $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_overlaps('.$field.', '.$value.$path.')';
+    }
+
+    /**
+     * Compile a "JSON contains key" statement into SQL.
+     *
+     * @param  string  $column
+     * @return string
+     */
+    protected function compileJsonContainsKey($column)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'ifnull(json_contains_path('.$field.', \'one\''.$path.'), 0)';
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Compile a "JSON length" statement into SQL.
      *
      * @param  string  $column

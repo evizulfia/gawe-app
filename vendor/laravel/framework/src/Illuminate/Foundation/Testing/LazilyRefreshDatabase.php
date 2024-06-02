@@ -24,8 +24,26 @@ trait LazilyRefreshDatabase
 
             RefreshDatabaseState::$lazilyRefreshed = true;
 
+<<<<<<< HEAD
             $this->baseRefreshDatabase();
         });
+=======
+            if (property_exists($this, 'mockConsoleOutput')) {
+                $shouldMockOutput = $this->mockConsoleOutput;
+
+                $this->mockConsoleOutput = false;
+            }
+
+            $this->baseRefreshDatabase();
+
+            if (property_exists($this, 'mockConsoleOutput')) {
+                $this->mockConsoleOutput = $shouldMockOutput;
+            }
+        };
+
+        $database->beforeStartingTransaction($callback);
+        $database->beforeExecuting($callback);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $this->beforeApplicationDestroyed(function () {
             RefreshDatabaseState::$lazilyRefreshed = false;

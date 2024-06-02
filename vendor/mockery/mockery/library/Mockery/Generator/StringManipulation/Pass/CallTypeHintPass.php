@@ -21,9 +21,17 @@
 namespace Mockery\Generator\StringManipulation\Pass;
 
 use Mockery\Generator\MockConfiguration;
+<<<<<<< HEAD
+=======
+use function str_replace;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class CallTypeHintPass implements Pass
 {
+    /**
+     * @param  string $code
+     * @return string
+     */
     public function apply($code, MockConfiguration $config)
     {
         if ($config->requiresCallTypeHintRemoval()) {

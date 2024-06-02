@@ -412,20 +412,35 @@ class Route implements \Serializable
 
     private function extractInlineDefaultsAndRequirements(string $pattern): string
     {
-        if (false === strpbrk($pattern, '?<')) {
+        if (false === strpbrk($pattern, '?<:')) {
             return $pattern;
         }
 
+<<<<<<< HEAD
         return preg_replace_callback('#\{(!?)(\w++)(<.*?>)?(\?[^\}]*+)?\}#', function ($m) {
+=======
+        $mapping = $this->getDefault('_route_mapping') ?? [];
+
+        $pattern = preg_replace_callback('#\{(!?)([\w\x80-\xFF]++)(:[\w\x80-\xFF]++)?(<.*?>)?(\?[^\}]*+)?\}#', function ($m) use (&$mapping) {
+            if (isset($m[5][0])) {
+                $this->setDefault($m[2], '?' !== $m[5] ? substr($m[5], 1) : null);
+            }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             if (isset($m[4][0])) {
-                $this->setDefault($m[2], '?' !== $m[4] ? substr($m[4], 1) : null);
+                $this->setRequirement($m[2], substr($m[4], 1, -1));
             }
             if (isset($m[3][0])) {
-                $this->setRequirement($m[2], substr($m[3], 1, -1));
+                $mapping[$m[2]] = substr($m[3], 1);
             }
 
             return '{'.$m[1].$m[2].'}';
         }, $pattern);
+
+        if ($mapping) {
+            $this->setDefault('_route_mapping', $mapping);
+        }
+
+        return $pattern;
     }
 
     private function sanitizeRequirement(string $key, string $regex)

@@ -22,8 +22,15 @@ namespace Mockery\Generator;
 
 class MockConfigurationBuilder
 {
+<<<<<<< HEAD
     protected $name;
     protected $blackListedMethods = array(
+=======
+    /**
+     * @var list<string>
+     */
+    protected $blackListedMethods = [
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         '__call',
         '__callStatic',
         '__clone',
@@ -36,6 +43,7 @@ class MockConfigurationBuilder
         '__debugInfo', ## mocking this makes it difficult to debug with xdebug
 
         // below are reserved words in PHP
+<<<<<<< HEAD
         "__halt_compiler", "abstract", "and", "array", "as",
         "break", "callable", "case", "catch", "class",
         "clone", "const", "continue", "declare", "default",
@@ -50,7 +58,51 @@ class MockConfigurationBuilder
         "static", "switch", "throw", "trait", "try",
         "unset", "use", "var", "while", "xor"
     );
+=======
+        '__halt_compiler', 'abstract', 'and', 'array', 'as',
+        'break', 'callable', 'case', 'catch', 'class',
+        'clone', 'const', 'continue', 'declare', 'default',
+        'die', 'do', 'echo', 'else', 'elseif',
+        'empty', 'enddeclare', 'endfor', 'endforeach', 'endif',
+        'endswitch', 'endwhile', 'eval', 'exit', 'extends',
+        'final', 'for', 'foreach', 'function', 'global',
+        'goto', 'if', 'implements', 'include', 'include_once',
+        'instanceof', 'insteadof', 'interface', 'isset', 'list',
+        'namespace', 'new', 'or', 'print', 'private',
+        'protected', 'public', 'require', 'require_once', 'return',
+        'static', 'switch', 'throw', 'trait', 'try',
+        'unset', 'use', 'var', 'while', 'xor',
+    ];
 
+    /**
+     * @var array
+     */
+    protected $constantsMap = [];
+
+    /**
+     * @var bool
+     */
+    protected $instanceMock = false;
+
+    /**
+     * @var bool
+     */
+    protected $mockOriginalDestructor = false;
+
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var array
+     */
+    protected $parameterOverrides = [];
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+
+    /**
+     * @var list<string>
+     */
     protected $php7SemiReservedKeywords = [
         "callable", "class", "trait", "extends", "implements", "static", "abstract", "final",
         "public", "protected", "private", "const", "enddeclare", "endfor", "endforeach", "endif",
@@ -61,6 +113,7 @@ class MockConfigurationBuilder
         "declare", "case", "do", "while", "as", "catch", "die", "self", "parent",
     ];
 
+<<<<<<< HEAD
     protected $whiteListedMethods = array();
     protected $instanceMock = false;
     protected $parameterOverrides = array();
@@ -69,12 +122,53 @@ class MockConfigurationBuilder
     protected $targets = array();
 
     protected $constantsMap = array();
+=======
+    /**
+     * @var array
+     */
+    protected $targets = [];
+
+    /**
+     * @var array
+     */
+    protected $whiteListedMethods = [];
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     public function __construct()
     {
         $this->blackListedMethods = array_diff($this->blackListedMethods, $this->php7SemiReservedKeywords);
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @param  string $blackListedMethod
+     * @return self
+     */
+    public function addBlackListedMethod($blackListedMethod)
+    {
+        $this->blackListedMethods[] = $blackListedMethod;
+        return $this;
+    }
+
+    /**
+     * @param  list<string> $blackListedMethods
+     * @return self
+     */
+    public function addBlackListedMethods(array $blackListedMethods)
+    {
+        foreach ($blackListedMethods as $method) {
+            $this->addBlackListedMethod($method);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  class-string $target
+     * @return self
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function addTarget($target)
     {
         $this->targets[] = $target;
@@ -82,6 +176,10 @@ class MockConfigurationBuilder
         return $this;
     }
 
+    /**
+     * @param  list<class-string> $targets
+     * @return self
+     */
     public function addTargets($targets)
     {
         foreach ($targets as $target) {
@@ -91,6 +189,7 @@ class MockConfigurationBuilder
         return $this;
     }
 
+<<<<<<< HEAD
     public function setName($name)
     {
         $this->name = $name;
@@ -117,12 +216,20 @@ class MockConfigurationBuilder
         return $this;
     }
 
+=======
+    /**
+     * @return self
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function addWhiteListedMethod($whiteListedMethod)
     {
         $this->whiteListedMethods[] = $whiteListedMethod;
         return $this;
     }
 
+    /**
+     * @return self
+     */
     public function addWhiteListedMethods(array $whiteListedMethods)
     {
         foreach ($whiteListedMethods as $method) {
@@ -131,6 +238,7 @@ class MockConfigurationBuilder
         return $this;
     }
 
+<<<<<<< HEAD
     public function setWhiteListedMethods(array $whiteListedMethods)
     {
         $this->whiteListedMethods = $whiteListedMethods;
@@ -158,6 +266,11 @@ class MockConfigurationBuilder
         $this->constantsMap = $map;
     }
 
+=======
+    /**
+     * @return MockConfiguration
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function getMockConfiguration()
     {
         return new MockConfiguration(
@@ -171,4 +284,74 @@ class MockConfigurationBuilder
             $this->constantsMap
         );
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * @param  list<string> $blackListedMethods
+     * @return self
+     */
+    public function setBlackListedMethods(array $blackListedMethods)
+    {
+        $this->blackListedMethods = $blackListedMethods;
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function setConstantsMap(array $map)
+    {
+        $this->constantsMap = $map;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $instanceMock
+     */
+    public function setInstanceMock($instanceMock)
+    {
+        $this->instanceMock = (bool) $instanceMock;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $mockDestructor
+     */
+    public function setMockOriginalDestructor($mockDestructor)
+    {
+        $this->mockOriginalDestructor = (bool) $mockDestructor;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function setParameterOverrides(array $overrides)
+    {
+        $this->parameterOverrides = $overrides;
+        return $this;
+    }
+
+    /**
+     * @param  list<string> $whiteListedMethods
+     * @return self
+     */
+    public function setWhiteListedMethods(array $whiteListedMethods)
+    {
+        $this->whiteListedMethods = $whiteListedMethods;
+        return $this;
+    }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

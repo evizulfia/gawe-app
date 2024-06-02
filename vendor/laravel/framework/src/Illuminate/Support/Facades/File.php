@@ -41,10 +41,25 @@ namespace Illuminate\Support\Facades;
  * @method static string|false mimeType(string $path)
  * @method static string|null guessExtension(string $path)
  * @method static void ensureDirectoryExists(string $path, int $mode = 0755, bool $recursive = true)
+<<<<<<< HEAD
  * @method static void link(string $target, string $link)
  * @method static \Illuminate\Support\LazyCollection lines(string $path)
  * @method static void relativeLink(string $target, string $link)
  * @method static void replace(string $path, string $content)
+=======
+ * @method static bool makeDirectory(string $path, int $mode = 0755, bool $recursive = false, bool $force = false)
+ * @method static bool moveDirectory(string $from, string $to, bool $overwrite = false)
+ * @method static bool copyDirectory(string $directory, string $destination, int|null $options = null)
+ * @method static bool deleteDirectory(string $directory, bool $preserve = false)
+ * @method static bool deleteDirectories(string $directory)
+ * @method static bool cleanDirectory(string $directory)
+ * @method static \Illuminate\Filesystem\Filesystem|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
+ * @method static \Illuminate\Filesystem\Filesystem|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
+ * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void mixin(object $mixin, bool $replace = true)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Filesystem\Filesystem
  */

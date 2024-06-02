@@ -6,6 +6,7 @@ use Illuminate\Support\Traits\Macroable;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class Command extends SymfonyCommand
 {
@@ -133,7 +134,33 @@ class Command extends SymfonyCommand
     {
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
+<<<<<<< HEAD
         return (int) $this->laravel->call([$this, $method]);
+=======
+        try {
+            return (int) $this->laravel->call([$this, $method]);
+        } catch (ManuallyFailedException $e) {
+            $this->components->error($e->getMessage());
+
+            return static::FAILURE;
+        } finally {
+            if ($this instanceof Isolatable && $this->option('isolated') !== false) {
+                $this->commandIsolationMutex()->forget($this);
+            }
+        }
+    }
+
+    /**
+     * Get a command isolation mutex instance for the command.
+     *
+     * @return \Illuminate\Console\CommandMutex
+     */
+    protected function commandIsolationMutex()
+    {
+        return $this->laravel->bound(CommandMutex::class)
+            ? $this->laravel->make(CommandMutex::class)
+            : $this->laravel->make(CacheCommandMutex::class);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -159,6 +186,25 @@ class Command extends SymfonyCommand
         }
 
         return $command;
+    }
+
+    /**
+     * Fail the command manually.
+     *
+     * @param  \Throwable|string|null  $exception
+     * @return void
+     */
+    public function fail(Throwable|string|null $exception = null)
+    {
+        if (is_null($exception)) {
+            $exception = 'Command failed manually.';
+        }
+
+        if (is_string($exception)) {
+            $exception = new ManuallyFailedException($exception);
+        }
+
+        throw $exception;
     }
 
     /**

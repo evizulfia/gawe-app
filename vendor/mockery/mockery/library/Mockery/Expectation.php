@@ -29,6 +29,76 @@ use Mockery\Matcher\MultiArgumentClosure;
 
 class Expectation implements ExpectationInterface
 {
+<<<<<<< HEAD
+=======
+    public const ERROR_ZERO_INVOCATION = 'shouldNotReceive(), never(), times(0) chaining additional invocation count methods has been deprecated and will throw an exception in a future version of Mockery';
+
+    /**
+     * Actual count of calls to this expectation
+     *
+     * @var int
+     */
+    protected $_actualCount = 0;
+
+    /**
+     * Exception message
+     *
+     * @var null|string
+     */
+    protected $_because = null;
+
+    /**
+     * Array of closures executed with given arguments to generate a result
+     * to be returned
+     *
+     * @var array
+     */
+    protected $_closureQueue = [];
+
+    /**
+     * The count validator class to use
+     *
+     * @var string
+     */
+    protected $_countValidatorClass = Exact::class;
+
+    /**
+     * Count validator store
+     *
+     * @var array
+     */
+    protected $_countValidators = [];
+
+    /**
+     * Arguments expected by this expectation
+     *
+     * @var array
+     */
+    protected $_expectedArgs = [];
+
+    /**
+     * Expected count of calls to this expectation
+     *
+     * @var int
+     */
+    protected $_expectedCount = -1;
+
+    /**
+     * Flag indicating whether the order of calling is determined locally or
+     * globally
+     *
+     * @var bool
+     */
+    protected $_globally = false;
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    /**
+     * Integer representing the call order of this expectation on a global basis
+     *
+     * @var int
+     */
+    protected $_globalOrderNumber = null;
+
     /**
      * Mock object to which this expectation belongs
      *
@@ -527,6 +597,18 @@ class Expectation implements ExpectationInterface
     }
 
     /**
+     * Set a return value, or sequential queue of return values
+     *
+     * @param mixed ...$args
+     *
+     * @return self
+     */
+    public function andReturns(...$args)
+    {
+        return $this->andReturn(...$args);
+    }
+
+    /**
      * Return this mock, like a fluent interface
      *
      * @return self
@@ -616,6 +698,7 @@ class Expectation implements ExpectationInterface
     }
 
     /**
+<<<<<<< HEAD
      * Set Exception class and arguments to that class to be thrown
      *
      * @param string|\Exception $exception
@@ -662,6 +745,13 @@ class Expectation implements ExpectationInterface
      *
      * @param string $name
      * @param array ...$values
+=======
+     * Register values to be set to a public property each time this expectation occurs
+     *
+     * @param string $name
+     * @param array  ...$values
+     *
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * @return self
      */
     public function andSet($name, ...$values)
@@ -671,6 +761,52 @@ class Expectation implements ExpectationInterface
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Set Exception class and arguments to that class to be thrown
+     *
+     * @param string|Throwable $exception
+     * @param string           $message
+     * @param int              $code
+     *
+     * @return self
+     */
+    public function andThrow($exception, $message = '', $code = 0, ?\Exception $previous = null)
+    {
+        $this->_throw = true;
+
+        if (is_object($exception)) {
+            return $this->andReturn($exception);
+        }
+
+        return $this->andReturn(new $exception($message, $code, $previous));
+    }
+
+    /**
+     * Set Exception classes to be thrown
+     *
+     * @return self
+     */
+    public function andThrowExceptions(array $exceptions)
+    {
+        $this->_throw = true;
+
+        foreach ($exceptions as $exception) {
+            if (! is_object($exception)) {
+                throw new Exception('You must pass an array of exception objects to andThrowExceptions');
+            }
+        }
+
+        return $this->andReturnValues($exceptions);
+    }
+
+    public function andThrows($exception, $message = '', $code = 0, ?\Exception $previous = null)
+    {
+        return $this->andThrow($exception, $message, $code, $previous);
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Sets up a closure that will yield each of the provided args
      *
      * @param mixed ...$args
@@ -758,6 +894,103 @@ class Expectation implements ExpectationInterface
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Indicates that this expectation must be called in a specific given order
+     *
+     * @param string $group Name of the ordered group
+     *
+     * @return self
+     */
+    public function ordered($group = null)
+    {
+        if ($this->_globally) {
+            $this->_globalOrderNumber = $this->_defineOrdered($group, $this->_mock->mockery_getContainer());
+        } else {
+            $this->_orderNumber = $this->_defineOrdered($group, $this->_mock);
+        }
+
+        $this->_globally = false;
+
+        return $this;
+    }
+
+    /**
+     * Flag this expectation as calling the original class method with
+     * the provided arguments instead of using a return value queue.
+     *
+     * @return self
+     */
+    public function passthru()
+    {
+        if ($this->_mock instanceof Mock) {
+            throw new Exception(
+                'Mock Objects not created from a loaded/existing class are incapable of passing method calls through to a parent class'
+            );
+        }
+
+        $this->_passthru = true;
+
+        return $this;
+    }
+
+    /**
+     * Alias to andSet(). Allows the natural English construct
+     * - set('foo', 'bar')->andReturn('bar')
+     *
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return self
+     */
+    public function set($name, $value)
+    {
+        return $this->andSet(...func_get_args());
+    }
+
+    /**
+     * Indicates the number of times this expectation should occur
+     *
+     * @param int $limit
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return self
+     */
+    public function times($limit = null)
+    {
+        if ($limit === null) {
+            return $this;
+        }
+
+        if (! is_int($limit)) {
+            throw new InvalidArgumentException('The passed Times limit should be an integer value');
+        }
+
+        if ($this->_expectedCount === 0) {
+            @trigger_error(self::ERROR_ZERO_INVOCATION, E_USER_DEPRECATED);
+            // throw new \InvalidArgumentException(self::ERROR_ZERO_INVOCATION);
+        }
+
+        if ($limit === 0) {
+            $this->_countValidators = [];
+        }
+
+        $this->_expectedCount = $limit;
+
+        $this->_countValidators[$this->_countValidatorClass] = new $this->_countValidatorClass($this, $limit);
+
+        if ($this->_countValidatorClass !== Exact::class) {
+            $this->_countValidatorClass = Exact::class;
+
+            unset($this->_countValidators[$this->_countValidatorClass]);
+        }
+
+        return $this;
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Indicates that this expectation is expected exactly twice
      *
      * @return self

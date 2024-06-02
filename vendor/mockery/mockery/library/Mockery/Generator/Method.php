@@ -22,6 +22,9 @@ namespace Mockery\Generator;
 
 use Mockery\Reflector;
 
+/**
+ * @mixin ReflectionMethod
+ */
 class Method
 {
     /** @var \ReflectionMethod */
@@ -32,13 +35,27 @@ class Method
         $this->method = $method;
     }
 
+    /**
+     * @template TArgs
+     * @template TMixed
+     *
+     * @param string       $method
+     * @param array<TArgs> $args
+     *
+     * @return TMixed
+     */
     public function __call($method, $args)
     {
+<<<<<<< HEAD
         return call_user_func_array(array($this->method, $method), $args);
+=======
+        /** @var TMixed */
+        return $this->method->{$method}(...$args);
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
-     * @return Parameter[]
+     * @return list<Parameter>
      */
     public function getParameters()
     {

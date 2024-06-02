@@ -43,6 +43,74 @@ final class ControllerEvent extends KernelEvent
 
     public function setController(callable $controller): void
     {
+<<<<<<< HEAD
         $this->controller = $controller;
     }
+=======
+        return $this->controllerReflector;
+    }
+
+    /**
+     * @param array<class-string, list<object>>|null $attributes
+     */
+    public function setController(callable $controller, ?array $attributes = null): void
+    {
+        if (null !== $attributes) {
+            $this->attributes = $attributes;
+        }
+
+        if (isset($this->controller) && ($controller instanceof \Closure ? $controller == $this->controller : $controller === $this->controller)) {
+            $this->controller = $controller;
+
+            return;
+        }
+
+        if (null === $attributes) {
+            unset($this->attributes);
+        }
+
+        if (\is_array($controller) && method_exists(...$controller)) {
+            $this->controllerReflector = new \ReflectionMethod(...$controller);
+        } elseif (\is_string($controller) && str_contains($controller, '::')) {
+            $this->controllerReflector = new \ReflectionMethod(...explode('::', $controller, 2));
+        } else {
+            $this->controllerReflector = new \ReflectionFunction($controller(...));
+        }
+
+        $this->controller = $controller;
+    }
+
+    /**
+     * @template T of class-string|null
+     *
+     * @param T $className
+     *
+     * @return array<class-string, list<object>>|list<object>
+     *
+     * @psalm-return (T is null ? array<class-string, list<object>> : list<object>)
+     */
+    public function getAttributes(?string $className = null): array
+    {
+        if (isset($this->attributes)) {
+            return null === $className ? $this->attributes : $this->attributes[$className] ?? [];
+        }
+
+        if (\is_array($this->controller) && method_exists(...$this->controller)) {
+            $class = new \ReflectionClass($this->controller[0]);
+        } elseif (\is_string($this->controller) && false !== $i = strpos($this->controller, '::')) {
+            $class = new \ReflectionClass(substr($this->controller, 0, $i));
+        } else {
+            $class = $this->controllerReflector instanceof \ReflectionFunction && $this->controllerReflector->isAnonymous() ? null : $this->controllerReflector->getClosureCalledClass();
+        }
+        $this->attributes = [];
+
+        foreach (array_merge($class?->getAttributes() ?? [], $this->controllerReflector->getAttributes()) as $attribute) {
+            if (class_exists($attribute->getName())) {
+                $this->attributes[$attribute->getName()][] = $attribute->newInstance();
+            }
+        }
+
+        return null === $className ? $this->attributes : $this->attributes[$className] ?? [];
+    }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

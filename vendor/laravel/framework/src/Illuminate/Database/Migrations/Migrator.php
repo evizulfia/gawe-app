@@ -80,7 +80,7 @@ class Migrator
     public function __construct(MigrationRepositoryInterface $repository,
                                 Resolver $resolver,
                                 Filesystem $files,
-                                Dispatcher $dispatcher = null)
+                                ?Dispatcher $dispatcher = null)
     {
         $this->files = $files;
         $this->events = $dispatcher;
@@ -172,6 +172,11 @@ class Migrator
         }
 
         $this->fireMigrationEvent(new MigrationsEnded('up'));
+<<<<<<< HEAD
+=======
+
+        $this->output?->writeln('');
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -233,7 +238,13 @@ class Migrator
             return [];
         }
 
+<<<<<<< HEAD
         return $this->rollbackMigrations($migrations, $paths, $options);
+=======
+        return tap($this->rollbackMigrations($migrations, $paths, $options), function () {
+            $this->output?->writeln('');
+        });
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -312,7 +323,13 @@ class Migrator
             return [];
         }
 
+<<<<<<< HEAD
         return $this->resetMigrations($migrations, $paths, $pretend);
+=======
+        return tap($this->resetMigrations($migrations, Arr::wrap($paths), $pretend), function () {
+            $this->output?->writeln('');
+        });
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -716,8 +733,6 @@ class Migrator
      */
     public function fireMigrationEvent($event)
     {
-        if ($this->events) {
-            $this->events->dispatch($event);
-        }
+        $this->events?->dispatch($event);
     }
 }

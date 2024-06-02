@@ -359,8 +359,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function storeVerbatimBlocks($value)
     {
-        return preg_replace_callback('/(?<!@)@verbatim(.*?)@endverbatim/s', function ($matches) {
-            return $this->storeRawBlock($matches[1]);
+        return preg_replace_callback('/(?<!@)@verbatim(\s*)(.*?)@endverbatim/s', function ($matches) {
+            return $matches[1].$this->storeRawBlock($matches[2]);
         }, $value);
     }
 
@@ -673,6 +673,48 @@ class BladeCompiler extends Compiler implements CompilerInterface
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Register a new anonymous component path.
+     *
+     * @param  string  $path
+     * @param  string|null  $prefix
+     * @return void
+     */
+    public function anonymousComponentPath(string $path, ?string $prefix = null)
+    {
+        $prefixHash = md5($prefix ?: $path);
+
+        $this->anonymousComponentPaths[] = [
+            'path' => $path,
+            'prefix' => $prefix,
+            'prefixHash' => $prefixHash,
+        ];
+
+        Container::getInstance()
+                ->make(ViewFactory::class)
+                ->addNamespace($prefixHash, $path);
+    }
+
+    /**
+     * Register an anonymous component namespace.
+     *
+     * @param  string  $directory
+     * @param  string|null  $prefix
+     * @return void
+     */
+    public function anonymousComponentNamespace(string $directory, ?string $prefix = null)
+    {
+        $prefix ??= $directory;
+
+        $this->anonymousComponentNamespaces[$prefix] = Str::of($directory)
+                ->replace('/', '.')
+                ->trim('. ')
+                ->toString();
+    }
+
+    /**
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Register a class-based component namespace.
      *
      * @param  string  $namespace

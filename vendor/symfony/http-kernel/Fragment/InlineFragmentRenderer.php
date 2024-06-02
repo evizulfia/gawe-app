@@ -27,6 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class InlineFragmentRenderer extends RoutableFragmentRenderer
 {
+<<<<<<< HEAD
     private $kernel;
     private $dispatcher;
 
@@ -34,6 +35,12 @@ class InlineFragmentRenderer extends RoutableFragmentRenderer
     {
         $this->kernel = $kernel;
         $this->dispatcher = $dispatcher;
+=======
+    public function __construct(
+        private HttpKernelInterface $kernel,
+        private ?EventDispatcherInterface $dispatcher = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

@@ -23,11 +23,20 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ControllerResolver implements ControllerResolverInterface
 {
+<<<<<<< HEAD
     private $logger;
 
     public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
+=======
+    private array $allowedControllerTypes = [];
+    private array $allowedControllerAttributes = [AsController::class => AsController::class];
+
+    public function __construct(
+        private ?LoggerInterface $logger = null,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -202,8 +211,61 @@ class ControllerResolver implements ControllerResolverInterface
     {
         $methods = get_class_methods($classOrObject);
 
+<<<<<<< HEAD
         return array_filter($methods, function (string $method) {
             return 0 !== strncmp($method, '__', 2);
         });
+=======
+        return array_filter($methods, fn (string $method) => 0 !== strncmp($method, '__', 2));
+    }
+
+    private function checkController(Request $request, callable $controller): callable
+    {
+        if (!$request->attributes->get('_check_controller_is_allowed', false)) {
+            return $controller;
+        }
+
+        $r = null;
+
+        if (\is_array($controller)) {
+            [$class, $name] = $controller;
+            $name = (\is_string($class) ? $class : $class::class).'::'.$name;
+        } elseif (\is_object($controller) && !$controller instanceof \Closure) {
+            $class = $controller;
+            $name = $class::class.'::__invoke';
+        } else {
+            $r = new \ReflectionFunction($controller);
+            $name = $r->name;
+
+            if ($r->isAnonymous()) {
+                $name = $class = \Closure::class;
+            } elseif ($class = $r->getClosureCalledClass()) {
+                $class = $class->name;
+                $name = $class.'::'.$name;
+            }
+        }
+
+        if ($class) {
+            foreach ($this->allowedControllerTypes as $type) {
+                if (is_a($class, $type, true)) {
+                    return $controller;
+                }
+            }
+        }
+
+        $r ??= new \ReflectionClass($class);
+
+        foreach ($r->getAttributes() as $attribute) {
+            if (isset($this->allowedControllerAttributes[$attribute->getName()])) {
+                return $controller;
+            }
+        }
+
+        if (str_contains($name, '@anonymous')) {
+            $name = preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)[0-9a-fA-F]++/', fn ($m) => class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0])) ?: 'class').'@anonymous' : $m[0], $name);
+        }
+
+        throw new BadRequestException(sprintf('Callable "%s()" is not allowed as a controller. Did you miss tagging it with "#[AsController]" or registering its type with "%s::allowControllers()"?', $name, self::class));
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 }

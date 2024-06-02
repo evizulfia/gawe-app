@@ -114,7 +114,13 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
     public function __construct($name,
                                 UserProvider $provider,
                                 Session $session,
+<<<<<<< HEAD
                                 Request $request = null)
+=======
+                                ?Request $request = null,
+                                ?Timebox $timebox = null,
+                                bool $rehashOnLogin = true)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->name = $name;
         $this->session = $session;
@@ -232,6 +238,8 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
         $this->fireAttemptEvent($credentials);
 
         if ($this->validate($credentials)) {
+            $this->rehashPasswordIfRequired($this->lastAttempted, $credentials);
+
             $this->setUser($this->lastAttempted);
 
             return true;

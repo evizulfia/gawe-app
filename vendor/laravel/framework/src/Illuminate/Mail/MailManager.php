@@ -253,7 +253,24 @@ class MailManager implements FactoryContract
             $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
         }
 
+<<<<<<< HEAD
         return $config;
+=======
+        return Arr::except($config, ['token']);
+    }
+
+    /**
+     * Create an instance of the Resend Transport driver.
+     *
+     * @param  array  $config
+     * @return \Illuminate\Mail\Transport\ResendTransprot
+     */
+    protected function createResendTransport(array $config)
+    {
+        return new ResendTransport(
+            Resend::client($config['key'] ?? $this->app['config']->get('services.resend.key')),
+        );
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

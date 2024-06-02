@@ -23,7 +23,11 @@ class UnknownSetterException extends BaseInvalidArgumentException implements Bad
      * @param int            $code
      * @param Exception|null $previous
      */
+<<<<<<< HEAD
     public function __construct($name, $code = 0, Exception $previous = null)
+=======
+    public function __construct($setter, $code = 0, ?Throwable $previous = null)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         parent::__construct("Unknown setter '$name'", $code, $previous);
     }

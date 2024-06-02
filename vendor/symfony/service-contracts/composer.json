@@ -16,8 +16,14 @@
         }
     ],
     "require": {
+<<<<<<< HEAD
         "php": ">=8.0.2",
         "psr/container": "^2.0"
+=======
+        "php": ">=8.1",
+        "psr/container": "^1.1|^2.0",
+        "symfony/deprecation-contracts": "^2.5|^3"
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     },
     "conflict": {
         "ext-psr": "<1.1|>=2"
@@ -31,7 +37,11 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
+<<<<<<< HEAD
             "dev-main": "3.0-dev"
+=======
+            "dev-main": "3.5-dev"
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         },
         "thanks": {
             "name": "symfony/contracts",

@@ -26,22 +26,36 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class Profiler implements ResetInterface
 {
+<<<<<<< HEAD
     private $storage;
 
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * @var DataCollectorInterface[]
      */
     private array $collectors = [];
 
+<<<<<<< HEAD
     private $logger;
+=======
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private bool $initiallyEnabled = true;
-    private bool $enabled = true;
 
+<<<<<<< HEAD
     public function __construct(ProfilerStorageInterface $storage, LoggerInterface $logger = null, bool $enable = true)
     {
         $this->storage = $storage;
         $this->logger = $logger;
         $this->initiallyEnabled = $this->enabled = $enable;
+=======
+    public function __construct(
+        private ProfilerStorageInterface $storage,
+        private ?LoggerInterface $logger = null,
+        private bool $enabled = true,
+    ) {
+        $this->initiallyEnabled = $enabled;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -130,7 +144,7 @@ class Profiler implements ResetInterface
             return null;
         }
 
-        $profile = new Profile(substr(hash('sha256', uniqid(mt_rand(), true)), 0, 6));
+        $profile = new Profile(substr(hash('xxh128', uniqid(mt_rand(), true)), 0, 6));
         $profile->setTime(time());
         $profile->setUrl($request->getUri());
         $profile->setMethod($request->getMethod());

@@ -50,6 +50,7 @@ class_exists(KernelEvents::class);
  */
 class HttpKernel implements HttpKernelInterface, TerminableInterface
 {
+<<<<<<< HEAD
     protected $dispatcher;
     protected $resolver;
     protected $requestStack;
@@ -59,6 +60,19 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     {
         $this->dispatcher = $dispatcher;
         $this->resolver = $resolver;
+=======
+    protected RequestStack $requestStack;
+    private ArgumentResolverInterface $argumentResolver;
+    private bool $terminating = false;
+
+    public function __construct(
+        protected EventDispatcherInterface $dispatcher,
+        protected ControllerResolverInterface $resolver,
+        ?RequestStack $requestStack = null,
+        ?ArgumentResolverInterface $argumentResolver = null,
+        private bool $handleAllThrowables = false,
+    ) {
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->requestStack = $requestStack ?? new RequestStack();
         $this->argumentResolver = $argumentResolver ?? new ArgumentResolver();
     }
@@ -91,7 +105,12 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      */
     public function terminate(Request $request, Response $response)
     {
-        $this->dispatcher->dispatch(new TerminateEvent($this, $request, $response), KernelEvents::TERMINATE);
+        try {
+            $this->terminating = true;
+            $this->dispatcher->dispatch(new TerminateEvent($this, $request, $response), KernelEvents::TERMINATE);
+        } finally {
+            $this->terminating = false;
+        }
     }
 
     /**
@@ -209,7 +228,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      */
     private function handleThrowable(\Throwable $e, Request $request, int $type): Response
     {
-        $event = new ExceptionEvent($this, $request, $type, $e);
+        $event = new ExceptionEvent($this, $request, $type, $e, isKernelTerminating: $this->terminating);
         $this->dispatcher->dispatch($event, KernelEvents::EXCEPTION);
 
         // a listener might have replaced the exception

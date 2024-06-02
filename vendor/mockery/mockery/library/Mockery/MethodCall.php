@@ -25,6 +25,18 @@ class MethodCall
     private $method;
     private $args;
 
+<<<<<<< HEAD
+=======
+    /**
+     * @var string
+     */
+    private $method;
+
+    /**
+     * @param string $method
+     * @param array  $args
+     */
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function __construct($method, $args)
     {
         $this->method = $method;

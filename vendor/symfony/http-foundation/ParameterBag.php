@@ -138,7 +138,38 @@ class ParameterBag implements \IteratorAggregate, \Countable
      */
     public function getBoolean(string $key, bool $default = false): bool
     {
+<<<<<<< HEAD
         return $this->filter($key, $default, \FILTER_VALIDATE_BOOLEAN);
+=======
+        return $this->filter($key, $default, \FILTER_VALIDATE_BOOL, ['flags' => \FILTER_REQUIRE_SCALAR]);
+    }
+
+    /**
+     * Returns the parameter value converted to an enum.
+     *
+     * @template T of \BackedEnum
+     *
+     * @param class-string<T> $class
+     * @param ?T              $default
+     *
+     * @return ?T
+     *
+     * @psalm-return ($default is null ? T|null : T)
+     */
+    public function getEnum(string $key, string $class, ?\BackedEnum $default = null): ?\BackedEnum
+    {
+        $value = $this->get($key);
+
+        if (null === $value) {
+            return $default;
+        }
+
+        try {
+            return $class::from($value);
+        } catch (\ValueError|\TypeError $e) {
+            throw new UnexpectedValueException(sprintf('Parameter "%s" cannot be converted to enum: %s.', $key, $e->getMessage()), $e->getCode(), $e);
+        }
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

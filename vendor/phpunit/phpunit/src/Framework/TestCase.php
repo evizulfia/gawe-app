@@ -18,9 +18,14 @@ use const LC_TIME;
 use const PATHINFO_FILENAME;
 use const PHP_EOL;
 use const PHP_URL_PATH;
+<<<<<<< HEAD
 use function array_filter;
 use function array_flip;
+=======
+use function array_is_list;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use function array_keys;
+use function array_map;
 use function array_merge;
 use function array_pop;
 use function array_search;
@@ -63,6 +68,13 @@ use function substr;
 use function trim;
 use function var_export;
 use DeepCopy\DeepCopy;
+<<<<<<< HEAD
+=======
+use PHPUnit\Event;
+use PHPUnit\Event\NoPreviousThrowableException;
+use PHPUnit\Event\RuntimeException;
+use PHPUnit\Event\TestData\MoreThanOneDataSetFromDataProviderException;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use PHPUnit\Framework\Constraint\Exception as ExceptionConstraint;
 use PHPUnit\Framework\Constraint\ExceptionCode;
 use PHPUnit\Framework\Constraint\ExceptionMessage;
@@ -102,6 +114,14 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 use ReflectionClass;
 use ReflectionException;
+<<<<<<< HEAD
+=======
+use ReflectionMethod;
+use ReflectionObject;
+use ReflectionParameter;
+use SebastianBergmann\CodeCoverage\StaticAnalysisCacheNotConfiguredException;
+use SebastianBergmann\CodeCoverage\UnintentionallyCoveredCodeException;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use SebastianBergmann\Comparator\Comparator;
 use SebastianBergmann\Comparator\Factory as ComparatorFactory;
 use SebastianBergmann\Diff\Differ;
@@ -1521,7 +1541,53 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
     }
 
     /**
+<<<<<<< HEAD
      * Override to run the test and assert its state.
+=======
+     * @throws RuntimeException
+     *
+     * @internal This method is not covered by the backward compatibility promise for PHPUnit
+     */
+    final public function setData(int|string $dataName, array $data): void
+    {
+        $this->dataName = $dataName;
+        $this->data     = $data;
+
+        if (array_is_list($data)) {
+            return;
+        }
+
+        try {
+            $reflector  = new ReflectionMethod($this, $this->name);
+            $parameters = array_map(static fn (ReflectionParameter $parameter) => $parameter->name, $reflector->getParameters());
+
+            foreach (array_keys($data) as $parameter) {
+                if (is_string($parameter) && !in_array($parameter, $parameters, true)) {
+                    Event\Facade::emitter()->testTriggeredPhpunitDeprecation(
+                        $this->valueObjectForEvents(),
+                        sprintf(
+                            'Providing invalid named argument $%s for method %s::%s() is deprecated and will not be supported in PHPUnit 11.0.',
+                            $parameter,
+                            $this::class,
+                            $this->name,
+                        ),
+                    );
+                }
+            }
+            // @codeCoverageIgnoreStart
+        } catch (ReflectionException $e) {
+            throw new RuntimeException(
+                $e->getMessage(),
+                $e->getCode(),
+                $e,
+            );
+        }
+        // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * @internal This method is not covered by the backward compatibility promise for PHPUnit
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @throws \SebastianBergmann\ObjectEnumerator\InvalidArgumentException
      * @throws AssertionFailedError
@@ -1682,7 +1748,7 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
             throw new Exception;
         }
 
-        $this->locale[$category] = setlocale($category, 0);
+        $this->locale[$category] = setlocale($category, '0');
 
         $result = setlocale(...$args);
 
@@ -2571,11 +2637,67 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
      */
     private function createMockObject(string $originalClassName): MockObject
     {
+<<<<<<< HEAD
         return $this->getMockBuilder($originalClassName)
                     ->disableOriginalConstructor()
                     ->disableOriginalClone()
                     ->disableArgumentCloning()
                     ->disallowMockingUnknownTypes()
                     ->getMock();
+=======
+        $stub = (new MockGenerator)->testDouble(
+            $originalClassName,
+            true,
+            callOriginalConstructor: false,
+            callOriginalClone: false,
+            cloneArguments: false,
+            allowMockingUnknownTypes: false,
+        );
+
+        Event\Facade::emitter()->testCreatedStub($originalClassName);
+
+        assert($stub instanceof $originalClassName);
+        assert($stub instanceof Stub);
+
+        return $stub;
+    }
+
+    /**
+     * @psalm-param list<class-string> $interfaces
+     *
+     * @throws MockObjectException
+     */
+    protected static function createStubForIntersectionOfInterfaces(array $interfaces): Stub
+    {
+        $stub = (new MockGenerator)->testDoubleForInterfaceIntersection($interfaces, true);
+
+        Event\Facade::emitter()->testCreatedStubForIntersectionOfInterfaces($interfaces);
+
+        return $stub;
+    }
+
+    /**
+     * Creates (and configures) a test stub for the specified interface or class.
+     *
+     * @psalm-template RealInstanceType of object
+     *
+     * @psalm-param class-string<RealInstanceType> $originalClassName
+     *
+     * @psalm-return Stub&RealInstanceType
+     *
+     * @throws InvalidArgumentException
+     * @throws MockObjectException
+     * @throws NoPreviousThrowableException
+     */
+    final protected static function createConfiguredStub(string $originalClassName, array $configuration): Stub
+    {
+        $o = self::createStub($originalClassName);
+
+        foreach ($configuration as $method => $return) {
+            $o->method($method)->willReturn($return);
+        }
+
+        return $o;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 }

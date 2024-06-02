@@ -24,7 +24,11 @@ class NotACarbonClassException extends BaseInvalidArgumentException implements I
      * @param int            $code
      * @param Exception|null $previous
      */
+<<<<<<< HEAD
     public function __construct($className, $code = 0, Exception $previous = null)
+=======
+    public function __construct($className, $code = 0, ?Throwable $previous = null)
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         parent::__construct(sprintf(
             'Given class does not implement %s: %s',

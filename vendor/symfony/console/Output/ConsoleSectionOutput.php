@@ -45,7 +45,7 @@ class ConsoleSectionOutput extends StreamOutput
      */
     public function clear(int $lines = null)
     {
-        if (empty($this->content) || !$this->isDecorated()) {
+        if (!$this->content || !$this->isDecorated()) {
             return;
         }
 

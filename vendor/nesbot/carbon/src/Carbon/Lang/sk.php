@@ -31,7 +31,54 @@
  * - jofi
  * - Jakub ADAMEC
  * - Marek Adamický
+<<<<<<< HEAD
  */
+=======
+ * - AlterwebStudio
+ * - Peter Kundis
+ */
+
+use Carbon\CarbonInterface;
+
+$fromNow = function ($time) {
+    return 'o '.strtr($time, [
+            'hodina' => 'hodinu',
+            'minúta' => 'minútu',
+            'sekunda' => 'sekundu',
+        ]);
+};
+
+$ago = function ($time) {
+    $replacements = [
+        '/\bhodina\b/' => 'hodinou',
+        '/\bminúta\b/' => 'minútou',
+        '/\bsekunda\b/' => 'sekundou',
+        '/\bdeň\b/u' => 'dňom',
+        '/\btýždeň\b/u' => 'týždňom',
+        '/\bmesiac\b/' => 'mesiacom',
+        '/\brok\b/' => 'rokom',
+    ];
+
+    $replacementsPlural = [
+        '/\b(?:hodiny|hodín)\b/' => 'hodinami',
+        '/\b(?:minúty|minút)\b/' => 'minútami',
+        '/\b(?:sekundy|sekúnd)\b/' => 'sekundami',
+        '/\bdeň\b/' => 'dňom',
+        '/\bdni\b/' => 'dňami',
+        '/\bdní\b/u' => 'dňami',
+        '/\b(?:týždne|týždňov)\b/' => 'týždňami',
+        '/\b(?:mesiace|mesiacov)\b/' => 'mesiacmi',
+        '/\b(?:roky|rokov)\b/' => 'rokmi',
+    ];
+
+    foreach ($replacements + $replacementsPlural as $pattern => $replacement) {
+        $time = preg_replace($pattern, $replacement, $time);
+    }
+
+    return "pred $time";
+};
+
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 return [
     'year' => 'rok|:count roky|:count rokov',
     'y' => ':count r',

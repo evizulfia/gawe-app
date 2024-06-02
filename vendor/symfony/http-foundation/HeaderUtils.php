@@ -270,6 +270,7 @@ class HeaderUtils
             }
         }
 
+<<<<<<< HEAD
         $parts = [];
         if ($partSeparators) {
             foreach ($partMatches as $matches) {
@@ -285,6 +286,13 @@ class HeaderUtils
                     $parts[0],
                     implode($separator, \array_slice($parts, 1)),
                 ];
+=======
+        foreach ($partMatches as $matches) {
+            if ('' === $separators && '' !== $unquoted = self::unquote($matches[0][0])) {
+                $parts[] = $unquoted;
+            } elseif ($groupedParts = self::groupParts($matches, $separators, false)) {
+                $parts[] = $groupedParts;
+>>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             }
         }
 
