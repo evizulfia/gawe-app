@@ -6,11 +6,9 @@ use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 use Illuminate\Database\Eloquent\Model;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-#[AsCommand(name: 'db:seed')]
 class SeedCommand extends Command
 {
     use ConfirmableTrait;
@@ -21,6 +19,15 @@ class SeedCommand extends Command
      * @var string
      */
     protected $name = 'db:seed';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     */
+    protected static $defaultName = 'db:seed';
 
     /**
      * The console command description.
@@ -60,8 +67,6 @@ class SeedCommand extends Command
             return 1;
         }
 
-        $this->components->info('Seeding database.');
-
         $previousConnection = $this->resolver->getDefaultConnection();
 
         $this->resolver->setDefaultConnection($this->getDatabase());
@@ -73,6 +78,8 @@ class SeedCommand extends Command
         if ($previousConnection) {
             $this->resolver->setDefaultConnection($previousConnection);
         }
+
+        $this->info('Database seeding completed successfully.');
 
         return 0;
     }

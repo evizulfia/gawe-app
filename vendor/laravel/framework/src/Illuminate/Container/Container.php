@@ -11,7 +11,6 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionFunction;
 use ReflectionParameter;
 use TypeError;
 
@@ -427,7 +426,9 @@ class Container implements ArrayAccess, ContainerContract
     public function scopedIf($abstract, $concrete = null)
     {
         if (! $this->bound($abstract)) {
-            $this->scoped($abstract, $concrete);
+            $this->scopedInstances[] = $abstract;
+
+            $this->singleton($abstract, $concrete);
         }
     }
 
@@ -632,7 +633,9 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function wrap(Closure $callback, array $parameters = [])
     {
-        return fn () => $this->call($callback, $parameters);
+        return function () use ($callback, $parameters) {
+            return $this->call($callback, $parameters);
+        };
     }
 
     /**
@@ -647,41 +650,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function call($callback, array $parameters = [], $defaultMethod = null)
     {
-        $pushedToBuildStack = false;
-
-        if (($className = $this->getClassForCallable($callback)) && ! in_array(
-            $className,
-            $this->buildStack,
-            true
-        )) {
-            $this->buildStack[] = $className;
-
-            $pushedToBuildStack = true;
-        }
-
-        $result = BoundMethod::call($this, $callback, $parameters, $defaultMethod);
-
-        if ($pushedToBuildStack) {
-            array_pop($this->buildStack);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get the class name for the given callback, if one can be determined.
-     *
-     * @param  callable|string  $callback
-     * @return string|false
-     */
-    protected function getClassForCallable($callback)
-    {
-        if (is_callable($callback) &&
-            ! ($reflector = new ReflectionFunction($callback(...)))->isAnonymous()) {
-            return $reflector->getClosureScopeClass()->name ?? false;
-        }
-
-        return false;
+        return BoundMethod::call($this, $callback, $parameters, $defaultMethod);
     }
 
     /**
@@ -692,7 +661,9 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function factory($abstract)
     {
-        return fn () => $this->make($abstract);
+        return function () use ($abstract) {
+            return $this->make($abstract);
+        };
     }
 
     /**
@@ -737,7 +708,7 @@ class Container implements ArrayAccess, ContainerContract
                 throw $e;
             }
 
-            throw new EntryNotFoundException($id, is_int($e->getCode()) ? $e->getCode() : 0, $e);
+            throw new EntryNotFoundException($id, $e->getCode(), $e);
         }
     }
 
@@ -783,9 +754,11 @@ class Container implements ArrayAccess, ContainerContract
         // We're ready to instantiate an instance of the concrete type registered for
         // the binding. This will instantiate the types, as well as resolve any of
         // its "nested" dependencies recursively until all have gotten resolved.
-        $object = $this->isBuildable($concrete, $abstract)
-            ? $this->build($concrete)
-            : $this->make($concrete);
+        if ($this->isBuildable($concrete, $abstract)) {
+            $object = $this->build($concrete);
+        } else {
+            $object = $this->make($concrete);
+        }
 
         // If we defined any extenders for this type, we'll need to spin through them
         // and apply them to the object being built. This allows for the extension
@@ -1035,10 +1008,6 @@ class Container implements ArrayAccess, ContainerContract
             return $parameter->getDefaultValue();
         }
 
-        if ($parameter->isVariadic()) {
-            return [];
-        }
-
         $this->unresolvablePrimitive($parameter);
     }
 
@@ -1094,7 +1063,9 @@ class Container implements ArrayAccess, ContainerContract
             return $this->make($className);
         }
 
-        return array_map(fn ($abstract) => $this->resolve($abstract), $concrete);
+        return array_map(function ($abstract) {
+            return $this->resolve($abstract);
+        }, $concrete);
     }
 
     /**
@@ -1455,7 +1426,9 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function offsetSet($key, $value): void
     {
-        $this->bind($key, $value instanceof Closure ? $value : fn () => $value);
+        $this->bind($key, $value instanceof Closure ? $value : function () use ($value) {
+            return $value;
+        });
     }
 
     /**

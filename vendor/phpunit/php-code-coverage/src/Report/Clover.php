@@ -16,13 +16,12 @@ use function is_string;
 use function ksort;
 use function max;
 use function range;
-use function str_contains;
 use function time;
 use DOMDocument;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Directory;
 use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 use SebastianBergmann\CodeCoverage\Node\File;
-use SebastianBergmann\CodeCoverage\Util\Filesystem;
 
 final class Clover
 {
@@ -79,7 +78,7 @@ final class Clover
                     }
 
                     $classMethods++;
-                    $classStatements        += $method['executableLines'];
+                    $classStatements += $method['executableLines'];
                     $coveredClassStatements += $method['executedLines'];
 
                     if ($method['coverage'] == 100) {
@@ -89,7 +88,7 @@ final class Clover
                     $methodCount = 0;
 
                     foreach (range($method['startLine'], $method['endLine']) as $line) {
-                        if (isset($coverageData[$line])) {
+                        if (isset($coverageData[$line]) && ($coverageData[$line] !== null)) {
                             $methodCount = max($methodCount, count($coverageData[$line]));
                         }
                     }
@@ -115,28 +114,28 @@ final class Clover
                 if (!empty($class['package']['fullPackage'])) {
                     $xmlClass->setAttribute(
                         'fullPackage',
-                        $class['package']['fullPackage'],
+                        $class['package']['fullPackage']
                     );
                 }
 
                 if (!empty($class['package']['category'])) {
                     $xmlClass->setAttribute(
                         'category',
-                        $class['package']['category'],
+                        $class['package']['category']
                     );
                 }
 
                 if (!empty($class['package']['package'])) {
                     $xmlClass->setAttribute(
                         'package',
-                        $class['package']['package'],
+                        $class['package']['package']
                     );
                 }
 
                 if (!empty($class['package']['subpackage'])) {
                     $xmlClass->setAttribute(
                         'subpackage',
-                        $class['package']['subpackage'],
+                        $class['package']['subpackage']
                     );
                 }
 
@@ -195,8 +194,8 @@ final class Clover
             $linesOfCode = $item->linesOfCode();
 
             $xmlMetrics = $xmlDocument->createElement('metrics');
-            $xmlMetrics->setAttribute('loc', (string) $linesOfCode['linesOfCode']);
-            $xmlMetrics->setAttribute('ncloc', (string) $linesOfCode['nonCommentLinesOfCode']);
+            $xmlMetrics->setAttribute('loc', (string) $linesOfCode->linesOfCode());
+            $xmlMetrics->setAttribute('ncloc', (string) $linesOfCode->nonCommentLinesOfCode());
             $xmlMetrics->setAttribute('classes', (string) $item->numberOfClassesAndTraits());
             $xmlMetrics->setAttribute('methods', (string) $item->numberOfMethods());
             $xmlMetrics->setAttribute('coveredmethods', (string) $item->numberOfTestedMethods());
@@ -213,7 +212,7 @@ final class Clover
             } else {
                 if (!isset($packages[$namespace])) {
                     $packages[$namespace] = $xmlDocument->createElement(
-                        'package',
+                        'package'
                     );
 
                     $packages[$namespace]->setAttribute('name', $namespace);
@@ -228,8 +227,8 @@ final class Clover
 
         $xmlMetrics = $xmlDocument->createElement('metrics');
         $xmlMetrics->setAttribute('files', (string) count($report));
-        $xmlMetrics->setAttribute('loc', (string) $linesOfCode['linesOfCode']);
-        $xmlMetrics->setAttribute('ncloc', (string) $linesOfCode['nonCommentLinesOfCode']);
+        $xmlMetrics->setAttribute('loc', (string) $linesOfCode->linesOfCode());
+        $xmlMetrics->setAttribute('ncloc', (string) $linesOfCode->nonCommentLinesOfCode());
         $xmlMetrics->setAttribute('classes', (string) $report->numberOfClassesAndTraits());
         $xmlMetrics->setAttribute('methods', (string) $report->numberOfMethods());
         $xmlMetrics->setAttribute('coveredmethods', (string) $report->numberOfTestedMethods());
@@ -244,9 +243,7 @@ final class Clover
         $buffer = $xmlDocument->saveXML();
 
         if ($target !== null) {
-            if (!str_contains($target, '://')) {
-                Filesystem::createDirectory(dirname($target));
-            }
+            Directory::create(dirname($target));
 
             if (@file_put_contents($target, $buffer) === false) {
                 throw new WriteOperationFailedException($target);

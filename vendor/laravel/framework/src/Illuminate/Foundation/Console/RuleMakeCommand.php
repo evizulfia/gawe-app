@@ -3,10 +3,8 @@
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-#[AsCommand(name: 'make:rule')]
 class RuleMakeCommand extends GeneratorCommand
 {
     /**
@@ -15,6 +13,15 @@ class RuleMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:rule';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     */
+    protected static $defaultName = 'make:rule';
 
     /**
      * The console command description.
@@ -54,13 +61,11 @@ class RuleMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        $stub = $this->option('implicit')
-            ? '/stubs/rule.implicit.stub'
-            : '/stubs/rule.stub';
+        $relativePath = '/stubs/rule.stub';
 
-        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
+        return file_exists($customPath = $this->laravel->basePath(trim($relativePath, '/')))
             ? $customPath
-            : __DIR__.$stub;
+            : __DIR__.$relativePath;
     }
 
     /**
@@ -82,8 +87,7 @@ class RuleMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the rule already exists'],
-            ['implicit', 'i', InputOption::VALUE_NONE, 'Generate an implicit rule'],
+            ['implicit', 'i', InputOption::VALUE_NONE, 'Generate an implicit rule.'],
         ];
     }
 }

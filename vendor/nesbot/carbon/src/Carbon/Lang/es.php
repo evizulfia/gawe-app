@@ -26,7 +26,6 @@
  * - quinterocesar
  * - Daniel Commesse Liévanos (danielcommesse)
  * - Pete Scopes (pdscopes)
- * - gam04
  */
 
 use Carbon\CarbonInterface;
@@ -81,19 +80,19 @@ return [
         'LLLL' => 'dddd, D [de] MMMM [de] YYYY H:mm',
     ],
     'calendar' => [
-        'sameDay' => static function (CarbonInterface $current) {
+        'sameDay' => function (CarbonInterface $current) {
             return '[hoy a la'.($current->hour !== 1 ? 's' : '').'] LT';
         },
-        'nextDay' => static function (CarbonInterface $current) {
+        'nextDay' => function (CarbonInterface $current) {
             return '[mañana a la'.($current->hour !== 1 ? 's' : '').'] LT';
         },
-        'nextWeek' => static function (CarbonInterface $current) {
+        'nextWeek' => function (CarbonInterface $current) {
             return 'dddd [a la'.($current->hour !== 1 ? 's' : '').'] LT';
         },
-        'lastDay' => static function (CarbonInterface $current) {
+        'lastDay' => function (CarbonInterface $current) {
             return '[ayer a la'.($current->hour !== 1 ? 's' : '').'] LT';
         },
-        'lastWeek' => static function (CarbonInterface $current) {
+        'lastWeek' => function (CarbonInterface $current) {
             return '[el] dddd [pasado a la'.($current->hour !== 1 ? 's' : '').'] LT';
         },
         'sameElse' => 'L',
@@ -109,13 +108,4 @@ return [
     'day_of_first_week_of_year' => 4,
     'list' => [', ', ' y '],
     'meridiem' => ['a. m.', 'p. m.'],
-    'ordinal_words' => [
-        'of' => 'de',
-        'first' => 'primer',
-        'second' => 'segundo',
-        'third' => 'tercer',
-        'fourth' => 'cuarto',
-        'fifth' => 'quinto',
-        'last' => 'último',
-    ],
 ];

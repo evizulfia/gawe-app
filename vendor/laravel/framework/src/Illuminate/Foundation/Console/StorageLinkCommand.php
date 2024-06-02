@@ -3,9 +3,7 @@
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'storage:link')]
 class StorageLinkCommand extends Command
 {
     /**
@@ -16,6 +14,15 @@ class StorageLinkCommand extends Command
     protected $signature = 'storage:link
                 {--relative : Create the symbolic link using relative paths}
                 {--force : Recreate existing symbolic links}';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     */
+    protected static $defaultName = 'storage:link';
 
     /**
      * The console command description.
@@ -35,7 +42,7 @@ class StorageLinkCommand extends Command
 
         foreach ($this->links() as $link => $target) {
             if (file_exists($link) && ! $this->isRemovableSymlink($link, $this->option('force'))) {
-                $this->components->error("The [$link] link already exists.");
+                $this->error("The [$link] link already exists.");
                 continue;
             }
 
@@ -49,8 +56,10 @@ class StorageLinkCommand extends Command
                 $this->laravel->make('files')->link($target, $link);
             }
 
-            $this->components->info("The [$link] link has been connected to [$target].");
+            $this->info("The [$link] link has been connected to [$target].");
         }
+
+        $this->info('The links have been created.');
     }
 
     /**

@@ -4,14 +4,11 @@ namespace Illuminate\Mail\Transport;
 
 use Aws\Exception\AwsException;
 use Aws\Ses\SesClient;
-use Stringable;
-use Symfony\Component\Mailer\Exception\TransportException;
-use Symfony\Component\Mailer\Header\MetadataHeader;
+use Exception;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
-use Symfony\Component\Mime\Message;
 
-class SesTransport extends AbstractTransport implements Stringable
+class SesTransport extends AbstractTransport
 {
     /**
      * The Amazon SES instance.
@@ -47,30 +44,11 @@ class SesTransport extends AbstractTransport implements Stringable
      */
     protected function doSend(SentMessage $message): void
     {
-        $options = $this->options;
-
-        if ($message->getOriginalMessage() instanceof Message) {
-            if ($listManagementOptions = $this->listManagementOptions($message)) {
-                $options['ListManagementOptions'] = $listManagementOptions;
-            }
-
-            foreach ($message->getOriginalMessage()->getHeaders()->all() as $header) {
-                if ($header instanceof MetadataHeader) {
-                    $options['Tags'][] = ['Name' => $header->getKey(), 'Value' => $header->getValue()];
-                }
-            }
-        }
-
         try {
-            $result = $this->ses->sendRawEmail(
+            $this->ses->sendRawEmail(
                 array_merge(
-                    $options, [
+                    $this->options, [
                         'Source' => $message->getEnvelope()->getSender()->toString(),
-                        'Destinations' => collect($message->getEnvelope()->getRecipients())
-                                ->map
-                                ->toString()
-                                ->values()
-                                ->all(),
                         'RawMessage' => [
                             'Data' => $message->toString(),
                         ],
@@ -78,34 +56,18 @@ class SesTransport extends AbstractTransport implements Stringable
                 )
             );
         } catch (AwsException $e) {
-            $reason = $e->getAwsErrorMessage() ?? $e->getMessage();
-
-            throw new TransportException(
-                sprintf('Request to AWS SES API failed. Reason: %s.', $reason),
-                is_int($e->getCode()) ? $e->getCode() : 0,
-                $e
-            );
+            throw new Exception('Request to AWS SES API failed.', $e->getCode(), $e);
         }
-
-        $messageId = $result->get('MessageId');
-
-        $message->getOriginalMessage()->getHeaders()->addHeader('X-Message-ID', $messageId);
-        $message->getOriginalMessage()->getHeaders()->addHeader('X-SES-Message-ID', $messageId);
     }
 
     /**
-     * Extract the SES list managenent options, if applicable.
+     * Get the string representation of the transport.
      *
-     * @param  \Illuminate\Mail\SentMessage  $message
-     * @return array|null
+     * @return string
      */
-    protected function listManagementOptions(SentMessage $message)
+    public function __toString(): string
     {
-        if ($header = $message->getOriginalMessage()->getHeaders()->get('X-SES-LIST-MANAGEMENT-OPTIONS')) {
-            if (preg_match("/^(contactListName=)*(?<ContactListName>[^;]+)(;\s?topicName=(?<TopicName>.+))?$/ix", $header->getBodyAsString(), $listManagementOptions)) {
-                return array_filter($listManagementOptions, fn ($e) => in_array($e, ['ContactListName', 'TopicName']), ARRAY_FILTER_USE_KEY);
-            }
-        }
+        return 'ses';
     }
 
     /**
@@ -137,15 +99,5 @@ class SesTransport extends AbstractTransport implements Stringable
     public function setOptions(array $options)
     {
         return $this->options = $options;
-    }
-
-    /**
-     * Get the string representation of the transport.
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return 'ses';
     }
 }

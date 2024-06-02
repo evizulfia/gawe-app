@@ -2,7 +2,6 @@
 
 namespace Illuminate\Routing;
 
-use BackedEnum;
 use Closure;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Contracts\Routing\UrlRoutable;
@@ -90,13 +89,6 @@ class UrlGenerator implements UrlGeneratorContract
     protected $keyResolver;
 
     /**
-     * The missing named route resolver callable.
-     *
-     * @var callable
-     */
-    protected $missingNamedRouteResolver;
-
-    /**
      * The callback to use to format hosts.
      *
      * @var \Closure
@@ -175,26 +167,15 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * Get the previous path info for the request.
-     *
-     * @param  mixed  $fallback
-     * @return string
-     */
-    public function previousPath($fallback = false)
-    {
-        $previousPath = str_replace($this->to('/'), '', rtrim(preg_replace('/\?.*/', '', $this->previous($fallback)), '/'));
-
-        return $previousPath === '' ? '/' : $previousPath;
-    }
-
-    /**
      * Get the previous URL from the session if possible.
      *
      * @return string|null
      */
     protected function getPreviousUrlFromSession()
     {
-        return $this->getSession()?->previousUrl();
+        $session = $this->getSession();
+
+        return $session ? $session->previousUrl() : null;
     }
 
     /**
@@ -260,7 +241,7 @@ class UrlGenerator implements UrlGeneratorContract
         // for asset paths, but only for routes to endpoints in the application.
         $root = $this->assetRoot ?: $this->formatRoot($this->formatScheme($secure));
 
-        return Str::finish($this->removeIndex($root), '/').trim($path, '/');
+        return $this->removeIndex($root).'/'.trim($path, '/');
     }
 
     /**
@@ -429,7 +410,7 @@ class UrlGenerator implements UrlGeneratorContract
 
         $url = $absolute ? $request->url() : '/'.$request->path();
 
-        $queryString = collect(explode('&', (string) $request->server->get('QUERY_STRING')))
+        $queryString = collect(explode('&', $request->server->get('QUERY_STRING')))
             ->reject(fn ($parameter) => in_array(Str::before($parameter, '='), $ignoreQuery))
             ->join('&');
 
@@ -469,11 +450,6 @@ class UrlGenerator implements UrlGeneratorContract
             return $this->toRoute($route, $parameters, $absolute);
         }
 
-        if (! is_null($this->missingNamedRouteResolver) &&
-            ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
-            return $url;
-        }
-
         throw new RouteNotFoundException("Route [{$name}] not defined.");
     }
 
@@ -490,11 +466,9 @@ class UrlGenerator implements UrlGeneratorContract
     public function toRoute($route, $parameters, $absolute)
     {
         $parameters = collect(Arr::wrap($parameters))->map(function ($value, $key) use ($route) {
-            $value = $value instanceof UrlRoutable && $route->bindingFieldFor($key)
+            return $value instanceof UrlRoutable && $route->bindingFieldFor($key)
                     ? $value->{$route->bindingFieldFor($key)}
                     : $value;
-
-            return $value instanceof BackedEnum ? $value->value : $value;
         })->all();
 
         return $this->routeUrl()->to(
@@ -535,9 +509,9 @@ class UrlGenerator implements UrlGeneratorContract
 
         if ($this->rootNamespace && ! str_starts_with($action, '\\')) {
             return $this->rootNamespace.'\\'.$action;
+        } else {
+            return trim($action, '\\');
         }
-
-        return trim($action, '\\');
     }
 
     /**
@@ -815,30 +789,6 @@ class UrlGenerator implements UrlGeneratorContract
     public function setKeyResolver(callable $keyResolver)
     {
         $this->keyResolver = $keyResolver;
-
-        return $this;
-    }
-
-    /**
-     * Clone a new instance of the URL generator with a different encryption key resolver.
-     *
-     * @param  callable  $keyResolver
-     * @return \Illuminate\Routing\UrlGenerator
-     */
-    public function withKeyResolver(callable $keyResolver)
-    {
-        return (clone $this)->setKeyResolver($keyResolver);
-    }
-
-    /**
-     * Set the callback that should be used to attempt to resolve missing named routes.
-     *
-     * @param  callable  $missingNamedRouteResolver
-     * @return $this
-     */
-    public function resolveMissingNamedRoutesUsing(callable $missingNamedRouteResolver)
-    {
-        $this->missingNamedRouteResolver = $missingNamedRouteResolver;
 
         return $this;
     }

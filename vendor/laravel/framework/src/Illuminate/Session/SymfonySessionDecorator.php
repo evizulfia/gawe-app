@@ -13,9 +13,9 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * The underlying Laravel session store.
      *
-     * @var \Illuminate\Contracts\Session\Session
+     * @var \Illuminate\Session\Store
      */
-    public readonly Session $store;
+    protected $store;
 
     /**
      * Create a new session decorator.
@@ -47,7 +47,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function setId(string $id): void
+    public function setId(string $id)
     {
         $this->store->setId($id);
     }
@@ -63,7 +63,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function setName(string $name): void
+    public function setName(string $name)
     {
         $this->store->setName($name);
     }
@@ -91,7 +91,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function save(): void
+    public function save()
     {
         $this->store->save();
     }
@@ -115,7 +115,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function set(string $name, mixed $value): void
+    public function set(string $name, mixed $value)
     {
         $this->store->put($name, $value);
     }
@@ -131,7 +131,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function replace(array $attributes): void
+    public function replace(array $attributes)
     {
         $this->store->replace($attributes);
     }
@@ -147,7 +147,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function clear(): void
+    public function clear()
     {
         $this->store->flush();
     }
@@ -163,7 +163,7 @@ class SymfonySessionDecorator implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function registerBag(SessionBagInterface $bag): void
+    public function registerBag(SessionBagInterface $bag)
     {
         throw new BadMethodCallException('Method not implemented by Laravel.');
     }

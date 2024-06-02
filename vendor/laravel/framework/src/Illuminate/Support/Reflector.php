@@ -23,7 +23,8 @@ class Reflector
             return is_callable($var, $syntaxOnly);
         }
 
-        if (! isset($var[0], $var[1]) || ! is_string($var[1] ?? null)) {
+        if ((! isset($var[0]) || ! isset($var[1])) ||
+            ! is_string($var[1] ?? null)) {
             return false;
         }
 
@@ -148,17 +149,9 @@ class Reflector
      */
     public static function isParameterBackedEnumWithStringBackingType($parameter)
     {
-        if (! $parameter->getType() instanceof ReflectionNamedType) {
-            return false;
-        }
+        $backedEnumClass = (string) $parameter->getType();
 
-        $backedEnumClass = $parameter->getType()?->getName();
-
-        if (is_null($backedEnumClass)) {
-            return false;
-        }
-
-        if (enum_exists($backedEnumClass)) {
+        if (function_exists('enum_exists') && enum_exists($backedEnumClass)) {
             $reflectionBackedEnum = new ReflectionEnum($backedEnumClass);
 
             return $reflectionBackedEnum->isBacked()

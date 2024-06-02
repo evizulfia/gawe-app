@@ -4,7 +4,6 @@ namespace Illuminate\Database\Connectors;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Connection;
-use Illuminate\Database\MariaDbConnection;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\SQLiteConnection;
@@ -178,7 +177,7 @@ class ConnectionFactory
     protected function createPdoResolverWithHosts(array $config)
     {
         return function () use ($config) {
-            foreach (Arr::shuffle($this->parseHosts($config)) as $host) {
+            foreach (Arr::shuffle($hosts = $this->parseHosts($config)) as $key => $host) {
                 $config['host'] = $host;
 
                 try {
@@ -219,7 +218,9 @@ class ConnectionFactory
      */
     protected function createPdoResolverWithoutHosts(array $config)
     {
-        return fn () => $this->createConnector($config)->connect($config);
+        return function () use ($config) {
+            return $this->createConnector($config)->connect($config);
+        };
     }
 
     /**
@@ -242,7 +243,6 @@ class ConnectionFactory
 
         return match ($config['driver']) {
             'mysql' => new MySqlConnector,
-            'mariadb' => new MariaDbConnector,
             'pgsql' => new PostgresConnector,
             'sqlite' => new SQLiteConnector,
             'sqlsrv' => new SqlServerConnector,
@@ -270,7 +270,6 @@ class ConnectionFactory
 
         return match ($driver) {
             'mysql' => new MySqlConnection($connection, $database, $prefix, $config),
-            'mariadb' => new MariaDbConnection($connection, $database, $prefix, $config),
             'pgsql' => new PostgresConnection($connection, $database, $prefix, $config),
             'sqlite' => new SQLiteConnection($connection, $database, $prefix, $config),
             'sqlsrv' => new SqlServerConnection($connection, $database, $prefix, $config),

@@ -3,10 +3,7 @@
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
 
-#[AsCommand(name: 'make:scope')]
 class ScopeMakeCommand extends GeneratorCommand
 {
     /**
@@ -15,6 +12,15 @@ class ScopeMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:scope';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     */
+    protected static $defaultName = 'make:scope';
 
     /**
      * The console command description.
@@ -62,17 +68,5 @@ class ScopeMakeCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         return is_dir(app_path('Models')) ? $rootNamespace.'\\Models\\Scopes' : $rootNamespace.'\Scopes';
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the scope already exists'],
-        ];
     }
 }

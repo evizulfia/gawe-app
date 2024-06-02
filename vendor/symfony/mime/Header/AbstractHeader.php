@@ -34,7 +34,7 @@ abstract class AbstractHeader implements HeaderInterface
         $this->name = $name;
     }
 
-    public function setCharset(string $charset): void
+    public function setCharset(string $charset)
     {
         $this->charset = $charset;
     }
@@ -49,7 +49,7 @@ abstract class AbstractHeader implements HeaderInterface
      *
      * For example, for US English, 'en-us'.
      */
-    public function setLanguage(string $lang): void
+    public function setLanguage(string $lang)
     {
         $this->lang = $lang;
     }
@@ -64,7 +64,7 @@ abstract class AbstractHeader implements HeaderInterface
         return $this->name;
     }
 
-    public function setMaxLineLength(int $lineLength): void
+    public function setMaxLineLength(int $lineLength)
     {
         $this->lineLength = $lineLength;
     }
@@ -109,11 +109,6 @@ abstract class AbstractHeader implements HeaderInterface
                 }
                 $phraseStr = $this->encodeWords($header, $string, $usedLength);
             }
-        } elseif (str_contains($phraseStr, '(')) {
-            foreach (['\\', '"'] as $char) {
-                $phraseStr = str_replace($char, '\\'.$char, $phraseStr);
-            }
-            $phraseStr = '"'.$phraseStr.'"';
         }
 
         return $phraseStr;
@@ -198,7 +193,7 @@ abstract class AbstractHeader implements HeaderInterface
         $encodingWrapperLength = \strlen('=?'.$charsetDecl.'?'.self::$encoder->getName().'??=');
 
         if ($firstLineOffset >= 75) {
-            // Does this logic need to be here?
+            //Does this logic need to be here?
             $firstLineOffset = 0;
         }
 
@@ -229,9 +224,11 @@ abstract class AbstractHeader implements HeaderInterface
     /**
      * Generate a list of all tokens in the final header.
      */
-    protected function toTokens(?string $string = null): array
+    protected function toTokens(string $string = null): array
     {
-        $string ??= $this->getBodyAsString();
+        if (null === $string) {
+            $string = $this->getBodyAsString();
+        }
 
         $tokens = [];
         // Generate atoms; split at all invisible boundaries followed by WSP
@@ -261,8 +258,8 @@ abstract class AbstractHeader implements HeaderInterface
         // Build all tokens back into compliant header
         foreach ($tokens as $i => $token) {
             // Line longer than specified maximum or token was just a new line
-            if (("\r\n" === $token)
-                || ($i > 0 && \strlen($currentLine.$token) > $this->lineLength)
+            if (("\r\n" === $token) ||
+                ($i > 0 && \strlen($currentLine.$token) > $this->lineLength)
                 && '' !== $currentLine) {
                 $headerLines[] = '';
                 $currentLine = &$headerLines[$lineCount++];

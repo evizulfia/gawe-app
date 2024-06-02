@@ -3,9 +3,7 @@
 namespace Illuminate\Validation;
 
 use Closure;
-use Illuminate\Contracts\Validation\InvokableRule;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Exists;
@@ -87,7 +85,9 @@ class ValidationRuleParser
     protected function explodeExplicitRule($rule, $attribute)
     {
         if (is_string($rule)) {
-            return explode('|', $rule);
+            [$name] = static::parseStringRule($rule);
+
+            return static::ruleIsRegex($name) ? [$rule] : explode('|', $rule);
         }
 
         if (is_object($rule)) {
@@ -97,7 +97,7 @@ class ValidationRuleParser
         return array_map(
             [$this, 'prepareRule'],
             $rule,
-            array_fill((int) array_key_first($rule), count($rule), $attribute)
+            array_fill(array_key_first($rule), count($rule), $attribute)
         );
     }
 
@@ -112,10 +112,6 @@ class ValidationRuleParser
     {
         if ($rule instanceof Closure) {
             $rule = new ClosureValidationRule($rule);
-        }
-
-        if ($rule instanceof InvokableRule || $rule instanceof ValidationRule) {
-            $rule = InvokableValidationRule::make($rule);
         }
 
         if (! is_object($rule) ||
@@ -144,13 +140,13 @@ class ValidationRuleParser
      */
     protected function explodeWildcardRules($results, $attribute, $rules)
     {
-        $pattern = str_replace('\*', '[^\.]*', preg_quote($attribute, '/'));
+        $pattern = str_replace('\*', '[^\.]*', preg_quote($attribute));
 
         $data = ValidationData::initializeAndGatherData($attribute, $this->data);
 
         foreach ($data as $key => $value) {
             if (Str::startsWith($key, $attribute) || (bool) preg_match('/^'.$pattern.'\z/', $key)) {
-                foreach ((array) $rules as $rule) {
+                foreach (Arr::flatten((array) $rules) as $rule) {
                     if ($rule instanceof NestedRules) {
                         $compiled = $rule->compile($key, $value, $data);
 
@@ -310,7 +306,7 @@ class ValidationRuleParser
     }
 
     /**
-     * Expand the conditional rules in the given array of rules.
+     * Expand and conditional rules in the given array of rules.
      *
      * @param  array  $rules
      * @param  array  $data

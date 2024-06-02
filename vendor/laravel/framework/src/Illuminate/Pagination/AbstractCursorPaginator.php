@@ -14,13 +14,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Tappable;
-use Stringable;
 use Traversable;
 
 /**
  * @mixin \Illuminate\Support\Collection
  */
-abstract class AbstractCursorPaginator implements Htmlable, Stringable
+abstract class AbstractCursorPaginator implements Htmlable
 {
     use ForwardsCalls, Tappable;
 
@@ -157,10 +156,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
             return null;
         }
 
-        if ($this->items->isEmpty()) {
-            return null;
-        }
-
         return $this->getCursorForItem($this->items->first(), false);
     }
 
@@ -173,10 +168,6 @@ abstract class AbstractCursorPaginator implements Htmlable, Stringable
     {
         if ((is_null($this->cursor) && ! $this->hasMore) ||
             (! is_null($this->cursor) && $this->cursor->pointsToNextItems() && ! $this->hasMore)) {
-            return null;
-        }
-
-        if ($this->items->isEmpty()) {
             return null;
         }
 

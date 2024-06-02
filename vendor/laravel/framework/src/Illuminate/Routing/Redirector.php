@@ -36,6 +36,17 @@ class Redirector
     }
 
     /**
+     * Create a new redirect response to the "home" route.
+     *
+     * @param  int  $status
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function home($status = 302)
+    {
+        return $this->to($this->generator->route('home'), $status);
+    }
+
+    /**
      * Create a new redirect response to the previous location.
      *
      * @param  int  $status
@@ -87,7 +98,7 @@ class Redirector
     /**
      * Create a new redirect response to the previously intended location.
      *
-     * @param  mixed  $default
+     * @param  string  $default
      * @param  int  $status
      * @param  array  $headers
      * @param  bool|null  $secure
@@ -98,6 +109,19 @@ class Redirector
         $path = $this->session->pull('url.intended', $default);
 
         return $this->to($path, $status, $headers, $secure);
+    }
+
+    /**
+     * Set the intended url.
+     *
+     * @param  string  $url
+     * @return $this
+     */
+    public function setIntendedUrl($url)
+    {
+        $this->session->put('url.intended', $url);
+
+        return $this;
     }
 
     /**
@@ -236,28 +260,5 @@ class Redirector
     public function setSession(SessionStore $session)
     {
         $this->session = $session;
-    }
-
-    /**
-     * Get the "intended" URL from the session.
-     *
-     * @return string|null
-     */
-    public function getIntendedUrl()
-    {
-        return $this->session->get('url.intended');
-    }
-
-    /**
-     * Set the "intended" URL in the session.
-     *
-     * @param  string  $url
-     * @return $this
-     */
-    public function setIntendedUrl($url)
-    {
-        $this->session->put('url.intended', $url);
-
-        return $this;
     }
 }

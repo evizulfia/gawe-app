@@ -46,16 +46,16 @@ return [
         'lastWeek' => 'dddd [leliphelile] [nga] LT',
         'sameElse' => 'L',
     ],
-    'ordinal' => static function ($number) {
+    'ordinal' => function ($number) {
         $lastDigit = $number % 10;
 
         return $number.(
-            ((int) ($number % 100 / 10) === 1) ? 'e' : (
+            (~~($number % 100 / 10) === 1) ? 'e' : (
                 ($lastDigit === 1 || $lastDigit === 2) ? 'a' : 'e'
             )
         );
     },
-    'meridiem' => static function ($hour) {
+    'meridiem' => function ($hour) {
         if ($hour < 11) {
             return 'ekuseni';
         }

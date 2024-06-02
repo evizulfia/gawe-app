@@ -2,7 +2,6 @@
 
 namespace Illuminate\Database\Schema;
 
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\File;
 
 class SQLiteBuilder extends Builder
@@ -29,42 +28,6 @@ class SQLiteBuilder extends Builder
         return File::exists($name)
             ? File::delete($name)
             : true;
-    }
-
-    /**
-     * Get the tables for the database.
-     *
-     * @return array
-     */
-    public function getTables()
-    {
-        $withSize = false;
-
-        try {
-            $withSize = $this->connection->scalar($this->grammar->compileDbstatExists());
-        } catch (QueryException $e) {
-            //
-        }
-
-        return $this->connection->getPostProcessor()->processTables(
-            $this->connection->selectFromWriteConnection($this->grammar->compileTables($withSize))
-        );
-    }
-
-    /**
-     * Get the columns for a given table.
-     *
-     * @param  string  $table
-     * @return array
-     */
-    public function getColumns($table)
-    {
-        $table = $this->connection->getTablePrefix().$table;
-
-        return $this->connection->getPostProcessor()->processColumns(
-            $this->connection->selectFromWriteConnection($this->grammar->compileColumns($table)),
-            $this->connection->scalar($this->grammar->compileSqlCreateStatement($table))
-        );
     }
 
     /**

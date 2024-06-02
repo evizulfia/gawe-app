@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This file is part of the Carbon package.
  *
@@ -13,39 +11,20 @@ declare(strict_types=1);
 
 namespace Carbon\Exceptions;
 
+use Exception;
 use InvalidArgumentException as BaseInvalidArgumentException;
-use Throwable;
 
 class UnknownSetterException extends BaseInvalidArgumentException implements BadMethodCallException
 {
     /**
-     * The setter.
-     *
-     * @var string
-     */
-    protected $setter;
-
-    /**
      * Constructor.
      *
-     * @param string         $setter   setter name
+     * @param string         $name     setter name
      * @param int            $code
-     * @param Throwable|null $previous
+     * @param Exception|null $previous
      */
-    public function __construct($setter, $code = 0, Throwable $previous = null)
+    public function __construct($name, $code = 0, Exception $previous = null)
     {
-        $this->setter = $setter;
-
-        parent::__construct("Unknown setter '$setter'", $code, $previous);
-    }
-
-    /**
-     * Get the setter.
-     *
-     * @return string
-     */
-    public function getSetter(): string
-    {
-        return $this->setter;
+        parent::__construct("Unknown setter '$name'", $code, $previous);
     }
 }

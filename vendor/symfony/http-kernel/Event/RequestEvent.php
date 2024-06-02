@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RequestEvent extends KernelEvent
 {
-    private ?Response $response = null;
+    private $response = null;
 
     /**
      * Returns the response object.
@@ -37,7 +37,7 @@ class RequestEvent extends KernelEvent
     /**
      * Sets a response and stops event propagation.
      */
-    public function setResponse(Response $response): void
+    public function setResponse(Response $response)
     {
         $this->response = $response;
 

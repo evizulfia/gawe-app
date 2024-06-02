@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This file is part of the Carbon package.
  *
@@ -13,38 +11,19 @@ declare(strict_types=1);
 
 namespace Carbon\Exceptions;
 
-use Throwable;
+use Exception;
 
 class UnitNotConfiguredException extends UnitException
 {
-    /**
-     * The unit.
-     *
-     * @var string
-     */
-    protected $unit;
-
     /**
      * Constructor.
      *
      * @param string         $unit
      * @param int            $code
-     * @param Throwable|null $previous
+     * @param Exception|null $previous
      */
-    public function __construct($unit, $code = 0, Throwable $previous = null)
+    public function __construct($unit, $code = 0, Exception $previous = null)
     {
-        $this->unit = $unit;
-
         parent::__construct("Unit $unit have no configuration to get total from other units.", $code, $previous);
-    }
-
-    /**
-     * Get the unit.
-     *
-     * @return string
-     */
-    public function getUnit(): string
-    {
-        return $this->unit;
     }
 }

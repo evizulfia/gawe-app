@@ -13,7 +13,6 @@ namespace Symfony\Component\HttpKernel\DataCollector;
 
 use Symfony\Component\VarDumper\Caster\CutStub;
 use Symfony\Component\VarDumper\Caster\ReflectionCaster;
-use Symfony\Component\VarDumper\Cloner\ClonerInterface;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\Stub;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
@@ -28,9 +27,12 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  */
 abstract class DataCollector implements DataCollectorInterface
 {
-    protected array|Data $data = [];
+    /**
+     * @var array|Data
+     */
+    protected $data = [];
 
-    private ClonerInterface $cloner;
+    private $cloner;
 
     /**
      * Converts the variable into a serializable Data instance.
@@ -55,7 +57,7 @@ abstract class DataCollector implements DataCollectorInterface
     /**
      * @return callable[] The casters to add to the cloner
      */
-    protected function getCasters(): array
+    protected function getCasters()
     {
         $casters = [
             '*' => function ($v, array $a, Stub $s, $isNested) {
@@ -79,29 +81,21 @@ abstract class DataCollector implements DataCollectorInterface
         return ['data'];
     }
 
-    public function __wakeup(): void
+    public function __wakeup()
     {
     }
 
     /**
      * @internal to prevent implementing \Serializable
      */
-    final protected function serialize(): void
+    final protected function serialize()
     {
     }
 
     /**
      * @internal to prevent implementing \Serializable
      */
-    final protected function unserialize(string $data): void
+    final protected function unserialize(string $data)
     {
-    }
-
-    /**
-     * @return void
-     */
-    public function reset()
-    {
-        $this->data = [];
     }
 }

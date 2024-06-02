@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This file is part of the Carbon package.
  *
@@ -14,56 +12,35 @@ declare(strict_types=1);
 namespace Carbon\PHPStan;
 
 use Carbon\CarbonInterface;
-use Carbon\FactoryImmutable;
-use InvalidArgumentException;
-use PHPStan\Reflection\ReflectionProvider;
+use ReflectionClass;
 use ReflectionException;
 
 final class MacroScanner
 {
     /**
-     * @var \PHPStan\Reflection\ReflectionProvider
-     */
-    private $reflectionProvider;
-
-    /**
-     * MacroScanner constructor.
-     *
-     * @param \PHPStan\Reflection\ReflectionProvider $reflectionProvider
-     */
-    public function __construct(ReflectionProvider $reflectionProvider)
-    {
-        $this->reflectionProvider = $reflectionProvider;
-    }
-
-    /**
      * Return true if the given pair class-method is a Carbon macro.
      *
-     * @param class-string $className
-     * @param string       $methodName
+     * @param string $className
+     * @phpstan-param class-string $className
+     *
+     * @param string $methodName
      *
      * @return bool
      */
     public function hasMethod(string $className, string $methodName): bool
     {
-        $classReflection = $this->reflectionProvider->getClass($className);
-
-        if (
-            $classReflection->getName() !== CarbonInterface::class &&
-            !$classReflection->isSubclassOf(CarbonInterface::class)
-        ) {
-            return false;
-        }
-
-        return \is_callable([$className, 'hasMacro']) &&
+        return is_a($className, CarbonInterface::class, true) &&
+            \is_callable([$className, 'hasMacro']) &&
             $className::hasMacro($methodName);
     }
 
     /**
      * Return the Macro for a given pair class-method.
      *
-     * @param class-string $className
-     * @param string       $methodName
+     * @param string $className
+     * @phpstan-param class-string $className
+     *
+     * @param string $methodName
      *
      * @throws ReflectionException
      *
@@ -71,13 +48,16 @@ final class MacroScanner
      */
     public function getMethod(string $className, string $methodName): Macro
     {
-        $macros = FactoryImmutable::getDefaultInstance()->getSettings()['macros'] ?? [];
-        $macro = $macros[$methodName] ?? throw new InvalidArgumentException("Macro '$methodName' not found");
+        $reflectionClass = new ReflectionClass($className);
+        $property = $reflectionClass->getProperty('globalMacros');
+
+        $property->setAccessible(true);
+        $macro = $property->getValue()[$methodName];
 
         return new Macro(
             $className,
             $methodName,
-            $macro,
+            $macro
         );
     }
 }

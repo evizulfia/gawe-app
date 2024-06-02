@@ -2,13 +2,10 @@
 
 namespace Illuminate\Mail;
 
-use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Part\DataPart;
-use Symfony\Component\Mime\Part\File;
 
 /**
  * @mixin \Symfony\Component\Mime\Email
@@ -26,8 +23,6 @@ class Message
 
     /**
      * CIDs of files embedded in the message.
-     *
-     * @deprecated Will be removed in a future Laravel version.
      *
      * @var array
      */
@@ -111,22 +106,6 @@ class Message
     }
 
     /**
-     * Remove all "to" addresses from the message.
-     *
-     * @return $this
-     */
-    public function forgetTo()
-    {
-        if ($header = $this->message->getHeaders()->get('To')) {
-            $this->addAddressDebugHeader('X-To', $this->message->getTo());
-
-            $header->setAddresses([]);
-        }
-
-        return $this;
-    }
-
-    /**
      * Add a carbon copy to the message.
      *
      * @param  string|array  $address
@@ -155,8 +134,6 @@ class Message
     public function forgetCc()
     {
         if ($header = $this->message->getHeaders()->get('Cc')) {
-            $this->addAddressDebugHeader('X-Cc', $this->message->getCC());
-
             $header->setAddresses([]);
         }
 
@@ -192,8 +169,6 @@ class Message
     public function forgetBcc()
     {
         if ($header = $this->message->getHeaders()->get('Bcc')) {
-            $this->addAddressDebugHeader('X-Bcc', $this->message->getBcc());
-
             $header->setAddresses([]);
         }
 
@@ -225,17 +200,13 @@ class Message
         if (is_array($address)) {
             $type = lcfirst($type);
 
-            $addresses = collect($address)->map(function ($address, $key) {
+            $addresses = collect($address)->map(function (string|array $address, $key) {
                 if (is_string($key) && is_string($address)) {
                     return new Address($key, $address);
                 }
 
                 if (is_array($address)) {
                     return new Address($address['email'] ?? $address['address'], $address['name'] ?? null);
-                }
-
-                if (is_null($address)) {
-                    return new Address($key);
                 }
 
                 return $address;
@@ -245,23 +216,6 @@ class Message
         } else {
             $this->message->{"add{$type}"}(new Address($address, (string) $name));
         }
-
-        return $this;
-    }
-
-    /**
-     * Add an address debug header for a list of recipients.
-     *
-     * @param  string  $header
-     * @param  \Symfony\Component\Mime\Address[]  $addresses
-     * @return $this
-     */
-    protected function addAddressDebugHeader(string $header, array $addresses)
-    {
-        $this->message->getHeaders()->addTextHeader(
-            $header,
-            implode(', ', array_map(fn ($a) => $a->toString(), $addresses)),
-        );
 
         return $this;
     }
@@ -295,20 +249,12 @@ class Message
     /**
      * Attach a file to the message.
      *
-     * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
+     * @param  string  $file
      * @param  array  $options
      * @return $this
      */
     public function attach($file, array $options = [])
     {
-        if ($file instanceof Attachable) {
-            $file = $file->toMailAttachment();
-        }
-
-        if ($file instanceof Attachment) {
-            return $file->attachTo($this);
-        }
-
         $this->message->attachFromPath($file, $options['as'] ?? null, $options['mime'] ?? null);
 
         return $this;
@@ -317,7 +263,7 @@ class Message
     /**
      * Attach in-memory data as an attachment.
      *
-     * @param  string|resource  $data
+     * @param  string  $data
      * @param  string  $name
      * @param  array  $options
      * @return $this
@@ -332,41 +278,14 @@ class Message
     /**
      * Embed a file in the message and get the CID.
      *
-     * @param  string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment  $file
+     * @param  string  $file
      * @return string
      */
     public function embed($file)
     {
-        if ($file instanceof Attachable) {
-            $file = $file->toMailAttachment();
-        }
-
-        if ($file instanceof Attachment) {
-            return $file->attachWith(
-                function ($path) use ($file) {
-                    $cid = $file->as ?? Str::random();
-
-                    $this->message->addPart(
-                        (new DataPart(new File($path), $cid, $file->mime))->asInline()
-                    );
-
-                    return "cid:{$cid}";
-                },
-                function ($data) use ($file) {
-                    $this->message->addPart(
-                        (new DataPart($data(), $file->as, $file->mime))->asInline()
-                    );
-
-                    return "cid:{$file->as}";
-                }
-            );
-        }
-
         $cid = Str::random(10);
 
-        $this->message->addPart(
-            (new DataPart(new File($file), $cid))->asInline()
-        );
+        $this->message->embedFromPath($file, $cid);
 
         return "cid:$cid";
     }
@@ -374,16 +293,14 @@ class Message
     /**
      * Embed in-memory data in the message and get the CID.
      *
-     * @param  string|resource  $data
+     * @param  string  $data
      * @param  string  $name
      * @param  string|null  $contentType
      * @return string
      */
     public function embedData($data, $name, $contentType = null)
     {
-        $this->message->addPart(
-            (new DataPart($data, $name, $contentType))->asInline()
-        );
+        $this->message->embed($data, $name, $contentType);
 
         return "cid:$name";
     }
