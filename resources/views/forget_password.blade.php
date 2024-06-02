@@ -1,16 +1,15 @@
 @include('nav')
 
- <h3>Forget Password</h3>
- 
- <form action="" method="post">
+<h3>Forget Password</h3>
+
+<form action="" method="post">
     <div>Email Address</div>
     <div>
         <input type="text" name="email">
     </div>
 
-
-    <div style="margin-top: 10px;">
-        <input type="submit" name="Submit">
+    <div style="margin-top:10px;">
+        <input type="submit" value="Submit">
         <br>
         <a href="{{ route('login') }}">Back to Login Page</a>
     </div>

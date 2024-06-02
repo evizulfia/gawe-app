@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Mail\WebsiteMail;
+use App\Mail\Websitemail;
 use Hash;
 use Auth;
 
 class WebsiteController extends Controller
 {
-    //
     public function index()
     {
         return view('home');
@@ -27,6 +25,29 @@ class WebsiteController extends Controller
         return view('login');
     }
 
+    public function login_submit(Request $request)
+    {
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password,
+            'status' => 'Active'
+        ];
+
+        if(Auth::attempt($credentials)) {
+            return redirect()->route('dashboard');
+        } else {
+            return redirect()->route('login');
+        }
+
+    }
+
+    public function logout()
+    {
+        Auth::guard('web')->logout();
+
+        return redirect()->route('login');
+    }
+
     public function registration()
     {
         return view('registration');
@@ -35,8 +56,8 @@ class WebsiteController extends Controller
     public function registration_submit(Request $request)
     {
 
-        $token = hash('sha256', time());
-
+        $token = hash('sha256',time());
+        
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -52,8 +73,8 @@ class WebsiteController extends Controller
         \Mail::to($request->email)->send(new Websitemail($subject,$message));
 
         echo 'Email is sent';
-    }
 
+    }
 
     public function registration_verify($token,$email)
     {
