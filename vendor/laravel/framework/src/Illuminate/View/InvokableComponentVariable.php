@@ -87,7 +87,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     /**
      * Resolve the variable as a string.
      *
-     * @return string
+     * @return mixed
      */
     public function __toString()
     {

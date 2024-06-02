@@ -1,32 +1,20 @@
 <?php
+
 /**
- * Mockery
+ * Mockery (https://docs.mockery.io/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://github.com/padraic/mockery/blob/master/LICENSE
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to padraic@php.net so we can send you a copy immediately.
- *
- * @category   Mockery
- * @package    Mockery
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
- * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
+ * @copyright https://github.com/mockery/mockery/blob/HEAD/COPYRIGHT.md
+ * @license https://github.com/mockery/mockery/blob/HEAD/LICENSE BSD 3-Clause License
+ * @link https://github.com/mockery/mockery for the canonical source repository
  */
 
 namespace Mockery\Generator\StringManipulation\Pass;
 
+use Mockery;
 use Mockery\Generator\MockConfiguration;
-<<<<<<< HEAD
-=======
 use function class_exists;
 use function ltrim;
 use function str_replace;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
 class ClassPass implements Pass
 {
@@ -38,7 +26,7 @@ class ClassPass implements Pass
     {
         $target = $config->getTargetClass();
 
-        if (!$target) {
+        if (! $target) {
             return $code;
         }
 
@@ -46,18 +34,16 @@ class ClassPass implements Pass
             return $code;
         }
 
-        $className = ltrim($target->getName(), "\\");
+        $className = ltrim($target->getName(), '\\');
 
-        if (!class_exists($className)) {
-            \Mockery::declareClass($className);
+        if (! class_exists($className)) {
+            Mockery::declareClass($className);
         }
 
-        $code = str_replace(
-            "implements MockInterface",
-            "extends \\" . $className . " implements MockInterface",
+        return str_replace(
+            'implements MockInterface',
+            'extends \\' . $className . ' implements MockInterface',
             $code
         );
-
-        return $code;
     }
 }

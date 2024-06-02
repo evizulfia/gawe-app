@@ -17,7 +17,7 @@ namespace Carbon\Traits;
 trait Timestamp
 {
     /**
-     * Create a Carbon instance from a timestamp and set the timezone (UTC by default).
+     * Create a Carbon instance from a timestamp and set the timezone (use default one if not specified).
      *
      * Timestamp input can be given as int, float or a string containing one or more numbers.
      *
@@ -63,7 +63,7 @@ trait Timestamp
     public static function createFromTimestampMsUTC($timestamp)
     {
         [$milliseconds, $microseconds] = self::getIntegerAndDecimalParts($timestamp, 3);
-        $sign = $milliseconds < 0 || $milliseconds === 0.0 && $microseconds < 0 ? -1 : 1;
+        $sign = $milliseconds < 0 || ($milliseconds === 0.0 && $microseconds < 0) ? -1 : 1;
         $milliseconds = abs($milliseconds);
         $microseconds = $sign * abs($microseconds) + static::MICROSECONDS_PER_MILLISECOND * ($milliseconds % static::MILLISECONDS_PER_SECOND);
         $seconds = $sign * floor($milliseconds / static::MILLISECONDS_PER_SECOND);
@@ -125,7 +125,7 @@ trait Timestamp
      */
     public function getPreciseTimestamp($precision = 6)
     {
-        return round($this->rawFormat('Uu') / pow(10, 6 - $precision));
+        return round(((float) $this->rawFormat('Uu')) / pow(10, 6 - $precision));
     }
 
     /**
@@ -182,7 +182,7 @@ trait Timestamp
         $integer = 0;
         $decimal = 0;
 
-        foreach (preg_split('`[^0-9.]+`', $numbers) as $chunk) {
+        foreach (preg_split('`[^\d.]+`', $numbers) as $chunk) {
             [$integerPart, $decimalPart] = explode('.', "$chunk.");
 
             $integer += (int) $integerPart;

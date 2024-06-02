@@ -84,7 +84,7 @@ class DatabaseStore implements LockProvider, Store
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param  string  $key
+     * @param  string|array  $key
      * @return mixed
      */
     public function get($key)
@@ -151,13 +151,6 @@ class DatabaseStore implements LockProvider, Store
         $value = $this->serialize($value);
         $expiration = $this->getTime() + $seconds;
 
-<<<<<<< HEAD
-=======
-        if (! $this->getConnection() instanceof SqlServerConnection) {
-            return $this->table()->insertOrIgnore(compact('key', 'value', 'expiration')) > 0;
-        }
-
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         try {
             return $this->table()->insert(compact('key', 'value', 'expiration'));
         } catch (QueryException $e) {
@@ -175,8 +168,8 @@ class DatabaseStore implements LockProvider, Store
      * Increment the value of an item in the cache.
      *
      * @param  string  $key
-     * @param  int  $value
-     * @return int|false
+     * @param  mixed  $value
+     * @return int|bool
      */
     public function increment($key, $value = 1)
     {
@@ -189,8 +182,8 @@ class DatabaseStore implements LockProvider, Store
      * Decrement the value of an item in the cache.
      *
      * @param  string  $key
-     * @param  int  $value
-     * @return int|false
+     * @param  mixed  $value
+     * @return int|bool
      */
     public function decrement($key, $value = 1)
     {
@@ -203,9 +196,9 @@ class DatabaseStore implements LockProvider, Store
      * Increment or decrement an item in the cache.
      *
      * @param  string  $key
-     * @param  int|float  $value
+     * @param  mixed  $value
      * @param  \Closure  $callback
-     * @return int|false
+     * @return int|bool
      */
     protected function incrementOrDecrement($key, $value, Closure $callback)
     {
@@ -366,17 +359,6 @@ class DatabaseStore implements LockProvider, Store
     public function getPrefix()
     {
         return $this->prefix;
-    }
-
-    /**
-     * Set the cache key prefix.
-     *
-     * @param  string  $prefix
-     * @return void
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
     }
 
     /**

@@ -19,27 +19,21 @@ use Symfony\Component\Mime\Header\Headers;
 class SMimePart extends AbstractPart
 {
     /** @internal */
-    protected $_headers;
+    protected Headers $_headers;
 
-<<<<<<< HEAD
-    private $body;
-    private $type;
-    private $subtype;
-    private $parameters;
+    private iterable|string $body;
+    private string $type;
+    private string $subtype;
+    private array $parameters;
 
     public function __construct(iterable|string $body, string $type, string $subtype, array $parameters)
     {
-        unset($this->_headers);
-
-=======
-    public function __construct(
-        private iterable|string $body,
-        private string $type,
-        private string $subtype,
-        private array $parameters,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         parent::__construct();
+
+        $this->body = $body;
+        $this->type = $type;
+        $this->subtype = $subtype;
+        $this->parameters = $parameters;
     }
 
     public function getMediaType(): string
@@ -111,7 +105,6 @@ class SMimePart extends AbstractPart
     public function __wakeup(): void
     {
         $r = new \ReflectionProperty(AbstractPart::class, 'headers');
-        $r->setAccessible(true);
         $r->setValue($this, $this->_headers);
         unset($this->_headers);
     }

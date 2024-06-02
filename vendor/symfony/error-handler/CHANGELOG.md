@@ -1,13 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Increase log level to "error" at least for all PHP errors
-
 6.4
 ---
 
@@ -24,7 +17,6 @@ CHANGELOG
  * Report overridden `@final` constants and properties
  * Read environment variable `SYMFONY_IDE` to configure file link format
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 5.4
 ---
 

@@ -1,24 +1,19 @@
 <?php
+
 /**
- * Mockery
+ * Mockery (https://docs.mockery.io/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://github.com/padraic/mockery/blob/master/LICENSE
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to padraic@php.net so we can send you a copy immediately.
- *
- * @category   Mockery
- * @package    Mockery
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
- * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
+ * @copyright https://github.com/mockery/mockery/blob/HEAD/COPYRIGHT.md
+ * @license https://github.com/mockery/mockery/blob/HEAD/LICENSE BSD 3-Clause License
+ * @link https://github.com/mockery/mockery for the canonical source repository
  */
 
 namespace Mockery\Generator;
+
+use function array_pop;
+use function explode;
+use function implode;
+use function ltrim;
 
 class UndefinedTargetClass implements TargetClassInterface
 {
@@ -35,11 +30,6 @@ class UndefinedTargetClass implements TargetClassInterface
         $this->name = $name;
     }
 
-<<<<<<< HEAD
-    public static function factory($name)
-    {
-        return new self($name);
-=======
     /**
      * @return class-string
      */
@@ -79,7 +69,6 @@ class UndefinedTargetClass implements TargetClassInterface
     public function getMethods()
     {
         return [];
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -90,8 +79,6 @@ class UndefinedTargetClass implements TargetClassInterface
         return $this->name;
     }
 
-<<<<<<< HEAD
-=======
     /**
      * @return string
      */
@@ -139,7 +126,6 @@ class UndefinedTargetClass implements TargetClassInterface
     /**
      * @return bool
      */
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function isAbstract()
     {
         return false;
@@ -152,50 +138,4 @@ class UndefinedTargetClass implements TargetClassInterface
     {
         return false;
     }
-<<<<<<< HEAD
-
-    public function getMethods()
-    {
-        return array();
-    }
-
-    public function getInterfaces()
-    {
-        return array();
-    }
-
-    public function getNamespaceName()
-    {
-        $parts = explode("\\", ltrim($this->getName(), "\\"));
-        array_pop($parts);
-        return implode("\\", $parts);
-    }
-
-    public function inNamespace()
-    {
-        return $this->getNamespaceName() !== '';
-    }
-
-    public function getShortName()
-    {
-        $parts = explode("\\", $this->getName());
-        return array_pop($parts);
-    }
-
-    public function implementsInterface($interface)
-    {
-        return false;
-    }
-
-    public function hasInternalAncestor()
-    {
-        return false;
-    }
-
-    public function __toString()
-    {
-        return $this->name;
-    }
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

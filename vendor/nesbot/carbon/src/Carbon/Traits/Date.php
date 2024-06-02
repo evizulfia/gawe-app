@@ -116,58 +116,38 @@ use Throwable;
  * @method        bool             isThursday()                                                                       Checks if the instance day is thursday.
  * @method        bool             isFriday()                                                                         Checks if the instance day is friday.
  * @method        bool             isSaturday()                                                                       Checks if the instance day is saturday.
- * @method        bool             isSameYear(DateTimeInterface|string $date)                                         Checks if the given date is in the same year as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameYear(Carbon|DateTimeInterface|string|null $date = null)                      Checks if the given date is in the same year as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentYear()                                                                    Checks if the instance is in the same year as the current moment.
  * @method        bool             isNextYear()                                                                       Checks if the instance is in the same year as the current moment next year.
  * @method        bool             isLastYear()                                                                       Checks if the instance is in the same year as the current moment last year.
-<<<<<<< HEAD
  * @method        bool             isSameWeek(Carbon|DateTimeInterface|string|null $date = null)                      Checks if the given date is in the same week as the instance. If null passed, compare to now (with the same timezone).
-=======
- * @method        bool             isCurrentMonth()                                                                   Checks if the instance is in the same month as the current moment.
- * @method        bool             isNextMonth()                                                                      Checks if the instance is in the same month as the current moment next month.
- * @method        bool             isLastMonth()                                                                      Checks if the instance is in the same month as the current moment last month.
- * @method        bool             isSameWeek(DateTimeInterface|string $date)                                         Checks if the given date is in the same week as the instance. If null passed, compare to now (with the same timezone).
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method        bool             isCurrentWeek()                                                                    Checks if the instance is in the same week as the current moment.
  * @method        bool             isNextWeek()                                                                       Checks if the instance is in the same week as the current moment next week.
  * @method        bool             isLastWeek()                                                                       Checks if the instance is in the same week as the current moment last week.
- * @method        bool             isSameDay(DateTimeInterface|string $date)                                          Checks if the given date is in the same day as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameDay(Carbon|DateTimeInterface|string|null $date = null)                       Checks if the given date is in the same day as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentDay()                                                                     Checks if the instance is in the same day as the current moment.
  * @method        bool             isNextDay()                                                                        Checks if the instance is in the same day as the current moment next day.
  * @method        bool             isLastDay()                                                                        Checks if the instance is in the same day as the current moment last day.
- * @method        bool             isSameHour(DateTimeInterface|string $date)                                         Checks if the given date is in the same hour as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameHour(Carbon|DateTimeInterface|string|null $date = null)                      Checks if the given date is in the same hour as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentHour()                                                                    Checks if the instance is in the same hour as the current moment.
  * @method        bool             isNextHour()                                                                       Checks if the instance is in the same hour as the current moment next hour.
  * @method        bool             isLastHour()                                                                       Checks if the instance is in the same hour as the current moment last hour.
- * @method        bool             isSameMinute(DateTimeInterface|string $date)                                       Checks if the given date is in the same minute as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameMinute(Carbon|DateTimeInterface|string|null $date = null)                    Checks if the given date is in the same minute as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentMinute()                                                                  Checks if the instance is in the same minute as the current moment.
  * @method        bool             isNextMinute()                                                                     Checks if the instance is in the same minute as the current moment next minute.
  * @method        bool             isLastMinute()                                                                     Checks if the instance is in the same minute as the current moment last minute.
- * @method        bool             isSameSecond(DateTimeInterface|string $date)                                       Checks if the given date is in the same second as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameSecond(Carbon|DateTimeInterface|string|null $date = null)                    Checks if the given date is in the same second as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentSecond()                                                                  Checks if the instance is in the same second as the current moment.
  * @method        bool             isNextSecond()                                                                     Checks if the instance is in the same second as the current moment next second.
  * @method        bool             isLastSecond()                                                                     Checks if the instance is in the same second as the current moment last second.
-<<<<<<< HEAD
  * @method        bool             isSameMicro(Carbon|DateTimeInterface|string|null $date = null)                     Checks if the given date is in the same microsecond as the instance. If null passed, compare to now (with the same timezone).
-=======
- * @method        bool             isSameMilli(DateTimeInterface|string $date)                                        Checks if the given date is in the same millisecond as the instance. If null passed, compare to now (with the same timezone).
- * @method        bool             isCurrentMilli()                                                                   Checks if the instance is in the same millisecond as the current moment.
- * @method        bool             isNextMilli()                                                                      Checks if the instance is in the same millisecond as the current moment next millisecond.
- * @method        bool             isLastMilli()                                                                      Checks if the instance is in the same millisecond as the current moment last millisecond.
- * @method        bool             isSameMillisecond(DateTimeInterface|string $date)                                  Checks if the given date is in the same millisecond as the instance. If null passed, compare to now (with the same timezone).
- * @method        bool             isCurrentMillisecond()                                                             Checks if the instance is in the same millisecond as the current moment.
- * @method        bool             isNextMillisecond()                                                                Checks if the instance is in the same millisecond as the current moment next millisecond.
- * @method        bool             isLastMillisecond()                                                                Checks if the instance is in the same millisecond as the current moment last millisecond.
- * @method        bool             isSameMicro(DateTimeInterface|string $date)                                        Checks if the given date is in the same microsecond as the instance. If null passed, compare to now (with the same timezone).
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method        bool             isCurrentMicro()                                                                   Checks if the instance is in the same microsecond as the current moment.
  * @method        bool             isNextMicro()                                                                      Checks if the instance is in the same microsecond as the current moment next microsecond.
  * @method        bool             isLastMicro()                                                                      Checks if the instance is in the same microsecond as the current moment last microsecond.
- * @method        bool             isSameMicrosecond(DateTimeInterface|string $date)                                  Checks if the given date is in the same microsecond as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameMicrosecond(Carbon|DateTimeInterface|string|null $date = null)               Checks if the given date is in the same microsecond as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentMicrosecond()                                                             Checks if the instance is in the same microsecond as the current moment.
  * @method        bool             isNextMicrosecond()                                                                Checks if the instance is in the same microsecond as the current moment next microsecond.
  * @method        bool             isLastMicrosecond()                                                                Checks if the instance is in the same microsecond as the current moment last microsecond.
-<<<<<<< HEAD
  * @method        bool             isCurrentMonth()                                                                   Checks if the instance is in the same month as the current moment.
  * @method        bool             isNextMonth()                                                                      Checks if the instance is in the same month as the current moment next month.
  * @method        bool             isLastMonth()                                                                      Checks if the instance is in the same month as the current moment last month.
@@ -175,17 +155,14 @@ use Throwable;
  * @method        bool             isNextQuarter()                                                                    Checks if the instance is in the same quarter as the current moment next quarter.
  * @method        bool             isLastQuarter()                                                                    Checks if the instance is in the same quarter as the current moment last quarter.
  * @method        bool             isSameDecade(Carbon|DateTimeInterface|string|null $date = null)                    Checks if the given date is in the same decade as the instance. If null passed, compare to now (with the same timezone).
-=======
- * @method        bool             isSameDecade(DateTimeInterface|string $date)                                       Checks if the given date is in the same decade as the instance. If null passed, compare to now (with the same timezone).
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method        bool             isCurrentDecade()                                                                  Checks if the instance is in the same decade as the current moment.
  * @method        bool             isNextDecade()                                                                     Checks if the instance is in the same decade as the current moment next decade.
  * @method        bool             isLastDecade()                                                                     Checks if the instance is in the same decade as the current moment last decade.
- * @method        bool             isSameCentury(DateTimeInterface|string $date)                                      Checks if the given date is in the same century as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameCentury(Carbon|DateTimeInterface|string|null $date = null)                   Checks if the given date is in the same century as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentCentury()                                                                 Checks if the instance is in the same century as the current moment.
  * @method        bool             isNextCentury()                                                                    Checks if the instance is in the same century as the current moment next century.
  * @method        bool             isLastCentury()                                                                    Checks if the instance is in the same century as the current moment last century.
- * @method        bool             isSameMillennium(DateTimeInterface|string $date)                                   Checks if the given date is in the same millennium as the instance. If null passed, compare to now (with the same timezone).
+ * @method        bool             isSameMillennium(Carbon|DateTimeInterface|string|null $date = null)                Checks if the given date is in the same millennium as the instance. If null passed, compare to now (with the same timezone).
  * @method        bool             isCurrentMillennium()                                                              Checks if the instance is in the same millennium as the current moment.
  * @method        bool             isNextMillennium()                                                                 Checks if the instance is in the same millennium as the current moment next millennium.
  * @method        bool             isLastMillennium()                                                                 Checks if the instance is in the same millennium as the current moment last millennium.
@@ -389,7 +366,6 @@ use Throwable;
  * @method        CarbonInterface  addWeekday()                                                                       Add one weekday to the instance (using date interval).
  * @method        CarbonInterface  subWeekdays(int $value = 1)                                                        Sub weekdays (the $value count passed in) to the instance (using date interval).
  * @method        CarbonInterface  subWeekday()                                                                       Sub one weekday to the instance (using date interval).
-<<<<<<< HEAD
  * @method        CarbonInterface  addRealMicros(int $value = 1)                                                      Add microseconds (the $value count passed in) to the instance (using timestamp).
  * @method        CarbonInterface  addRealMicro()                                                                     Add one microsecond to the instance (using timestamp).
  * @method        CarbonInterface  subRealMicros(int $value = 1)                                                      Sub microseconds (the $value count passed in) to the instance (using timestamp).
@@ -465,98 +441,6 @@ use Throwable;
  * @method        CarbonInterface  subRealMillennia(int $value = 1)                                                   Sub millennia (the $value count passed in) to the instance (using timestamp).
  * @method        CarbonInterface  subRealMillennium()                                                                Sub one millennium to the instance (using timestamp).
  * @method        CarbonPeriod     millenniaUntil($endDate = null, int $factor = 1)                                   Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each millennium or every X millennia if a factor is given.
-=======
- * @method        CarbonInterface  addUTCMicros(int|float $value = 1)                                                 Add microseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMicro()                                                                      Add one microsecond to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMicros(int|float $value = 1)                                                 Sub microseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMicro()                                                                      Sub one microsecond to the instance (using timestamp).
- * @method        CarbonPeriod     microsUntil($endDate = null, int|float $factor = 1)                                Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each microsecond or every X microseconds if a factor is given.
- * @method        float            diffInUTCMicros(DateTimeInterface|string|null $date, bool $absolute = false)       Convert current and given date in UTC timezone and return a floating number of microseconds.
- * @method        CarbonInterface  addUTCMicroseconds(int|float $value = 1)                                           Add microseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMicrosecond()                                                                Add one microsecond to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMicroseconds(int|float $value = 1)                                           Sub microseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMicrosecond()                                                                Sub one microsecond to the instance (using timestamp).
- * @method        CarbonPeriod     microsecondsUntil($endDate = null, int|float $factor = 1)                          Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each microsecond or every X microseconds if a factor is given.
- * @method        float            diffInUTCMicroseconds(DateTimeInterface|string|null $date, bool $absolute = false) Convert current and given date in UTC timezone and return a floating number of microseconds.
- * @method        CarbonInterface  addUTCMillis(int|float $value = 1)                                                 Add milliseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMilli()                                                                      Add one millisecond to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMillis(int|float $value = 1)                                                 Sub milliseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMilli()                                                                      Sub one millisecond to the instance (using timestamp).
- * @method        CarbonPeriod     millisUntil($endDate = null, int|float $factor = 1)                                Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each millisecond or every X milliseconds if a factor is given.
- * @method        float            diffInUTCMillis(DateTimeInterface|string|null $date, bool $absolute = false)       Convert current and given date in UTC timezone and return a floating number of milliseconds.
- * @method        CarbonInterface  addUTCMilliseconds(int|float $value = 1)                                           Add milliseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMillisecond()                                                                Add one millisecond to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMilliseconds(int|float $value = 1)                                           Sub milliseconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMillisecond()                                                                Sub one millisecond to the instance (using timestamp).
- * @method        CarbonPeriod     millisecondsUntil($endDate = null, int|float $factor = 1)                          Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each millisecond or every X milliseconds if a factor is given.
- * @method        float            diffInUTCMilliseconds(DateTimeInterface|string|null $date, bool $absolute = false) Convert current and given date in UTC timezone and return a floating number of milliseconds.
- * @method        CarbonInterface  addUTCSeconds(int|float $value = 1)                                                Add seconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCSecond()                                                                     Add one second to the instance (using timestamp).
- * @method        CarbonInterface  subUTCSeconds(int|float $value = 1)                                                Sub seconds (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCSecond()                                                                     Sub one second to the instance (using timestamp).
- * @method        CarbonPeriod     secondsUntil($endDate = null, int|float $factor = 1)                               Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each second or every X seconds if a factor is given.
- * @method        float            diffInUTCSeconds(DateTimeInterface|string|null $date, bool $absolute = false)      Convert current and given date in UTC timezone and return a floating number of seconds.
- * @method        CarbonInterface  addUTCMinutes(int|float $value = 1)                                                Add minutes (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMinute()                                                                     Add one minute to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMinutes(int|float $value = 1)                                                Sub minutes (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMinute()                                                                     Sub one minute to the instance (using timestamp).
- * @method        CarbonPeriod     minutesUntil($endDate = null, int|float $factor = 1)                               Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each minute or every X minutes if a factor is given.
- * @method        float            diffInUTCMinutes(DateTimeInterface|string|null $date, bool $absolute = false)      Convert current and given date in UTC timezone and return a floating number of minutes.
- * @method        CarbonInterface  addUTCHours(int|float $value = 1)                                                  Add hours (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCHour()                                                                       Add one hour to the instance (using timestamp).
- * @method        CarbonInterface  subUTCHours(int|float $value = 1)                                                  Sub hours (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCHour()                                                                       Sub one hour to the instance (using timestamp).
- * @method        CarbonPeriod     hoursUntil($endDate = null, int|float $factor = 1)                                 Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each hour or every X hours if a factor is given.
- * @method        float            diffInUTCHours(DateTimeInterface|string|null $date, bool $absolute = false)        Convert current and given date in UTC timezone and return a floating number of hours.
- * @method        CarbonInterface  addUTCDays(int|float $value = 1)                                                   Add days (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCDay()                                                                        Add one day to the instance (using timestamp).
- * @method        CarbonInterface  subUTCDays(int|float $value = 1)                                                   Sub days (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCDay()                                                                        Sub one day to the instance (using timestamp).
- * @method        CarbonPeriod     daysUntil($endDate = null, int|float $factor = 1)                                  Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each day or every X days if a factor is given.
- * @method        float            diffInUTCDays(DateTimeInterface|string|null $date, bool $absolute = false)         Convert current and given date in UTC timezone and return a floating number of days.
- * @method        CarbonInterface  addUTCWeeks(int|float $value = 1)                                                  Add weeks (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCWeek()                                                                       Add one week to the instance (using timestamp).
- * @method        CarbonInterface  subUTCWeeks(int|float $value = 1)                                                  Sub weeks (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCWeek()                                                                       Sub one week to the instance (using timestamp).
- * @method        CarbonPeriod     weeksUntil($endDate = null, int|float $factor = 1)                                 Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each week or every X weeks if a factor is given.
- * @method        float            diffInUTCWeeks(DateTimeInterface|string|null $date, bool $absolute = false)        Convert current and given date in UTC timezone and return a floating number of weeks.
- * @method        CarbonInterface  addUTCMonths(int|float $value = 1)                                                 Add months (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMonth()                                                                      Add one month to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMonths(int|float $value = 1)                                                 Sub months (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMonth()                                                                      Sub one month to the instance (using timestamp).
- * @method        CarbonPeriod     monthsUntil($endDate = null, int|float $factor = 1)                                Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each month or every X months if a factor is given.
- * @method        float            diffInUTCMonths(DateTimeInterface|string|null $date, bool $absolute = false)       Convert current and given date in UTC timezone and return a floating number of months.
- * @method        CarbonInterface  addUTCQuarters(int|float $value = 1)                                               Add quarters (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCQuarter()                                                                    Add one quarter to the instance (using timestamp).
- * @method        CarbonInterface  subUTCQuarters(int|float $value = 1)                                               Sub quarters (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCQuarter()                                                                    Sub one quarter to the instance (using timestamp).
- * @method        CarbonPeriod     quartersUntil($endDate = null, int|float $factor = 1)                              Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each quarter or every X quarters if a factor is given.
- * @method        float            diffInUTCQuarters(DateTimeInterface|string|null $date, bool $absolute = false)     Convert current and given date in UTC timezone and return a floating number of quarters.
- * @method        CarbonInterface  addUTCYears(int|float $value = 1)                                                  Add years (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCYear()                                                                       Add one year to the instance (using timestamp).
- * @method        CarbonInterface  subUTCYears(int|float $value = 1)                                                  Sub years (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCYear()                                                                       Sub one year to the instance (using timestamp).
- * @method        CarbonPeriod     yearsUntil($endDate = null, int|float $factor = 1)                                 Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each year or every X years if a factor is given.
- * @method        float            diffInUTCYears(DateTimeInterface|string|null $date, bool $absolute = false)        Convert current and given date in UTC timezone and return a floating number of years.
- * @method        CarbonInterface  addUTCDecades(int|float $value = 1)                                                Add decades (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCDecade()                                                                     Add one decade to the instance (using timestamp).
- * @method        CarbonInterface  subUTCDecades(int|float $value = 1)                                                Sub decades (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCDecade()                                                                     Sub one decade to the instance (using timestamp).
- * @method        CarbonPeriod     decadesUntil($endDate = null, int|float $factor = 1)                               Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each decade or every X decades if a factor is given.
- * @method        float            diffInUTCDecades(DateTimeInterface|string|null $date, bool $absolute = false)      Convert current and given date in UTC timezone and return a floating number of decades.
- * @method        CarbonInterface  addUTCCenturies(int|float $value = 1)                                              Add centuries (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCCentury()                                                                    Add one century to the instance (using timestamp).
- * @method        CarbonInterface  subUTCCenturies(int|float $value = 1)                                              Sub centuries (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCCentury()                                                                    Sub one century to the instance (using timestamp).
- * @method        CarbonPeriod     centuriesUntil($endDate = null, int|float $factor = 1)                             Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each century or every X centuries if a factor is given.
- * @method        float            diffInUTCCenturies(DateTimeInterface|string|null $date, bool $absolute = false)    Convert current and given date in UTC timezone and return a floating number of centuries.
- * @method        CarbonInterface  addUTCMillennia(int|float $value = 1)                                              Add millennia (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  addUTCMillennium()                                                                 Add one millennium to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMillennia(int|float $value = 1)                                              Sub millennia (the $value count passed in) to the instance (using timestamp).
- * @method        CarbonInterface  subUTCMillennium()                                                                 Sub one millennium to the instance (using timestamp).
- * @method        CarbonPeriod     millenniaUntil($endDate = null, int|float $factor = 1)                             Return an iterable period from current date to given end (string, DateTime or Carbon instance) for each millennium or every X millennia if a factor is given.
- * @method        float            diffInUTCMillennia(DateTimeInterface|string|null $date, bool $absolute = false)    Convert current and given date in UTC timezone and return a floating number of millennia.
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method        CarbonInterface  roundYear(float $precision = 1, string $function = "round")                        Round the current instance year with given precision using the given function.
  * @method        CarbonInterface  roundYears(float $precision = 1, string $function = "round")                       Round the current instance year with given precision using the given function.
  * @method        CarbonInterface  floorYear(float $precision = 1)                                                    Truncate the current instance year with given precision.
@@ -648,6 +532,7 @@ trait Date
     use Creator;
     use Difference;
     use Macro;
+    use MagicParameter;
     use Modifiers;
     use Mutability;
     use ObjectInitialisation;
@@ -757,9 +642,11 @@ trait Date
     /**
      * List of minimum and maximums for each unit.
      *
+     * @param int $daysInMonth
+     *
      * @return array
      */
-    protected static function getRangesByUnit()
+    protected static function getRangesByUnit(int $daysInMonth = 31): array
     {
         return [
             // @call roundUnit
@@ -767,7 +654,7 @@ trait Date
             // @call roundUnit
             'month' => [1, static::MONTHS_PER_YEAR],
             // @call roundUnit
-            'day' => [1, 31],
+            'day' => [1, $daysInMonth],
             // @call roundUnit
             'hour' => [0, static::HOURS_PER_DAY - 1],
             // @call roundUnit
@@ -942,7 +829,7 @@ trait Date
      *
      * @throws UnknownGetterException
      *
-     * @return string|int|bool|DateTimeZone
+     * @return string|int|bool|DateTimeZone|null
      */
     public function get($name)
     {
@@ -1056,7 +943,7 @@ trait Date
             case $name === 'millisecond':
             // @property int
             case $name === 'milli':
-                return (int) floor($this->rawFormat('u') / 1000);
+                return (int) floor(((int) $this->rawFormat('u')) / 1000);
 
             // @property int 1 through 53
             case $name === 'week':
@@ -1171,7 +1058,7 @@ trait Date
             // @property CarbonTimeZone $timezone the current timezone
             // @property CarbonTimeZone $tz alias of $timezone
             case $name === 'timezone' || $name === 'tz':
-                return $this->getTimezone();
+                return CarbonTimeZone::instance($this->getTimezone());
 
             // @property-read string $timezoneName the current timezone name
             // @property-read string $tzName alias of $timezoneName
@@ -1242,11 +1129,7 @@ trait Date
      *
      * @return $this
      */
-<<<<<<< HEAD
     public function set($name, $value = null)
-=======
-    public function set(Unit|array|string $name, DateTimeZone|Month|string|int|float|null $value = null): static
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         if ($this->isImmutable()) {
             throw new ImmutableException(sprintf('%s class', static::class));
@@ -1370,7 +1253,7 @@ trait Date
     protected function getTranslatedFormByRegExp($baseKey, $keySuffix, $context, $subKey, $defaultValue)
     {
         $key = $baseKey.$keySuffix;
-        $standaloneKey = "${key}_standalone";
+        $standaloneKey = "{$key}_standalone";
         $baseTranslation = $this->getTranslationMessage($key);
 
         if ($baseTranslation instanceof Closure) {
@@ -1379,7 +1262,7 @@ trait Date
 
         if (
             $this->getTranslationMessage("$standaloneKey.$subKey") &&
-            (!$context || ($regExp = $this->getTranslationMessage("${baseKey}_regexp")) && !preg_match($regExp, $context))
+            (!$context || (($regExp = $this->getTranslationMessage("{$baseKey}_regexp")) && !preg_match($regExp, $context)))
         ) {
             $key = $standaloneKey;
         }
@@ -1474,9 +1357,14 @@ trait Date
      */
     public function weekday($value = null)
     {
-        $dayOfWeek = ($this->dayOfWeek + 7 - (int) ($this->getTranslationMessage('first_day_of_week') ?? 0)) % 7;
+        if ($value === null) {
+            return $this->dayOfWeek;
+        }
 
-        return $value === null ? $dayOfWeek : $this->addDays($value - $dayOfWeek);
+        $firstDay = (int) ($this->getTranslationMessage('first_day_of_week') ?? 0);
+        $dayOfWeek = ($this->dayOfWeek + 7 - $firstDay) % 7;
+
+        return $this->addDays((($value + 7 - $firstDay) % 7) - $dayOfWeek);
     }
 
     /**
@@ -1491,6 +1379,39 @@ trait Date
         $dayOfWeekIso = $this->dayOfWeekIso;
 
         return $value === null ? $dayOfWeekIso : $this->addDays($value - $dayOfWeekIso);
+    }
+
+    /**
+     * Return the number of days since the start of the week (using the current locale or the first parameter
+     * if explicitly given).
+     *
+     * @param int|null $weekStartsAt optional start allow you to specify the day of week to use to start the week,
+     *                               if not provided, start of week is inferred from the locale
+     *                               (Sunday for en_US, Monday for de_DE, etc.)
+     *
+     * @return int
+     */
+    public function getDaysFromStartOfWeek(int $weekStartsAt = null): int
+    {
+        $firstDay = (int) ($weekStartsAt ?? $this->getTranslationMessage('first_day_of_week') ?? 0);
+
+        return ($this->dayOfWeek + 7 - $firstDay) % 7;
+    }
+
+    /**
+     * Set the day (keeping the current time) to the start of the week + the number of days passed as the first
+     * parameter. First day of week is driven by the locale unless explicitly set with the second parameter.
+     *
+     * @param int      $numberOfDays number of days to add after the start of the current week
+     * @param int|null $weekStartsAt optional start allow you to specify the day of week to use to start the week,
+     *                               if not provided, start of week is inferred from the locale
+     *                               (Sunday for en_US, Monday for de_DE, etc.)
+     *
+     * @return static
+     */
+    public function setDaysFromStartOfWeek(int $numberOfDays, int $weekStartsAt = null)
+    {
+        return $this->addDays($numberOfDays - $this->getDaysFromStartOfWeek($weekStartsAt));
     }
 
     /**
@@ -1968,9 +1889,18 @@ trait Date
             $format = preg_replace('#(?<!%)((?:%%)*)%e#', '\1%#d', $format); // @codeCoverageIgnore
         }
 
-        $formatted = strftime($format, strtotime($this->toDateTimeString()));
+        $time = strtotime($this->toDateTimeString());
+        $formatted = ($this->localStrictModeEnabled ?? static::isStrictModeEnabled())
+            ? strftime($format, $time)
+            : @strftime($format, $time);
 
-        return static::$utf8 ? utf8_encode($formatted) : $formatted;
+        return static::$utf8
+            ? (
+                \function_exists('mb_convert_encoding')
+                ? mb_convert_encoding($formatted, 'UTF-8', mb_list_encodings())
+                : utf8_encode($formatted)
+            )
+            : $formatted;
     }
 
     /**
@@ -1989,6 +1919,10 @@ trait Date
             'LL' => $this->getTranslationMessage('formats.LL', $locale, 'MMMM D, YYYY'),
             'LLL' => $this->getTranslationMessage('formats.LLL', $locale, 'MMMM D, YYYY h:mm A'),
             'LLLL' => $this->getTranslationMessage('formats.LLLL', $locale, 'dddd, MMMM D, YYYY h:mm A'),
+            'l' => $this->getTranslationMessage('formats.l', $locale),
+            'll' => $this->getTranslationMessage('formats.ll', $locale),
+            'lll' => $this->getTranslationMessage('formats.lll', $locale),
+            'llll' => $this->getTranslationMessage('formats.llll', $locale),
         ];
     }
 
@@ -2272,7 +2206,7 @@ trait Date
 
             $input = mb_substr($format, $i);
 
-            if (preg_match('/^(LTS|LT|[Ll]{1,4})/', $input, $match)) {
+            if (preg_match('/^(LTS|LT|l{1,4}|L{1,4})/', $input, $match)) {
                 if ($formats === null) {
                     $formats = $this->getIsoFormats();
                 }
@@ -2376,6 +2310,7 @@ trait Date
                 'c' => true,
                 'r' => true,
                 'U' => true,
+                'T' => true,
             ];
         }
 
@@ -2479,7 +2414,7 @@ trait Date
         $symbol = $second < 0 ? '-' : '+';
         $minute = abs($second) / static::SECONDS_PER_MINUTE;
         $hour = str_pad((string) floor($minute / static::MINUTES_PER_HOUR), 2, '0', STR_PAD_LEFT);
-        $minute = str_pad((string) ($minute % static::MINUTES_PER_HOUR), 2, '0', STR_PAD_LEFT);
+        $minute = str_pad((string) (((int) $minute) % static::MINUTES_PER_HOUR), 2, '0', STR_PAD_LEFT);
 
         return "$symbol$hour$separator$minute";
     }
@@ -2535,11 +2470,7 @@ trait Date
      *
      * @return static
      */
-<<<<<<< HEAD
     public function setUnit($unit, $value = null)
-=======
-    public function setUnit(string $unit, Month|int|float|null $value = null): static
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $unit = static::singularUnit($unit);
         $dateUnits = ['year', 'month', 'day'];
@@ -2603,7 +2534,7 @@ trait Date
             return 'millennia';
         }
 
-        return "${unit}s";
+        return "{$unit}s";
     }
 
     protected function executeCallable($macro, ...$parameters)
@@ -2645,7 +2576,6 @@ trait Date
      */
     public function __call($method, $parameters)
     {
-<<<<<<< HEAD
         $diffSizes = [
             // @mode diffForHumans
             'short' => true,
@@ -2691,7 +2621,7 @@ trait Date
         if (str_starts_with($unit, 'is')) {
             $word = substr($unit, 2);
 
-            if (\in_array($word, static::$days)) {
+            if (\in_array($word, static::$days, true)) {
                 return $this->isDayOfWeek($word);
             }
 
@@ -2719,7 +2649,7 @@ trait Date
             $unit = strtolower(substr($unit, 3));
         }
 
-        if (\in_array($unit, static::$units)) {
+        if (\in_array($unit, static::$units, true)) {
             return $this->setUnit($unit, ...$parameters);
         }
 
@@ -2729,7 +2659,7 @@ trait Date
             if (str_starts_with($unit, 'Real')) {
                 $unit = static::singularUnit(substr($unit, 4));
 
-                return $this->{"${action}RealUnit"}($unit, ...$parameters);
+                return $this->{"{$action}RealUnit"}($unit, ...$parameters);
             }
 
             if (preg_match('/^(Month|Quarter|Year|Decade|Century|Centurie|Millennium|Millennia)s?(No|With|Without|WithNo)Overflow$/', $unit, $match)) {
@@ -2741,7 +2671,7 @@ trait Date
         }
 
         if (static::isModifiableUnit($unit)) {
-            return $this->{"${action}Unit"}($unit, $parameters[0] ?? 1, $overflow);
+            return $this->{"{$action}Unit"}($unit, $this->getMagicParameter($parameters, 0, 'value', 1), $overflow);
         }
 
         $sixFirstLetters = substr($unit, 0, 6);
@@ -2780,7 +2710,11 @@ trait Date
             try {
                 $unit = static::singularUnit(substr($method, 0, -5));
 
-                return $this->range($parameters[0] ?? $this, $parameters[1] ?? 1, $unit);
+                return $this->range(
+                    $this->getMagicParameter($parameters, 0, 'endDate', $this),
+                    $this->getMagicParameter($parameters, 1, 'factor', 1),
+                    $unit
+                );
             } catch (InvalidArgumentException $exception) {
                 // Try macros
             }
@@ -2810,370 +2744,4 @@ trait Date
             return $this->executeCallable($macro, ...$parameters);
         });
     }
-=======
-        $unit = rtrim($method, 's');
-
-        return $this->callDiffAlias($unit, $parameters)
-            ?? $this->callHumanDiffAlias($unit, $parameters)
-            ?? $this->callRoundMethod($unit, $parameters)
-            ?? $this->callIsMethod($unit, $parameters)
-            ?? $this->callModifierMethod($unit, $parameters)
-            ?? $this->callPeriodMethod($method, $parameters)
-            ?? $this->callGetOrSetMethod($method, $parameters)
-            ?? $this->callMacroMethod($method, $parameters);
-    }
-
-    /**
-     * Return the Carbon instance passed through, a now instance in the same timezone
-     * if null given or parse the input if string given.
-     */
-    protected function resolveCarbon(DateTimeInterface|string|null $date): self
-    {
-        if (!$date) {
-            return $this->nowWithSameTz();
-        }
-
-        if (\is_string($date)) {
-            return $this->transmitFactory(fn () => static::parse($date, $this->getTimezone()));
-        }
-
-        return $date instanceof self ? $date : $this->transmitFactory(static fn () => static::instance($date));
-    }
-
-    protected static function weekRotate(int $day, int $rotation): int
-    {
-        return (static::DAYS_PER_WEEK + $rotation % static::DAYS_PER_WEEK + $day) % static::DAYS_PER_WEEK;
-    }
-
-    protected function executeCallable(callable $macro, ...$parameters)
-    {
-        if ($macro instanceof Closure) {
-            $boundMacro = @$macro->bindTo($this, static::class) ?: @$macro->bindTo(null, static::class);
-
-            return \call_user_func_array($boundMacro ?: $macro, $parameters);
-        }
-
-        return \call_user_func_array($macro, $parameters);
-    }
-
-    protected function executeCallableWithContext(callable $macro, ...$parameters)
-    {
-        return static::bindMacroContext($this, function () use (&$macro, &$parameters) {
-            return $this->executeCallable($macro, ...$parameters);
-        });
-    }
-
-    protected function getAllGenericMacros(): Generator
-    {
-        yield from $this->localGenericMacros ?? [];
-        yield from $this->transmitFactory(static fn () => static::getGenericMacros());
-    }
-
-    protected static function getGenericMacros(): Generator
-    {
-        foreach ((FactoryImmutable::getInstance()->getSettings()['genericMacros'] ?? []) as $list) {
-            foreach ($list as $macro) {
-                yield $macro;
-            }
-        }
-    }
-
-    protected static function executeStaticCallable(callable $macro, ...$parameters)
-    {
-        return static::bindMacroContext(null, function () use (&$macro, &$parameters) {
-            if ($macro instanceof Closure) {
-                $boundMacro = @Closure::bind($macro, null, static::class);
-
-                return \call_user_func_array($boundMacro ?: $macro, $parameters);
-            }
-
-            return \call_user_func_array($macro, $parameters);
-        });
-    }
-
-    protected function getTranslatedFormByRegExp($baseKey, $keySuffix, $context, $subKey, $defaultValue)
-    {
-        $key = $baseKey.$keySuffix;
-        $standaloneKey = "{$key}_standalone";
-        $baseTranslation = $this->getTranslationMessage($key);
-
-        if ($baseTranslation instanceof Closure) {
-            return $baseTranslation($this, $context, $subKey) ?: $defaultValue;
-        }
-
-        if (
-            $this->getTranslationMessage("$standaloneKey.$subKey") &&
-            (!$context || (($regExp = $this->getTranslationMessage("{$baseKey}_regexp")) && !preg_match($regExp, $context)))
-        ) {
-            $key = $standaloneKey;
-        }
-
-        return $this->getTranslationMessage("$key.$subKey", null, $defaultValue);
-    }
-
-    private function callGetOrSetMethod(string $method, array $parameters): mixed
-    {
-        if (preg_match('/^([a-z]{2,})(In|Of)([A-Z][a-z]+)$/', $method)) {
-            $localStrictModeEnabled = $this->localStrictModeEnabled;
-            $this->localStrictModeEnabled = true;
-
-            try {
-                return $this->callGetOrSet($method, $parameters[0] ?? null);
-            } catch (UnknownGetterException|UnknownSetterException|ImmutableException) {
-                // continue to macro
-            } finally {
-                $this->localStrictModeEnabled = $localStrictModeEnabled;
-            }
-        }
-
-        return null;
-    }
-
-    private function callGetOrSet(string $name, mixed $value): mixed
-    {
-        if ($value !== null) {
-            if (\is_string($value) || \is_int($value) || \is_float($value) || $value instanceof DateTimeZone || $value instanceof Month) {
-                return $this->set($name, $value);
-            }
-
-            return null;
-        }
-
-        return $this->get($name);
-    }
-
-    private function getUTCUnit(string $unit): ?string
-    {
-        if (str_starts_with($unit, 'Real')) {
-            return substr($unit, 4);
-        }
-
-        if (str_starts_with($unit, 'UTC')) {
-            return substr($unit, 3);
-        }
-
-        return null;
-    }
-
-    private function callDiffAlias(string $method, array $parameters): mixed
-    {
-        if (preg_match('/^(diff|floatDiff)In(Real|UTC|Utc)?(.+)$/', $method, $match)) {
-            $mode = strtoupper($match[2] ?? '');
-            $betterMethod = $match[1] === 'floatDiff' ? str_replace('floatDiff', 'diff', $method) : null;
-
-            if ($mode === 'REAL') {
-                $mode = 'UTC';
-                $betterMethod = str_replace($match[2], 'UTC', $betterMethod ?? $method);
-            }
-
-            if ($betterMethod) {
-                @trigger_error(
-                    "Use the method $betterMethod instead to make it more explicit about what it does.\n".
-                    'On next major version, "float" prefix will be removed (as all diff are now returning floating numbers)'.
-                    ' and "Real" methods will be removed in favor of "UTC" because what it actually does is to convert both'.
-                    ' dates to UTC timezone before comparison, while by default it does it only if both dates don\'t have'.
-                    ' exactly the same timezone (Note: 2 timezones with the same offset but different names are considered'.
-                    " different as it's not safe to assume they will always have the same offset).",
-                    \E_USER_DEPRECATED,
-                );
-            }
-
-            $unit = self::pluralUnit($match[3]);
-            $diffMethod = 'diffIn'.ucfirst($unit);
-
-            if (\in_array($unit, ['days', 'weeks', 'months', 'quarters', 'years'])) {
-                $parameters['utc'] = ($mode === 'UTC');
-            }
-
-            if (method_exists($this, $diffMethod)) {
-                return $this->$diffMethod(...$parameters);
-            }
-        }
-
-        return null;
-    }
-
-    private function callHumanDiffAlias(string $method, array $parameters): ?string
-    {
-        $diffSizes = [
-            // @mode diffForHumans
-            'short' => true,
-            // @mode diffForHumans
-            'long' => false,
-        ];
-        $diffSyntaxModes = [
-            // @call diffForHumans
-            'Absolute' => CarbonInterface::DIFF_ABSOLUTE,
-            // @call diffForHumans
-            'Relative' => CarbonInterface::DIFF_RELATIVE_AUTO,
-            // @call diffForHumans
-            'RelativeToNow' => CarbonInterface::DIFF_RELATIVE_TO_NOW,
-            // @call diffForHumans
-            'RelativeToOther' => CarbonInterface::DIFF_RELATIVE_TO_OTHER,
-        ];
-        $sizePattern = implode('|', array_keys($diffSizes));
-        $syntaxPattern = implode('|', array_keys($diffSyntaxModes));
-
-        if (preg_match("/^(?<size>$sizePattern)(?<syntax>$syntaxPattern)DiffForHuman$/", $method, $match)) {
-            $dates = array_filter($parameters, function ($parameter) {
-                return $parameter instanceof DateTimeInterface;
-            });
-            $other = null;
-
-            if (\count($dates)) {
-                $key = key($dates);
-                $other = current($dates);
-                array_splice($parameters, $key, 1);
-            }
-
-            return $this->diffForHumans($other, $diffSyntaxModes[$match['syntax']], $diffSizes[$match['size']], ...$parameters);
-        }
-
-        return null;
-    }
-
-    private function callIsMethod(string $unit, array $parameters): ?bool
-    {
-        if (!str_starts_with($unit, 'is')) {
-            return null;
-        }
-
-        $word = substr($unit, 2);
-
-        if (\in_array($word, static::$days, true)) {
-            return $this->isDayOfWeek($word);
-        }
-
-        return match ($word) {
-            // @call is Check if the current instance has UTC timezone. (Both isUtc and isUTC cases are valid.)
-            'Utc', 'UTC' => $this->utc,
-            // @call is Check if the current instance has non-UTC timezone.
-            'Local' => $this->local,
-            // @call is Check if the current instance is a valid date.
-            'Valid' => $this->year !== 0,
-            // @call is Check if the current instance is in a daylight saving time.
-            'DST' => $this->dst,
-            default => $this->callComparatorMethod($word, $parameters),
-        };
-    }
-
-    private function callComparatorMethod(string $unit, array $parameters): ?bool
-    {
-        $start = substr($unit, 0, 4);
-        $factor = -1;
-
-        if ($start === 'Last') {
-            $start = 'Next';
-            $factor = 1;
-        }
-
-        if ($start === 'Next') {
-            $lowerUnit = strtolower(substr($unit, 4));
-
-            if (static::isModifiableUnit($lowerUnit)) {
-                return $this->avoidMutation()->addUnit($lowerUnit, $factor, false)->isSameUnit($lowerUnit, ...($parameters ?: ['now']));
-            }
-        }
-
-        if ($start === 'Same') {
-            try {
-                return $this->isSameUnit(strtolower(substr($unit, 4)), ...$parameters);
-            } catch (BadComparisonUnitException) {
-                // Try next
-            }
-        }
-
-        if (str_starts_with($unit, 'Current')) {
-            try {
-                return $this->isCurrentUnit(strtolower(substr($unit, 7)));
-            } catch (BadComparisonUnitException | BadMethodCallException) {
-                // Try next
-            }
-        }
-
-        return null;
-    }
-
-    private function callModifierMethod(string $unit, array $parameters): ?static
-    {
-        $action = substr($unit, 0, 3);
-        $overflow = null;
-
-        if ($action === 'set') {
-            $unit = strtolower(substr($unit, 3));
-        }
-
-        if (\in_array($unit, static::$units, true)) {
-            return $this->setUnit($unit, ...$parameters);
-        }
-
-        if ($action === 'add' || $action === 'sub') {
-            $unit = substr($unit, 3);
-            $utcUnit = $this->getUTCUnit($unit);
-
-            if ($utcUnit) {
-                $unit = static::singularUnit($utcUnit);
-
-                return $this->{"{$action}UTCUnit"}($unit, ...$parameters);
-            }
-
-            if (preg_match('/^(Month|Quarter|Year|Decade|Century|Centurie|Millennium|Millennia)s?(No|With|Without|WithNo)Overflow$/', $unit, $match)) {
-                $unit = $match[1];
-                $overflow = $match[2] === 'With';
-            }
-
-            $unit = static::singularUnit($unit);
-        }
-
-        if (static::isModifiableUnit($unit)) {
-            return $this->{"{$action}Unit"}($unit, $this->getMagicParameter($parameters, 0, 'value', 1), $overflow);
-        }
-
-        return null;
-    }
-
-    private function callPeriodMethod(string $method, array $parameters): ?CarbonPeriod
-    {
-        if (str_ends_with($method, 'Until')) {
-            try {
-                $unit = static::singularUnit(substr($method, 0, -5));
-
-                return $this->range(
-                    $this->getMagicParameter($parameters, 0, 'endDate', $this),
-                    $this->getMagicParameter($parameters, 1, 'factor', 1),
-                    $unit
-                );
-            } catch (InvalidArgumentException) {
-                // Try macros
-            }
-        }
-
-        return null;
-    }
-
-    private function callMacroMethod(string $method, array $parameters): mixed
-    {
-        return static::bindMacroContext($this, function () use (&$method, &$parameters) {
-            $macro = $this->getLocalMacro($method);
-
-            if (!$macro) {
-                foreach ($this->getAllGenericMacros() as $callback) {
-                    try {
-                        return $this->executeCallable($callback, $method, ...$parameters);
-                    } catch (BadMethodCallException) {
-                        continue;
-                    }
-                }
-
-                if ($this->isLocalStrictModeEnabled()) {
-                    throw new UnknownMethodException($method);
-                }
-
-                return null;
-            }
-
-            return $this->executeCallable($macro, ...$parameters);
-        });
-    }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

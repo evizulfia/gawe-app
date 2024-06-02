@@ -7,7 +7,7 @@ class Limit
     /**
      * The rate limit signature key.
      *
-     * @var mixed|string
+     * @var mixed
      */
     public $key;
 
@@ -35,7 +35,7 @@ class Limit
     /**
      * Create a new limit instance.
      *
-     * @param  mixed|string  $key
+     * @param  mixed  $key
      * @param  int  $maxAttempts
      * @param  int  $decayMinutes
      * @return void
@@ -44,39 +44,18 @@ class Limit
     {
         $this->key = $key;
         $this->maxAttempts = $maxAttempts;
-<<<<<<< HEAD
         $this->decayMinutes = $decayMinutes;
-=======
-        $this->decaySeconds = $decaySeconds;
     }
 
     /**
      * Create a new rate limit.
      *
      * @param  int  $maxAttempts
-     * @param  int  $decaySeconds
      * @return static
      */
-    public static function perSecond($maxAttempts, $decaySeconds = 1)
+    public static function perMinute($maxAttempts)
     {
-        return new static('', $maxAttempts, $decaySeconds);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
-    }
-
-    /**
-     * Create a new rate limit.
-     *
-     * @param  int  $maxAttempts
-     * @param  int  $decayMinutes
-     * @return static
-     */
-    public static function perMinute($maxAttempts, $decayMinutes = 1)
-    {
-<<<<<<< HEAD
         return new static('', $maxAttempts);
-=======
-        return new static('', $maxAttempts, 60 * $decayMinutes);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -128,7 +107,7 @@ class Limit
     /**
      * Set the key of the rate limit.
      *
-     * @param  string  $key
+     * @param  mixed  $key
      * @return $this
      */
     public function by($key)

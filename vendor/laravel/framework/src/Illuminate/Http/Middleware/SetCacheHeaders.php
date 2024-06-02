@@ -4,6 +4,7 @@ namespace Illuminate\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SetCacheHeaders
 {
@@ -21,16 +22,12 @@ class SetCacheHeaders
     {
         $response = $next($request);
 
-        if (! $request->isMethodCacheable() || ! $response->getContent()) {
+        if (! $request->isMethodCacheable() || (! $response->getContent() && ! $response instanceof BinaryFileResponse)) {
             return $response;
         }
 
         if (is_string($options)) {
             $options = $this->parseOptions($options);
-        }
-
-        if (! $response->isSuccessful()) {
-            return $response;
         }
 
         if (isset($options['etag']) && $options['etag'] === true) {

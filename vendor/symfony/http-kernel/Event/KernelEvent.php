@@ -22,22 +22,19 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class KernelEvent extends Event
 {
-<<<<<<< HEAD
-    private $kernel;
-    private $request;
+    private HttpKernelInterface $kernel;
+    private Request $request;
     private ?int $requestType;
 
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * @param int $requestType The request type the kernel is currently processing; one of
      *                         HttpKernelInterface::MAIN_REQUEST or HttpKernelInterface::SUB_REQUEST
      */
-    public function __construct(
-        private HttpKernelInterface $kernel,
-        private Request $request,
-        private ?int $requestType,
-    ) {
+    public function __construct(HttpKernelInterface $kernel, Request $request, ?int $requestType)
+    {
+        $this->kernel = $kernel;
+        $this->request = $request;
+        $this->requestType = $requestType;
     }
 
     /**

@@ -12,23 +12,38 @@
 namespace Carbon\Exceptions;
 
 use BadMethodCallException as BaseBadMethodCallException;
-use Exception;
+use Throwable;
 
 class UnknownMethodException extends BaseBadMethodCallException implements BadMethodCallException
 {
+    /**
+     * The method.
+     *
+     * @var string
+     */
+    protected $method;
+
     /**
      * Constructor.
      *
      * @param string         $method
      * @param int            $code
-     * @param Exception|null $previous
+     * @param Throwable|null $previous
      */
-<<<<<<< HEAD
-    public function __construct($method, $code = 0, Exception $previous = null)
-=======
-    public function __construct($method, $code = 0, ?Throwable $previous = null)
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    public function __construct($method, $code = 0, Throwable $previous = null)
     {
+        $this->method = $method;
+
         parent::__construct("Method $method does not exist.", $code, $previous);
+    }
+
+    /**
+     * Get the method.
+     *
+     * @return string
+     */
+    public function getMethod(): string
+    {
+        return $this->method;
     }
 }

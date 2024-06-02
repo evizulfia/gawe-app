@@ -16,6 +16,7 @@ class Factory implements FactoryContract
     use Macroable,
         Concerns\ManagesComponents,
         Concerns\ManagesEvents,
+        Concerns\ManagesFragments,
         Concerns\ManagesLayouts,
         Concerns\ManagesLoops,
         Concerns\ManagesStacks,
@@ -88,20 +89,6 @@ class Factory implements FactoryContract
      * @var array
      */
     protected $renderedOnce = [];
-
-    /**
-     * The cached array of engines for paths.
-     *
-     * @var array
-     */
-    protected $pathEngineCache = [];
-
-    /**
-     * The cache of normalized names for views.
-     *
-     * @var array
-     */
-    protected $normalizedNameCache = [];
 
     /**
      * Create a new view factory instance.
@@ -260,7 +247,7 @@ class Factory implements FactoryContract
      */
     protected function normalizeName($name)
     {
-        return $this->normalizedNameCache[$name] ??= ViewName::normalize($name);
+        return ViewName::normalize($name);
     }
 
     /**
@@ -314,17 +301,13 @@ class Factory implements FactoryContract
      */
     public function getEngineFromPath($path)
     {
-        if (isset($this->pathEngineCache[$path])) {
-            return $this->engines->resolve($this->pathEngineCache[$path]);
-        }
-
         if (! $extension = $this->getExtension($path)) {
             throw new InvalidArgumentException("Unrecognized extension in file: {$path}.");
         }
 
-        return $this->engines->resolve(
-            $this->pathEngineCache[$path] = $this->extensions[$extension]
-        );
+        $engine = $this->extensions[$extension];
+
+        return $this->engines->resolve($engine);
     }
 
     /**
@@ -484,8 +467,6 @@ class Factory implements FactoryContract
         unset($this->extensions[$extension]);
 
         $this->extensions = array_merge([$extension => $engine], $this->extensions);
-
-        $this->pathEngineCache = [];
     }
 
     /**
@@ -501,6 +482,7 @@ class Factory implements FactoryContract
         $this->flushSections();
         $this->flushStacks();
         $this->flushComponents();
+        $this->flushFragments();
     }
 
     /**

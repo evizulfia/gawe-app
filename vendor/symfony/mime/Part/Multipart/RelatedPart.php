@@ -19,19 +19,11 @@ use Symfony\Component\Mime\Part\AbstractPart;
  */
 final class RelatedPart extends AbstractMultipartPart
 {
-<<<<<<< HEAD
-    private $mainPart;
+    private AbstractPart $mainPart;
 
     public function __construct(AbstractPart $mainPart, AbstractPart $part, AbstractPart ...$parts)
     {
         $this->mainPart = $mainPart;
-=======
-    public function __construct(
-        private AbstractPart $mainPart,
-        AbstractPart $part,
-        AbstractPart ...$parts,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->prepareParts($part, ...$parts);
 
         parent::__construct($part, ...$parts);

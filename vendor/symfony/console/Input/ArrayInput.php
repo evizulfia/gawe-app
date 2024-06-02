@@ -25,25 +25,15 @@ use Symfony\Component\Console\Exception\InvalidOptionException;
  */
 class ArrayInput extends Input
 {
-<<<<<<< HEAD
     private array $parameters;
 
-    public function __construct(array $parameters, InputDefinition $definition = null)
+    public function __construct(array $parameters, ?InputDefinition $definition = null)
     {
         $this->parameters = $parameters;
 
-=======
-    public function __construct(
-        private array $parameters,
-        ?InputDefinition $definition = null,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         parent::__construct($definition);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFirstArgument(): ?string
     {
         foreach ($this->parameters as $param => $value) {
@@ -57,9 +47,6 @@ class ArrayInput extends Input
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasParameterOption(string|array $values, bool $onlyParams = false): bool
     {
         $values = (array) $values;
@@ -81,9 +68,6 @@ class ArrayInput extends Input
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterOption(string|array $values, string|bool|int|float|array|null $default = false, bool $onlyParams = false): mixed
     {
         $values = (array) $values;
@@ -122,7 +106,7 @@ class ArrayInput extends Input
                     $params[] = $param.('' != $val ? $glue.$this->escapeToken($val) : '');
                 }
             } else {
-                $params[] = \is_array($val) ? implode(' ', array_map([$this, 'escapeToken'], $val)) : $this->escapeToken($val);
+                $params[] = \is_array($val) ? implode(' ', array_map($this->escapeToken(...), $val)) : $this->escapeToken($val);
             }
         }
 
@@ -130,7 +114,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     protected function parse()
     {
@@ -153,7 +137,7 @@ class ArrayInput extends Input
      *
      * @throws InvalidOptionException When option given doesn't exist
      */
-    private function addShortOption(string $shortcut, mixed $value)
+    private function addShortOption(string $shortcut, mixed $value): void
     {
         if (!$this->definition->hasShortcut($shortcut)) {
             throw new InvalidOptionException(sprintf('The "-%s" option does not exist.', $shortcut));
@@ -168,7 +152,7 @@ class ArrayInput extends Input
      * @throws InvalidOptionException When option given doesn't exist
      * @throws InvalidOptionException When a required value is missing
      */
-    private function addLongOption(string $name, mixed $value)
+    private function addLongOption(string $name, mixed $value): void
     {
         if (!$this->definition->hasOption($name)) {
             if (!$this->definition->hasNegation($name)) {
@@ -201,7 +185,7 @@ class ArrayInput extends Input
      *
      * @throws InvalidArgumentException When argument given doesn't exist
      */
-    private function addArgument(string|int $name, mixed $value)
+    private function addArgument(string|int $name, mixed $value): void
     {
         if (!$this->definition->hasArgument($name)) {
             throw new InvalidArgumentException(sprintf('The "%s" argument does not exist.', $name));

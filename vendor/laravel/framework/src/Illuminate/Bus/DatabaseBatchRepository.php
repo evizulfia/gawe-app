@@ -9,7 +9,6 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
-use Throwable;
 
 class DatabaseBatchRepository implements PrunableBatchRepository
 {
@@ -60,9 +59,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
         return $this->connection->table($this->table)
                             ->orderByDesc('id')
                             ->take($limit)
-                            ->when($before, function ($q) use ($before) {
-                                return $q->where('id', '<', $before);
-                            })
+                            ->when($before, fn ($q) => $q->where('id', '<', $before))
                             ->get()
                             ->map(function ($batch) {
                                 return $this->toBatch($batch);
@@ -79,6 +76,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     public function find(string $batchId)
     {
         $batch = $this->connection->table($this->table)
+                            ->useWritePdo()
                             ->where('id', $batchId)
                             ->first();
 
@@ -280,6 +278,29 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     }
 
     /**
+     * Prune all of the cancelled entries older than the given date.
+     *
+     * @param  \DateTimeInterface  $before
+     * @return int
+     */
+    public function pruneCancelled(DateTimeInterface $before)
+    {
+        $query = $this->connection->table($this->table)
+            ->whereNotNull('cancelled_at')
+            ->where('created_at', '<', $before->getTimestamp());
+
+        $totalDeleted = 0;
+
+        do {
+            $deleted = $query->take(1000)->delete();
+
+            $totalDeleted += $deleted;
+        } while ($deleted !== 0);
+
+        return $totalDeleted;
+    }
+
+    /**
      * Execute the given Closure within a storage specific transaction.
      *
      * @param  \Closure  $callback
@@ -287,9 +308,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
      */
     public function transaction(Closure $callback)
     {
-        return $this->connection->transaction(function () use ($callback) {
-            return $callback();
-        });
+        return $this->connection->transaction(fn () => $callback());
     }
 
     /**
@@ -320,15 +339,7 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             $serialized = base64_decode($serialized);
         }
 
-<<<<<<< HEAD
         return unserialize($serialized);
-=======
-        try {
-            return unserialize($serialized);
-        } catch (Throwable) {
-            return [];
-        }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -352,5 +363,26 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             $batch->cancelled_at ? CarbonImmutable::createFromTimestamp($batch->cancelled_at) : $batch->cancelled_at,
             $batch->finished_at ? CarbonImmutable::createFromTimestamp($batch->finished_at) : $batch->finished_at
         );
+    }
+
+    /**
+     * Get the underlying database connection.
+     *
+     * @return \Illuminate\Database\Connection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Set the underlying database connection.
+     *
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return void
+     */
+    public function setConnection(Connection $connection)
+    {
+        $this->connection = $connection;
     }
 }

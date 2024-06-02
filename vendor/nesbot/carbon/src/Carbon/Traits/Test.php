@@ -28,7 +28,7 @@ trait Test
     /**
      * A test Carbon instance to be returned when now instances are created.
      *
-     * @var static
+     * @var Closure|static|null
      */
     protected static $testNow;
 
@@ -59,15 +59,13 @@ trait Test
      *
      * /!\ Use this method for unit tests only.
      *
-     * @param Closure|static|string|false|null $testNow real or mock Carbon instance
+     * @param DateTimeInterface|Closure|static|string|false|null $testNow real or mock Carbon instance
      */
     public static function setTestNow($testNow = null)
     {
-        if ($testNow === false) {
-            $testNow = null;
-        }
-
-        static::$testNow = \is_string($testNow) ? static::parse($testNow) : $testNow;
+        static::$testNow = $testNow instanceof self || $testNow instanceof Closure
+            ? $testNow
+            : static::make($testNow);
     }
 
     /**
@@ -87,7 +85,7 @@ trait Test
      *
      * /!\ Use this method for unit tests only.
      *
-     * @param Closure|static|string|false|null $testNow real or mock Carbon instance
+     * @param DateTimeInterface|Closure|static|string|false|null $testNow real or mock Carbon instance
      */
     public static function setTestNowAndTimezone($testNow = null, $tz = null)
     {
@@ -121,16 +119,22 @@ trait Test
      *
      * /!\ Use this method for unit tests only.
      *
-     * @param Closure|static|string|false|null $testNow  real or mock Carbon instance
-     * @param Closure|null                     $callback
+     * @template T
      *
-     * @return mixed
+     * @param DateTimeInterface|Closure|static|string|false|null $testNow  real or mock Carbon instance
+     * @param Closure(): T                                       $callback
+     *
+     * @return T
      */
-    public static function withTestNow($testNow = null, $callback = null)
+    public static function withTestNow($testNow, $callback)
     {
         static::setTestNow($testNow);
-        $result = $callback();
-        static::setTestNow();
+
+        try {
+            $result = $callback();
+        } finally {
+            static::setTestNow();
+        }
 
         return $result;
     }
@@ -184,24 +188,8 @@ trait Test
 
     protected static function mockConstructorParameters(&$time, $tz)
     {
-<<<<<<< HEAD
         /** @var \Carbon\CarbonImmutable|\Carbon\Carbon $testInstance */
         $testInstance = clone static::getMockedTestNow($tz);
-=======
-        $clock = $this->clock?->unwrap();
-        $now = $clock instanceof Factory
-            ? $clock->getTestNow()
-            : $this->nowFromClock($timezone);
-        $testInstance = $now ?? self::getMockedTestNowClone($timezone);
-
-        if (!$testInstance) {
-            return;
-        }
-
-        if ($testInstance instanceof DateTimeInterface) {
-            $testInstance = $testInstance->setTimezone($timezone ?? date_default_timezone_get());
-        }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         if (static::hasRelativeKeywords($time)) {
             $testInstance = $testInstance->modify($time);

@@ -21,21 +21,13 @@ use Symfony\Component\Mime\Part\TextPart;
  */
 class Message extends RawMessage
 {
-<<<<<<< HEAD
-    private $headers;
-    private $body;
-
-    public function __construct(Headers $headers = null, AbstractPart $body = null)
-    {
-=======
     private Headers $headers;
+    private ?AbstractPart $body;
 
-    public function __construct(
-        ?Headers $headers = null,
-        private ?AbstractPart $body = null,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    public function __construct(?Headers $headers = null, ?AbstractPart $body = null)
+    {
         $this->headers = $headers ? clone $headers : new Headers();
+        $this->body = $body;
     }
 
     public function __clone()
@@ -50,8 +42,11 @@ class Message extends RawMessage
     /**
      * @return $this
      */
-    public function setBody(AbstractPart $body = null): static
+    public function setBody(?AbstractPart $body = null): static
     {
+        if (1 > \func_num_args()) {
+            trigger_deprecation('symfony/mime', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
+        }
         $this->body = $body;
 
         return $this;
@@ -130,13 +125,16 @@ class Message extends RawMessage
         yield from $body->toIterable();
     }
 
+    /**
+     * @return void
+     */
     public function ensureValidity()
     {
-        if (!$this->headers->get('To')?->getBody() && !$this->headers->get('Cc')?->getBody() && !$this->headers->get('Bcc')?->getBody()) {
+        if (!$this->headers->has('To') && !$this->headers->has('Cc') && !$this->headers->has('Bcc')) {
             throw new LogicException('An email must have a "To", "Cc", or "Bcc" header.');
         }
 
-        if (!$this->headers->get('From')?->getBody() && !$this->headers->get('Sender')?->getBody()) {
+        if (!$this->headers->has('From') && !$this->headers->has('Sender')) {
             throw new LogicException('An email must have a "From" or a "Sender" header.');
         }
 
@@ -148,7 +146,10 @@ class Message extends RawMessage
         if ($this->headers->has('Sender')) {
             $sender = $this->headers->get('Sender')->getAddress();
         } elseif ($this->headers->has('From')) {
-            $sender = $this->headers->get('From')->getAddresses()[0];
+            if (!$froms = $this->headers->get('From')->getAddresses()) {
+                throw new LogicException('A "From" header must have at least one email address.');
+            }
+            $sender = $froms[0];
         } else {
             throw new LogicException('An email must have a "From" or a "Sender" header.');
         }

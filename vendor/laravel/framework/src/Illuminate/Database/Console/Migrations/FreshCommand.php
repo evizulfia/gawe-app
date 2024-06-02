@@ -4,19 +4,13 @@ namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Illuminate\Console\Prohibitable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\DatabaseRefreshed;
-<<<<<<< HEAD
-=======
-use Illuminate\Database\Migrations\Migrator;
-use Symfony\Component\Console\Attribute\AsCommand;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Symfony\Component\Console\Input\InputOption;
 
 class FreshCommand extends Command
 {
-    use ConfirmableTrait, Prohibitable;
+    use ConfirmableTrait;
 
     /**
      * The console command name.
@@ -33,62 +27,28 @@ class FreshCommand extends Command
     protected $description = 'Drop all tables and re-run all migrations';
 
     /**
-     * The migrator instance.
-     *
-     * @var \Illuminate\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
-     * Create a new fresh command instance.
-     *
-     * @param  \Illuminate\Database\Migrations\Migrator  $migrator
-     * @return void
-     */
-    public function __construct(Migrator $migrator)
-    {
-        parent::__construct();
-
-        $this->migrator = $migrator;
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle()
     {
-        if ($this->isProhibited() ||
-            ! $this->confirmToProceed()) {
+        if (! $this->confirmToProceed()) {
             return 1;
         }
 
         $database = $this->input->getOption('database');
 
-<<<<<<< HEAD
-        $this->call('db:wipe', array_filter([
+        $this->newLine();
+
+        $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
             '--database' => $database,
             '--drop-views' => $this->option('drop-views'),
             '--drop-types' => $this->option('drop-types'),
             '--force' => true,
-        ]));
-=======
-        $this->migrator->usingConnection($database, function () use ($database) {
-            if ($this->migrator->repositoryExists()) {
-                $this->newLine();
-
-                $this->components->task('Dropping all tables', fn () => $this->callSilent('db:wipe', array_filter([
-                    '--database' => $database,
-                    '--drop-views' => $this->option('drop-views'),
-                    '--drop-types' => $this->option('drop-types'),
-                    '--force' => true,
-                ])) == 0);
-            }
-        });
+        ])) == 0);
 
         $this->newLine();
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
         $this->call('migrate', array_filter([
             '--database' => $database,

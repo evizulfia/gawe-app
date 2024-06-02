@@ -4,15 +4,15 @@ namespace Illuminate\Validation;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Macroable;
-<<<<<<< HEAD
-=======
-use Illuminate\Validation\Rules\ArrayRule;
-use Illuminate\Validation\Rules\Can;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Illuminate\Validation\Rules\Dimensions;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\ExcludeIf;
 use Illuminate\Validation\Rules\Exists;
+use Illuminate\Validation\Rules\File;
+use Illuminate\Validation\Rules\ImageFile;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\NotIn;
+use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
 use Illuminate\Validation\Rules\Unique;
 
@@ -24,38 +24,13 @@ class Rule
      * Create a new conditional rule set.
      *
      * @param  callable|bool  $condition
-     * @param  array|string  $rules
-     * @param  array|string  $defaultRules
+     * @param  array|string|\Closure  $rules
+     * @param  array|string|\Closure  $defaultRules
      * @return \Illuminate\Validation\ConditionalRules
      */
     public static function when($condition, $rules, $defaultRules = [])
     {
         return new ConditionalRules($condition, $rules, $defaultRules);
-    }
-
-    /**
-     * Get a dimensions constraint builder instance.
-     *
-     * @param  array  $constraints
-     * @return \Illuminate\Validation\Rules\Dimensions
-     */
-    public static function dimensions(array $constraints = [])
-    {
-<<<<<<< HEAD
-        return new Dimensions($constraints);
-=======
-        return new ConditionalRules($condition, $defaultRules, $rules);
-    }
-
-    /**
-     * Get an array rule builder instance.
-     *
-     * @param  array|null  $keys
-     * @return \Illuminate\Validation\Rules\ArrayRule
-     */
-    public static function array($keys = null)
-    {
-        return new ArrayRule(...func_get_args());
     }
 
     /**
@@ -79,7 +54,6 @@ class Rule
     public static function unique($table, $column = 'NULL')
     {
         return new Unique($table, $column);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -95,9 +69,9 @@ class Rule
     }
 
     /**
-     * Get an in rule builder instance.
+     * Get an in constraint builder instance.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|\BackedEnum|\UnitEnum|array|string  $values
+     * @param  \Illuminate\Contracts\Support\Arrayable|array|string  $values
      * @return \Illuminate\Validation\Rules\In
      */
     public static function in($values)
@@ -110,9 +84,9 @@ class Rule
     }
 
     /**
-     * Get a not_in rule builder instance.
+     * Get a not_in constraint builder instance.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|\BackedEnum|\UnitEnum|array|string  $values
+     * @param  \Illuminate\Contracts\Support\Arrayable|array|string  $values
      * @return \Illuminate\Validation\Rules\NotIn
      */
     public static function notIn($values)
@@ -125,22 +99,7 @@ class Rule
     }
 
     /**
-<<<<<<< HEAD
-     * Create a new nested rule set.
-     *
-     * @param  callable  $callback
-     * @return \Illuminate\Validation\NestedRules
-     */
-    public static function forEach($callback)
-    {
-        return new NestedRules($callback);
-    }
-
-    /**
      * Get a required_if constraint builder instance.
-=======
-     * Get a required_if rule builder instance.
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @param  callable|bool  $callback
      * @return \Illuminate\Validation\Rules\RequiredIf
@@ -151,26 +110,18 @@ class Rule
     }
 
     /**
-<<<<<<< HEAD
-     * Get a unique constraint builder instance.
-=======
-     * Get a exclude_if rule builder instance.
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+     * Get a exclude_if constraint builder instance.
      *
-     * @param  string  $table
-     * @param  string  $column
-     * @return \Illuminate\Validation\Rules\Unique
+     * @param  callable|bool  $callback
+     * @return \Illuminate\Validation\Rules\ExcludeIf
      */
-    public static function unique($table, $column = 'NULL')
+    public static function excludeIf($callback)
     {
-<<<<<<< HEAD
-        return new Unique($table, $column);
-=======
         return new ExcludeIf($callback);
     }
 
     /**
-     * Get a prohibited_if rule builder instance.
+     * Get a prohibited_if constraint builder instance.
      *
      * @param  callable|bool  $callback
      * @return \Illuminate\Validation\Rules\ProhibitedIf
@@ -181,9 +132,9 @@ class Rule
     }
 
     /**
-     * Get an enum rule builder instance.
+     * Get an enum constraint builder instance.
      *
-     * @param  class-string  $type
+     * @param  string  $type
      * @return \Illuminate\Validation\Rules\Enum
      */
     public static function enum($type)
@@ -192,7 +143,7 @@ class Rule
     }
 
     /**
-     * Get a file rule builder instance.
+     * Get a file constraint builder instance.
      *
      * @return \Illuminate\Validation\Rules\File
      */
@@ -202,7 +153,7 @@ class Rule
     }
 
     /**
-     * Get an image file rule builder instance.
+     * Get an image file constraint builder instance.
      *
      * @return \Illuminate\Validation\Rules\ImageFile
      */
@@ -212,7 +163,7 @@ class Rule
     }
 
     /**
-     * Get a dimensions rule builder instance.
+     * Get a dimensions constraint builder instance.
      *
      * @param  array  $constraints
      * @return \Illuminate\Validation\Rules\Dimensions
@@ -220,6 +171,5 @@ class Rule
     public static function dimensions(array $constraints = [])
     {
         return new Dimensions($constraints);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 }

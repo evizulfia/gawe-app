@@ -2,6 +2,7 @@
 
 namespace Illuminate\Routing;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Contracts\Routing\UrlRoutable;
@@ -167,6 +168,19 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
+     * Get the previous path info for the request.
+     *
+     * @param  mixed  $fallback
+     * @return string
+     */
+    public function previousPath($fallback = false)
+    {
+        $previousPath = str_replace($this->to('/'), '', rtrim(preg_replace('/\?.*/', '', $this->previous($fallback)), '/'));
+
+        return $previousPath === '' ? '/' : $previousPath;
+    }
+
+    /**
      * Get the previous URL from the session if possible.
      *
      * @return string|null
@@ -209,26 +223,6 @@ class UrlGenerator implements UrlGeneratorContract
         return $this->format(
             $root, '/'.trim($path.'/'.$tail, '/')
         ).$query;
-    }
-
-    /**
-     * Generate an absolute URL with the given query parameters.
-     *
-     * @param  string  $path
-     * @param  array  $query
-     * @param  mixed  $extra
-     * @param  bool|null  $secure
-     * @return string
-     */
-    public function query($path, $query = [], $extra = [], $secure = null)
-    {
-        [$path, $existingQueryString] = $this->extractQueryString($path);
-
-        parse_str(Str::after($existingQueryString, '?'), $existingQueryArray);
-
-        return rtrim($this->to($path.'?'.Arr::query(
-            array_merge($existingQueryArray, $query)
-        ), $extra, $secure), '?');
     }
 
     /**
@@ -351,11 +345,7 @@ class UrlGenerator implements UrlGeneratorContract
         $key = call_user_func($this->keyResolver);
 
         return $this->route($name, $parameters + [
-            'signature' => hash_hmac(
-                'sha256',
-                $this->route($name, $parameters, $absolute),
-                is_array($key) ? $key[0] : $key
-            ),
+            'signature' => hash_hmac('sha256', $this->route($name, $parameters, $absolute), $key),
         ], $absolute);
     }
 
@@ -434,26 +424,15 @@ class UrlGenerator implements UrlGeneratorContract
 
         $url = $absolute ? $request->url() : '/'.$request->path();
 
-        $queryString = collect(explode('&', $request->server->get('QUERY_STRING')))
+        $queryString = collect(explode('&', (string) $request->server->get('QUERY_STRING')))
             ->reject(fn ($parameter) => in_array(Str::before($parameter, '='), $ignoreQuery))
             ->join('&');
 
         $original = rtrim($url.'?'.$queryString, '?');
 
-        $keys = call_user_func($this->keyResolver);
+        $signature = hash_hmac('sha256', $original, call_user_func($this->keyResolver));
 
-        $keys = is_array($keys) ? $keys : [$keys];
-
-        foreach ($keys as $key) {
-            if (hash_equals(
-                hash_hmac('sha256', $original, $key),
-                (string) $request->query('signature', '')
-            )) {
-                return true;
-            }
-        }
-
-        return false;
+        return hash_equals($signature, (string) $request->query('signature', ''));
     }
 
     /**
@@ -501,16 +480,14 @@ class UrlGenerator implements UrlGeneratorContract
     public function toRoute($route, $parameters, $absolute)
     {
         $parameters = collect(Arr::wrap($parameters))->map(function ($value, $key) use ($route) {
-            return $value instanceof UrlRoutable && $route->bindingFieldFor($key)
+            $value = $value instanceof UrlRoutable && $route->bindingFieldFor($key)
                     ? $value->{$route->bindingFieldFor($key)}
                     : $value;
-        })->all();
 
-        array_walk_recursive($parameters, function (&$item) {
-            if ($item instanceof BackedEnum) {
-                $item = $item->value;
-            }
-        });
+            return function_exists('enum_exists') && $value instanceof BackedEnum
+                ? $value->value
+                : $value;
+        })->all();
 
         return $this->routeUrl()->to(
             $route, $this->formatParameters($parameters), $absolute
@@ -832,6 +809,17 @@ class UrlGenerator implements UrlGeneratorContract
         $this->keyResolver = $keyResolver;
 
         return $this;
+    }
+
+    /**
+     * Clone a new instance of the URL generator with a different encryption key resolver.
+     *
+     * @param  callable  $keyResolver
+     * @return \Illuminate\Routing\UrlGenerator
+     */
+    public function withKeyResolver(callable $keyResolver)
+    {
+        return (clone $this)->setKeyResolver($keyResolver);
     }
 
     /**

@@ -1,13 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Add `Process::setIgnoredSignals()` to disable signal propagation to the child process
-
 6.4
 ---
 
@@ -16,7 +9,6 @@ CHANGELOG
  * Add `RunProcessMessage` and `RunProcessMessageHandler`
  * Support using `Process::findExecutable()` independently of `open_basedir`
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 5.2.0
 -----
 

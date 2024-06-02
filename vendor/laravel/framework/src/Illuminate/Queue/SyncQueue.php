@@ -13,17 +13,6 @@ use Throwable;
 class SyncQueue extends Queue implements QueueContract
 {
     /**
-     * Create a new sync queue instance.
-     *
-     * @param  bool  $dispatchAfterCommit
-     * @return void
-     */
-    public function __construct($dispatchAfterCommit = false)
-    {
-        $this->dispatchAfterCommit = $dispatchAfterCommit;
-    }
-
-    /**
      * Get the size of the queue.
      *
      * @param  string|null  $queue
@@ -145,7 +134,7 @@ class SyncQueue extends Queue implements QueueContract
     }
 
     /**
-     * Push a new job onto the queue after a delay.
+     * Push a new job onto the queue after (n) seconds.
      *
      * @param  \DateTimeInterface|\DateInterval|int  $delay
      * @param  string  $job

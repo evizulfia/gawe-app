@@ -56,8 +56,6 @@ class DatabaseLock extends Lock
      */
     public function acquire()
     {
-        $acquired = false;
-
         try {
             $this->connection->table($this->table)->insert([
                 'key' => $this->name,
@@ -70,7 +68,7 @@ class DatabaseLock extends Lock
             $updated = $this->connection->table($this->table)
                 ->where('key', $this->name)
                 ->where(function ($query) {
-                    return $query->where('owner', $this->owner)->orWhere('expiration', '<=', $this->currentTime());
+                    return $query->where('owner', $this->owner)->orWhere('expiration', '<=', time());
                 })->update([
                     'owner' => $this->owner,
                     'expiration' => $this->expiresAt(),
@@ -80,7 +78,7 @@ class DatabaseLock extends Lock
         }
 
         if (random_int(1, $this->lottery[1]) <= $this->lottery[0]) {
-            $this->connection->table($this->table)->where('expiration', '<=', $this->currentTime())->delete();
+            $this->connection->table($this->table)->where('expiration', '<=', time())->delete();
         }
 
         return $acquired;
@@ -93,13 +91,7 @@ class DatabaseLock extends Lock
      */
     protected function expiresAt()
     {
-<<<<<<< HEAD
         return $this->seconds > 0 ? time() + $this->seconds : Carbon::now()->addDays(1)->getTimestamp();
-=======
-        $lockTimeout = $this->seconds > 0 ? $this->seconds : $this->defaultTimeoutInSeconds;
-
-        return $this->currentTime() + $lockTimeout;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

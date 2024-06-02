@@ -18,27 +18,12 @@ namespace Symfony\Component\HttpKernel\ControllerMetadata;
  */
 final class ArgumentMetadataFactory implements ArgumentMetadataFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createArgumentMetadata(string|object|array $controller): array
+    public function createArgumentMetadata(string|object|array $controller, ?\ReflectionFunctionAbstract $reflector = null): array
     {
         $arguments = [];
-<<<<<<< HEAD
-=======
         $reflector ??= new \ReflectionFunction($controller(...));
-        $controllerName = $this->getPrettyName($reflector);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
-        if (\is_array($controller)) {
-            $reflection = new \ReflectionMethod($controller[0], $controller[1]);
-        } elseif (\is_object($controller) && !$controller instanceof \Closure) {
-            $reflection = (new \ReflectionObject($controller))->getMethod('__invoke');
-        } else {
-            $reflection = new \ReflectionFunction($controller);
-        }
-
-        foreach ($reflection->getParameters() as $param) {
+        foreach ($reflector->getParameters() as $param) {
             $attributes = [];
             foreach ($param->getAttributes() as $reflectionAttribute) {
                 if (class_exists($reflectionAttribute->getName())) {
@@ -46,11 +31,7 @@ final class ArgumentMetadataFactory implements ArgumentMetadataFactoryInterface
                 }
             }
 
-<<<<<<< HEAD
-            $arguments[] = new ArgumentMetadata($param->getName(), $this->getType($param, $reflection), $param->isVariadic(), $param->isDefaultValueAvailable(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null, $param->allowsNull(), $attributes);
-=======
-            $arguments[] = new ArgumentMetadata($param->getName(), $this->getType($param), $param->isVariadic(), $param->isDefaultValueAvailable(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null, $param->allowsNull(), $attributes, $controllerName);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+            $arguments[] = new ArgumentMetadata($param->getName(), $this->getType($param), $param->isVariadic(), $param->isDefaultValueAvailable(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null, $param->allowsNull(), $attributes);
         }
 
         return $arguments;
@@ -59,38 +40,17 @@ final class ArgumentMetadataFactory implements ArgumentMetadataFactoryInterface
     /**
      * Returns an associated type to the given parameter if available.
      */
-    private function getType(\ReflectionParameter $parameter, \ReflectionFunctionAbstract $function): ?string
+    private function getType(\ReflectionParameter $parameter): ?string
     {
         if (!$type = $parameter->getType()) {
             return null;
         }
         $name = $type instanceof \ReflectionNamedType ? $type->getName() : (string) $type;
 
-        if ($function instanceof \ReflectionMethod) {
-            $lcName = strtolower($name);
-            switch ($lcName) {
-                case 'self':
-                    return $function->getDeclaringClass()->name;
-                case 'parent':
-                    return ($parent = $function->getDeclaringClass()->getParentClass()) ? $parent->name : null;
-            }
-        }
-
-        return $name;
-    }
-
-    private function getPrettyName(\ReflectionFunctionAbstract $r): string
-    {
-        $name = $r->name;
-
-        if ($r instanceof \ReflectionMethod) {
-            return $r->class.'::'.$name;
-        }
-
-        if ($r->isAnonymous() || !$class = $r->getClosureCalledClass()) {
-            return $name;
-        }
-
-        return $class->name.'::'.$name;
+        return match (strtolower($name)) {
+            'self' => $parameter->getDeclaringClass()?->name,
+            'parent' => get_parent_class($parameter->getDeclaringClass()?->name ?? '') ?: null,
+            default => $name,
+        };
     }
 }

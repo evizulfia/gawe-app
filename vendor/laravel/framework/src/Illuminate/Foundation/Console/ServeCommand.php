@@ -3,11 +3,16 @@
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Env;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
+use function Termwind\terminal;
+
+#[AsCommand(name: 'serve')]
 class ServeCommand extends Command
 {
     /**
@@ -23,6 +28,8 @@ class ServeCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
+     *
+     * @deprecated
      */
     protected static $defaultName = 'serve';
 
@@ -39,15 +46,6 @@ class ServeCommand extends Command
      * @var int
      */
     protected $portOffset = 0;
-
-    /**
-<<<<<<< HEAD
-=======
-     * The list of lines that are pending to be output.
-     *
-     * @var string
-     */
-    protected $outputBuffer = '';
 
     /**
      * The list of requests being handled and their start time.
@@ -70,10 +68,6 @@ class ServeCommand extends Command
      */
     public static $passthroughVariables = [
         'APP_ENV',
-        'HERD_PHP_81_INI_SCAN_DIR',
-        'HERD_PHP_82_INI_SCAN_DIR',
-        'HERD_PHP_83_INI_SCAN_DIR',
-        'IGNITION_LOCAL_SITES_PATH',
         'LARAVEL_SAIL',
         'PATH',
         'PHP_CLI_SERVER_WORKERS',
@@ -85,7 +79,6 @@ class ServeCommand extends Command
     ];
 
     /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Execute the console command.
      *
      * @return int
@@ -94,8 +87,6 @@ class ServeCommand extends Command
      */
     public function handle()
     {
-        $this->line("<info>Starting Laravel development server:</info> http://{$this->host()}:{$this->port()}");
-
         $environmentFile = $this->option('env')
                             ? base_path('.env').'.'.$this->option('env')
                             : base_path('.env');
@@ -118,9 +109,13 @@ class ServeCommand extends Command
                 filemtime($environmentFile) > $environmentLastModified) {
                 $environmentLastModified = filemtime($environmentFile);
 
-                $this->comment('Environment modified. Restarting server...');
+                $this->newLine();
+
+                $this->components->info('Environment modified. Restarting server...');
 
                 $process->stop(5);
+
+                $this->serverRunningHasBeenDisplayed = false;
 
                 $process = $this->startProcess($hasEnvironment);
             }
@@ -152,21 +147,10 @@ class ServeCommand extends Command
                 return [$key => $value];
             }
 
-            return in_array($key, [
-                'APP_ENV',
-                'LARAVEL_SAIL',
-                'PHP_CLI_SERVER_WORKERS',
-                'PHP_IDE_CONFIG',
-                'SYSTEMROOT',
-                'XDEBUG_CONFIG',
-                'XDEBUG_MODE',
-                'XDEBUG_SESSION',
-            ]) ? [$key => $value] : [$key => false];
+            return in_array($key, static::$passthroughVariables) ? [$key => $value] : [$key => false];
         })->all());
 
-        $process->start(function ($type, $buffer) {
-            $this->output->write($buffer);
-        });
+        $process->start($this->handleProcessOutput());
 
         return $process;
     }
@@ -197,7 +181,7 @@ class ServeCommand extends Command
      */
     protected function host()
     {
-        [$host, ] = $this->getHostAndPort();
+        [$host] = $this->getHostAndPort();
 
         return $host;
     }
@@ -236,7 +220,7 @@ class ServeCommand extends Command
     }
 
     /**
-     * Check if the command has reached its max amount of port tries.
+     * Check if the command has reached its maximum number of port tries.
      *
      * @return bool
      */
@@ -247,100 +231,66 @@ class ServeCommand extends Command
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Returns a "callable" to handle the process output.
      *
      * @return callable(string, string): void
      */
     protected function handleProcessOutput()
     {
-        return function ($type, $buffer) {
-            $this->outputBuffer .= $buffer;
-
-            $this->flushOutputBuffer();
-        };
-    }
-
-    /**
-     * Flush the output buffer.
-     *
-     * @return void
-     */
-    protected function flushOutputBuffer()
-    {
-        $lines = str($this->outputBuffer)->explode("\n");
-
-        $this->outputBuffer = (string) $lines->pop();
-
-        $lines
-            ->map(fn ($line) => trim($line))
-            ->filter()
-            ->each(function ($line) {
-                if (str($line)->contains('Development Server (http')) {
-                    if ($this->serverRunningHasBeenDisplayed === false) {
-                        $this->serverRunningHasBeenDisplayed = true;
-
-                        $this->components->info("Server running on [http://{$this->host()}:{$this->port()}].");
-                        $this->comment('  <fg=yellow;options=bold>Press Ctrl+C to stop the server</>');
-
-                        $this->newLine();
-                    }
-
+        return fn ($type, $buffer) => str($buffer)->explode("\n")->each(function ($line) {
+            if (str($line)->contains('Development Server (http')) {
+                if ($this->serverRunningHasBeenDisplayed) {
                     return;
                 }
 
-                if (str($line)->contains(' Accepted')) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                $this->components->info("Server running on [http://{$this->host()}:{$this->port()}].");
+                $this->comment('  <fg=yellow;options=bold>Press Ctrl+C to stop the server</>');
 
-                    $this->requestsPool[$requestPort] = [
-                        $this->getDateFromLine($line),
-                        false,
-                    ];
-                } elseif (str($line)->contains([' [200]: GET '])) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                $this->newLine();
 
-                    $this->requestsPool[$requestPort][1] = trim(explode('[200]: GET', $line)[1]);
-                } elseif (str($line)->contains(' Closing')) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                $this->serverRunningHasBeenDisplayed = true;
+            } elseif (str($line)->contains(' Accepted')) {
+                $requestPort = $this->getRequestPortFromLine($line);
 
-                    if (empty($this->requestsPool[$requestPort])) {
-                        $this->requestsPool[$requestPort] = [
-                            $this->getDateFromLine($line),
-                            false,
-                        ];
-                    }
+                $this->requestsPool[$requestPort] = [
+                    $this->getDateFromLine($line),
+                    false,
+                ];
+            } elseif (str($line)->contains([' [200]: GET '])) {
+                $requestPort = $this->getRequestPortFromLine($line);
 
-                    [$startDate, $file] = $this->requestsPool[$requestPort];
+                $this->requestsPool[$requestPort][1] = trim(explode('[200]: GET', $line)[1]);
+            } elseif (str($line)->contains(' Closing')) {
+                $requestPort = $this->getRequestPortFromLine($line);
+                $request = $this->requestsPool[$requestPort];
 
-                    $formattedStartedAt = $startDate->format('Y-m-d H:i:s');
+                [$startDate, $file] = $request;
 
-                    unset($this->requestsPool[$requestPort]);
+                $formattedStartedAt = $startDate->format('Y-m-d H:i:s');
 
-                    [$date, $time] = explode(' ', $formattedStartedAt);
+                unset($this->requestsPool[$requestPort]);
 
-                    $this->output->write("  <fg=gray>$date</> $time");
+                [$date, $time] = explode(' ', $formattedStartedAt);
 
-                    $runTime = $this->getDateFromLine($line)->diffInSeconds($startDate);
+                $this->output->write("  <fg=gray>$date</> $time");
 
-                    if ($file) {
-                        $this->output->write($file = " $file");
-                    }
+                $runTime = $this->getDateFromLine($line)->diffInSeconds($startDate);
 
-                    $dots = max(terminal()->width() - mb_strlen($formattedStartedAt) - mb_strlen($file) - mb_strlen($runTime) - 9, 0);
-
-                    $this->output->write(' '.str_repeat('<fg=gray>.</>', $dots));
-                    $this->output->writeln(" <fg=gray>~ {$runTime}s</>");
-                } elseif (str($line)->contains(['Closed without sending a request', 'Failed to poll event'])) {
-                    // ...
-                } elseif (! empty($line)) {
-                    if (str($line)->startsWith('[')) {
-                        $line = str($line)->after('] ');
-                    }
-
-                    $this->output->writeln("  <fg=gray>$line</>");
+                if ($file) {
+                    $this->output->write($file = " $file");
                 }
-            });
+
+                $dots = max(terminal()->width() - mb_strlen($formattedStartedAt) - mb_strlen($file) - mb_strlen($runTime) - 9, 0);
+
+                $this->output->write(' '.str_repeat('<fg=gray>.</>', $dots));
+                $this->output->writeln(" <fg=gray>~ {$runTime}s</>");
+            } elseif (str($line)->contains(['Closed without sending a request'])) {
+                // ...
+            } elseif (! empty($line)) {
+                $warning = explode('] ', $line);
+                $this->components->warn(count($warning) > 1 ? $warning[1] : $warning[0]);
+            }
+        });
     }
 
     /**
@@ -376,7 +326,6 @@ class ServeCommand extends Command
     }
 
     /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the console command options.
      *
      * @return array
@@ -384,7 +333,7 @@ class ServeCommand extends Command
     protected function getOptions()
     {
         return [
-            ['host', null, InputOption::VALUE_OPTIONAL, 'The host address to serve the application on', '127.0.0.1'],
+            ['host', null, InputOption::VALUE_OPTIONAL, 'The host address to serve the application on', Env::get('SERVER_HOST', '127.0.0.1')],
             ['port', null, InputOption::VALUE_OPTIONAL, 'The port to serve the application on', Env::get('SERVER_PORT')],
             ['tries', null, InputOption::VALUE_OPTIONAL, 'The max number of ports to attempt to serve from', 10],
             ['no-reload', null, InputOption::VALUE_NONE, 'Do not reload the development server on .env file changes'],

@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
@@ -31,21 +32,15 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
  */
 class ProfilerListener implements EventSubscriberInterface
 {
-<<<<<<< HEAD
-    private $profiler;
-    private $matcher;
+    private Profiler $profiler;
+    private ?RequestMatcherInterface $matcher;
     private bool $onlyException;
     private bool $onlyMainRequests;
     private ?\Throwable $exception = null;
     /** @var \SplObjectStorage<Request, Profile> */
     private \SplObjectStorage $profiles;
-    private $requestStack;
+    private RequestStack $requestStack;
     private ?string $collectParameter;
-=======
-    private ?\Throwable $exception = null;
-    /** @var \SplObjectStorage<Request, Profile> */
-    private \SplObjectStorage $profiles;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /** @var \SplObjectStorage<Request, Request|null> */
     private \SplObjectStorage $parents;
 
@@ -53,31 +48,22 @@ class ProfilerListener implements EventSubscriberInterface
      * @param bool $onlyException    True if the profiler only collects data when an exception occurs, false otherwise
      * @param bool $onlyMainRequests True if the profiler only collects data when the request is the main request, false otherwise
      */
-<<<<<<< HEAD
-    public function __construct(Profiler $profiler, RequestStack $requestStack, RequestMatcherInterface $matcher = null, bool $onlyException = false, bool $onlyMainRequests = false, string $collectParameter = null)
+    public function __construct(Profiler $profiler, RequestStack $requestStack, ?RequestMatcherInterface $matcher = null, bool $onlyException = false, bool $onlyMainRequests = false, ?string $collectParameter = null)
     {
         $this->profiler = $profiler;
         $this->matcher = $matcher;
         $this->onlyException = $onlyException;
         $this->onlyMainRequests = $onlyMainRequests;
-=======
-    public function __construct(
-        private Profiler $profiler,
-        private RequestStack $requestStack,
-        private ?RequestMatcherInterface $matcher = null,
-        private bool $onlyException = false,
-        private bool $onlyMainRequests = false,
-        private ?string $collectParameter = null,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         $this->profiles = new \SplObjectStorage();
         $this->parents = new \SplObjectStorage();
+        $this->requestStack = $requestStack;
+        $this->collectParameter = $collectParameter;
     }
 
     /**
      * Handles the onKernelException event.
      */
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         if ($this->onlyMainRequests && !$event->isMainRequest()) {
             return;
@@ -89,7 +75,7 @@ class ProfilerListener implements EventSubscriberInterface
     /**
      * Handles the onKernelResponse event.
      */
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if ($this->onlyMainRequests && !$event->isMainRequest()) {
             return;
@@ -101,7 +87,7 @@ class ProfilerListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
         if (null !== $this->collectParameter && null !== $collectParameterValue = $request->get($this->collectParameter)) {
-            true === $collectParameterValue || filter_var($collectParameterValue, \FILTER_VALIDATE_BOOLEAN) ? $this->profiler->enable() : $this->profiler->disable();
+            true === $collectParameterValue || filter_var($collectParameterValue, \FILTER_VALIDATE_BOOL) ? $this->profiler->enable() : $this->profiler->disable();
         }
 
         $exception = $this->exception;
@@ -111,8 +97,21 @@ class ProfilerListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$profile = $this->profiler->collect($request, $event->getResponse(), $exception)) {
-            return;
+        $session = $request->hasPreviousSession() ? $request->getSession() : null;
+
+        if ($session instanceof Session) {
+            $usageIndexValue = $usageIndexReference = &$session->getUsageIndex();
+            $usageIndexReference = \PHP_INT_MIN;
+        }
+
+        try {
+            if (!$profile = $this->profiler->collect($request, $event->getResponse(), $exception)) {
+                return;
+            }
+        } finally {
+            if ($session instanceof Session) {
+                $usageIndexReference = $usageIndexValue;
+            }
         }
 
         $this->profiles[$request] = $profile;
@@ -120,7 +119,7 @@ class ProfilerListener implements EventSubscriberInterface
         $this->parents[$request] = $this->requestStack->getParentRequest();
     }
 
-    public function onKernelTerminate(TerminateEvent $event)
+    public function onKernelTerminate(TerminateEvent $event): void
     {
         // attach children to parents
         foreach ($this->profiles as $request) {

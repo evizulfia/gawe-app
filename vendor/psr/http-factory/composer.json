@@ -15,20 +15,15 @@
     "authors": [
         {
             "name": "PHP-FIG",
-            "homepage": "http://www.php-fig.org/"
+            "homepage": "https://www.php-fig.org/"
         }
     ],
     "support": {
         "source": "https://github.com/php-fig/http-factory"
     },
     "require": {
-<<<<<<< HEAD
-        "php": ">=7.0.0",
-        "psr/http-message": "^1.0"
-=======
         "php": ">=7.1",
         "psr/http-message": "^1.0 || ^2.0"
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     },
     "autoload": {
         "psr-4": {

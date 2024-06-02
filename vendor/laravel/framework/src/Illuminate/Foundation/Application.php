@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Env;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -30,16 +31,14 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class Application extends Container implements ApplicationContract, CachesConfiguration, CachesRoutes, HttpKernelInterface
 {
+    use Macroable;
+
     /**
      * The Laravel framework version.
      *
      * @var string
      */
-<<<<<<< HEAD
-    const VERSION = '9.1.0';
-=======
-    const VERSION = '11.9.2';
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    const VERSION = '9.52.16';
 
     /**
      * The base path for the Laravel installation.
@@ -86,7 +85,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * All of the registered service providers.
      *
-     * @var array<string, \Illuminate\Support\ServiceProvider>
+     * @var \Illuminate\Support\ServiceProvider[]
      */
     protected $serviceProviders = [];
 
@@ -185,42 +184,6 @@ class Application extends Container implements ApplicationContract, CachesConfig
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Begin configuring a new Laravel application instance.
-     *
-     * @param  string|null  $basePath
-     * @return \Illuminate\Foundation\Configuration\ApplicationBuilder
-     */
-    public static function configure(?string $basePath = null)
-    {
-        $basePath = match (true) {
-            is_string($basePath) => $basePath,
-            default => static::inferBasePath(),
-        };
-
-        return (new Configuration\ApplicationBuilder(new static($basePath)))
-            ->withKernels()
-            ->withEvents()
-            ->withCommands()
-            ->withProviders();
-    }
-
-    /**
-     * Infer the application's base directory from the environment.
-     *
-     * @return string
-     */
-    public static function inferBasePath()
-    {
-        return match (true) {
-            isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],
-            default => dirname(array_keys(ClassLoader::getRegisteredLoaders())[0]),
-        };
-    }
-
-    /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the version number of the application.
      *
      * @return string
@@ -500,20 +463,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function storagePath($path = '')
     {
-<<<<<<< HEAD
         return ($this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'storage')
                             .($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-=======
-        if (isset($_ENV['LARAVEL_STORAGE_PATH'])) {
-            return $this->joinPaths($this->storagePath ?: $_ENV['LARAVEL_STORAGE_PATH'], $path);
-        }
-
-        if (isset($_SERVER['LARAVEL_STORAGE_PATH'])) {
-            return $this->joinPaths($this->storagePath ?: $_SERVER['LARAVEL_STORAGE_PATH'], $path);
-        }
-
-        return $this->joinPaths($this->storagePath ?: $this->basePath('storage'), $path);
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -616,7 +567,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * Get or check the current application environment.
      *
-     * @param  string|array  $environments
+     * @param  string|array  ...$environments
      * @return string|bool
      */
     public function environment(...$environments)
@@ -705,9 +656,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     public function registerConfiguredProviders()
     {
         $providers = Collection::make($this->make('config')->get('app.providers'))
-                        ->partition(function ($provider) {
-                            return str_starts_with($provider, 'Illuminate\\');
-                        });
+                        ->partition(fn ($provider) => str_starts_with($provider, 'Illuminate\\'));
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
@@ -748,6 +697,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
 
         if (property_exists($provider, 'singletons')) {
             foreach ($provider->singletons as $key => $value) {
+                $key = is_int($key) ? $value : $key;
+
                 $this->singleton($key, $value);
             }
         }
@@ -772,9 +723,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getProvider($provider)
     {
-        $name = is_string($provider) ? $provider : get_class($provider);
-
-        return $this->serviceProviders[$name] ?? null;
+        return array_values($this->getProviders($provider))[0] ?? null;
     }
 
     /**
@@ -787,9 +736,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     {
         $name = is_string($provider) ? $provider : get_class($provider);
 
-        return Arr::where($this->serviceProviders, function ($value) use ($name) {
-            return $value instanceof $name;
-        });
+        return Arr::where($this->serviceProviders, fn ($value) => $value instanceof $name);
     }
 
     /**
@@ -811,11 +758,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     protected function markAsRegistered($provider)
     {
-        $class = get_class($provider);
+        $this->serviceProviders[] = $provider;
 
-        $this->serviceProviders[$class] = $provider;
-
-        $this->loadedProviders[$class] = true;
+        $this->loadedProviders[get_class($provider)] = true;
     }
 
     /**
@@ -1234,7 +1179,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * Get the service providers that have been loaded.
      *
-     * @return array<string, boolean>
+     * @return array
      */
     public function getLoadedProviders()
     {

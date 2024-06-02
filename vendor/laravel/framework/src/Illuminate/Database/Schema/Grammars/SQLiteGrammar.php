@@ -26,26 +26,7 @@ class SQLiteGrammar extends Grammar
     protected $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
 
     /**
-<<<<<<< HEAD
      * Compile the query to determine if a table exists.
-=======
-     * Compile the query to determine the SQL text that describes the given object.
-     *
-     * @param  string  $name
-     * @param  string  $type
-     * @return string
-     */
-    public function compileSqlCreateStatement($name, $type = 'table')
-    {
-        return sprintf('select "sql" from sqlite_master where type = %s and name = %s',
-            $this->quoteString($type),
-            $this->quoteString(str_replace('.', '__', $name))
-        );
-    }
-
-    /**
-     * Compile the query to determine if the dbstat table is available.
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      *
      * @return string
      */
@@ -62,51 +43,7 @@ class SQLiteGrammar extends Grammar
      */
     public function compileColumnListing($table)
     {
-<<<<<<< HEAD
         return 'pragma table_info('.$this->wrap(str_replace('.', '__', $table)).')';
-=======
-        return sprintf(
-            'select name, type, not "notnull" as "nullable", dflt_value as "default", pk as "primary", hidden as "extra" '
-            .'from pragma_table_xinfo(%s) order by cid asc',
-            $this->quoteString(str_replace('.', '__', $table))
-        );
-    }
-
-    /**
-     * Compile the query to determine the indexes.
-     *
-     * @param  string  $table
-     * @return string
-     */
-    public function compileIndexes($table)
-    {
-        return sprintf(
-            'select \'primary\' as name, group_concat(col) as columns, 1 as "unique", 1 as "primary" '
-            .'from (select name as col from pragma_table_info(%s) where pk > 0 order by pk, cid) group by name '
-            .'union select name, group_concat(col) as columns, "unique", origin = \'pk\' as "primary" '
-            .'from (select il.*, ii.name as col from pragma_index_list(%s) il, pragma_index_info(il.name) ii order by il.seq, ii.seqno) '
-            .'group by name, "unique", "primary"',
-            $table = $this->quoteString(str_replace('.', '__', $table)),
-            $table
-        );
-    }
-
-    /**
-     * Compile the query to determine the foreign keys.
-     *
-     * @param  string  $table
-     * @return string
-     */
-    public function compileForeignKeys($table)
-    {
-        return sprintf(
-            'select group_concat("from") as columns, "table" as foreign_table, '
-            .'group_concat("to") as foreign_columns, on_update, on_delete '
-            .'from (select * from pragma_foreign_key_list(%s) order by id desc, seq) '
-            .'group by id, "table", on_update, on_delete',
-            $this->quoteString(str_replace('.', '__', $table))
-        );
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -205,6 +142,25 @@ class SQLiteGrammar extends Grammar
         })->map(function ($column) use ($blueprint) {
             return 'alter table '.$this->wrapTable($blueprint).' '.$column;
         })->all();
+    }
+
+    /**
+     * Compile a rename column command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array|string
+     */
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        return $connection->usingNativeSchemaOperations()
+            ? sprintf('alter table %s rename column %s to %s',
+                $this->wrapTable($blueprint),
+                $this->wrap($command->from),
+                $this->wrap($command->to)
+            )
+            : parent::compileRenameColumn($blueprint, $command, $connection);
     }
 
     /**
@@ -310,6 +266,26 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
+     * Compile the SQL needed to retrieve all table names.
+     *
+     * @return string
+     */
+    public function compileGetAllTables()
+    {
+        return 'select type, name from sqlite_master where type = \'table\' and name not like \'sqlite_%\'';
+    }
+
+    /**
+     * Compile the SQL needed to retrieve all view names.
+     *
+     * @return string
+     */
+    public function compileGetAllViews()
+    {
+        return 'select type, name from sqlite_master where type = \'view\'';
+    }
+
+    /**
      * Compile the SQL needed to rebuild the database.
      *
      * @return string
@@ -329,17 +305,26 @@ class SQLiteGrammar extends Grammar
      */
     public function compileDropColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
-        $tableDiff = $this->getDoctrineTableDiff(
-            $blueprint, $schema = $connection->getDoctrineSchemaManager()
-        );
+        if ($connection->usingNativeSchemaOperations()) {
+            $table = $this->wrapTable($blueprint);
 
-        foreach ($command->columns as $name) {
-            $tableDiff->removedColumns[$name] = $connection->getDoctrineColumn(
-                $this->getTablePrefix().$blueprint->getTable(), $name
+            $columns = $this->prefixArray('drop column', $this->wrapArray($command->columns));
+
+            return collect($columns)->map(fn ($column) => 'alter table '.$table.' '.$column
+            )->all();
+        } else {
+            $tableDiff = $this->getDoctrineTableDiff(
+                $blueprint, $schema = $connection->getDoctrineSchemaManager()
             );
-        }
 
-        return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
+            foreach ($command->columns as $name) {
+                $tableDiff->removedColumns[$name] = $connection->getDoctrineColumn(
+                    $this->getTablePrefix().$blueprint->getTable(), $name
+                );
+            }
+
+            return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
+        }
     }
 
     /**

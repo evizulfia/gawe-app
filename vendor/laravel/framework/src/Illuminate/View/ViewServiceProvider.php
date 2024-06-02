@@ -2,7 +2,6 @@
 
 namespace Illuminate\View;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
@@ -23,6 +22,10 @@ class ViewServiceProvider extends ServiceProvider
         $this->registerViewFinder();
         $this->registerBladeCompiler();
         $this->registerEngineResolver();
+
+        $this->app->terminating(static function () {
+            Component::flushCache();
+        });
     }
 
     /**
@@ -48,6 +51,10 @@ class ViewServiceProvider extends ServiceProvider
             $factory->setContainer($app);
 
             $factory->share('app', $app);
+
+            $app->terminating(static function () {
+                Component::forgetFactory();
+            });
 
             return $factory;
         });
@@ -90,6 +97,8 @@ class ViewServiceProvider extends ServiceProvider
                 $app['files'],
                 $app['config']['view.compiled'],
                 $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
+                $app['config']->get('view.cache', true),
+                $app['config']->get('view.compiled_extension', 'php'),
             ), function ($blade) {
                 $blade->component('dynamic-component', DynamicComponent::class);
             });
@@ -126,7 +135,7 @@ class ViewServiceProvider extends ServiceProvider
     public function registerFileEngine($resolver)
     {
         $resolver->register('file', function () {
-            return new FileEngine(Container::getInstance()->make('files'));
+            return new FileEngine($this->app['files']);
         });
     }
 
@@ -139,7 +148,7 @@ class ViewServiceProvider extends ServiceProvider
     public function registerPhpEngine($resolver)
     {
         $resolver->register('php', function () {
-            return new PhpEngine(Container::getInstance()->make('files'));
+            return new PhpEngine($this->app['files']);
         });
     }
 
@@ -152,22 +161,13 @@ class ViewServiceProvider extends ServiceProvider
     public function registerBladeEngine($resolver)
     {
         $resolver->register('blade', function () {
-<<<<<<< HEAD
-            return new CompilerEngine($this->app['blade.compiler'], $this->app['files']);
-=======
-            $app = Container::getInstance();
+            $compiler = new CompilerEngine($this->app['blade.compiler'], $this->app['files']);
 
-            $compiler = new CompilerEngine(
-                $app->make('blade.compiler'),
-                $app->make('files'),
-            );
-
-            $app->terminating(static function () use ($compiler) {
+            $this->app->terminating(static function () use ($compiler) {
                 $compiler->forgetCompiledOrNotExpired();
             });
 
             return $compiler;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         });
     }
 }

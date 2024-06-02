@@ -11,8 +11,8 @@
 
 namespace Carbon\Exceptions;
 
-use Exception;
 use InvalidArgumentException as BaseInvalidArgumentException;
+use Throwable;
 
 // This will extends OutOfRangeException instead of InvalidArgumentException since 3.0.0
 // use OutOfRangeException as BaseOutOfRangeException;
@@ -55,13 +55,9 @@ class OutOfRangeException extends BaseInvalidArgumentException implements Invali
      * @param mixed          $max
      * @param mixed          $value
      * @param int            $code
-     * @param Exception|null $previous
+     * @param Throwable|null $previous
      */
-<<<<<<< HEAD
-    public function __construct($unit, $min, $max, $value, $code = 0, Exception $previous = null)
-=======
-    public function __construct($unit, $min, $max, $value, $code = 0, ?Throwable $previous = null)
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    public function __construct($unit, $min, $max, $value, $code = 0, Throwable $previous = null)
     {
         $this->unit = $unit;
         $this->min = $min;

@@ -25,7 +25,6 @@ class LineFormatter extends NormalizerFormatter
 {
     public const SIMPLE_FORMAT = "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n";
 
-<<<<<<< HEAD
     /** @var string */
     protected $format;
     /** @var bool */
@@ -34,16 +33,8 @@ class LineFormatter extends NormalizerFormatter
     protected $ignoreEmptyContextAndExtra;
     /** @var bool */
     protected $includeStacktraces;
-=======
-    protected string $format;
-    protected bool $allowInlineLineBreaks;
-    protected bool $ignoreEmptyContextAndExtra;
-    protected bool $includeStacktraces;
-    protected ?int $maxLevelNameLength = null;
-    protected string $indentStacktraces = '';
-    protected Closure|null $stacktracesParser = null;
-    protected string $basePath = '';
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    /** @var ?callable */
+    protected $stacktracesParser;
 
     /**
      * @param string|null $format                     The format of the message
@@ -51,52 +42,38 @@ class LineFormatter extends NormalizerFormatter
      * @param bool        $allowInlineLineBreaks      Whether to allow inline line breaks in log entries
      * @param bool        $ignoreEmptyContextAndExtra
      */
-    public function __construct(?string $format = null, ?string $dateFormat = null, bool $allowInlineLineBreaks = false, bool $ignoreEmptyContextAndExtra = false)
+    public function __construct(?string $format = null, ?string $dateFormat = null, bool $allowInlineLineBreaks = false, bool $ignoreEmptyContextAndExtra = false, bool $includeStacktraces = false)
     {
         $this->format = $format === null ? static::SIMPLE_FORMAT : $format;
         $this->allowInlineLineBreaks = $allowInlineLineBreaks;
         $this->ignoreEmptyContextAndExtra = $ignoreEmptyContextAndExtra;
+        $this->includeStacktraces($includeStacktraces);
         parent::__construct($dateFormat);
     }
 
-<<<<<<< HEAD
-    public function includeStacktraces(bool $include = true): void
-=======
-    /**
-     * Setting a base path will hide the base path from exception and stack trace file names to shorten them
-     * @return $this
-     */
-    public function setBasePath(string $path = ''): self
-    {
-        if ($path !== '') {
-            $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        }
-
-        $this->basePath = $path;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function includeStacktraces(bool $include = true, ?Closure $parser = null): self
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    public function includeStacktraces(bool $include = true, ?callable $parser = null): self
     {
         $this->includeStacktraces = $include;
         if ($this->includeStacktraces) {
             $this->allowInlineLineBreaks = true;
+            $this->stacktracesParser = $parser;
         }
+
+        return $this;
     }
 
-    public function allowInlineLineBreaks(bool $allow = true): void
+    public function allowInlineLineBreaks(bool $allow = true): self
     {
         $this->allowInlineLineBreaks = $allow;
+
+        return $this;
     }
 
-    public function ignoreEmptyContextAndExtra(bool $ignore = true): void
+    public function ignoreEmptyContextAndExtra(bool $ignore = true): self
     {
         $this->ignoreEmptyContextAndExtra = $ignore;
+
+        return $this;
     }
 
     /**
@@ -176,6 +153,12 @@ class LineFormatter extends NormalizerFormatter
 
         if ($previous = $e->getPrevious()) {
             do {
+                $depth++;
+                if ($depth > $this->maxNormalizeDepth) {
+                    $str .= "\n[previous exception] Over " . $this->maxNormalizeDepth . ' levels deep, aborting normalization';
+                    break;
+                }
+
                 $str .= "\n[previous exception] " . $this->formatException($previous);
             } while ($previous = $previous->getPrevious());
         }
@@ -203,7 +186,11 @@ class LineFormatter extends NormalizerFormatter
     {
         if ($this->allowInlineLineBreaks) {
             if (0 === strpos($str, '{')) {
-                return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
+                $str = preg_replace('/(?<!\\\\)\\\\[rn]/', "\n", $str);
+                if (null === $str) {
+                    $pcreErrorCode = preg_last_error();
+                    throw new \RuntimeException('Failed to run preg_replace: ' . $pcreErrorCode . ' / ' . Utils::pcreLastErrorMessage($pcreErrorCode));
+                }
             }
 
             return $str;
@@ -232,45 +219,28 @@ class LineFormatter extends NormalizerFormatter
                 }
             }
         }
-
-        $file = $e->getFile();
-        if ($this->basePath !== '') {
-            $file = preg_replace('{^'.preg_quote($this->basePath).'}', '', $file);
-        }
-
-        $str .= '): ' . $e->getMessage() . ' at ' . $file . ':' . $e->getLine() . ')';
+        $str .= '): ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine() . ')';
 
         if ($this->includeStacktraces) {
-            $str .= "\n[stacktrace]\n" . $e->getTraceAsString() . "\n";
+            $str .= $this->stacktracesParser($e);
         }
 
         return $str;
     }
-<<<<<<< HEAD
-=======
 
     private function stacktracesParser(\Throwable $e): string
     {
         $trace = $e->getTraceAsString();
 
-        if ($this->basePath !== '') {
-            $trace = preg_replace('{^(#\d+ )' . preg_quote($this->basePath) . '}m', '$1', $trace) ?? $trace;
-        }
-
-        if ($this->stacktracesParser !== null) {
+        if ($this->stacktracesParser) {
             $trace = $this->stacktracesParserCustom($trace);
         }
 
-        if ($this->indentStacktraces !== '') {
-            $trace = str_replace("\n", "\n{$this->indentStacktraces}", $trace);
-        }
-
-        return "\n{$this->indentStacktraces}[stacktrace]\n{$this->indentStacktraces}" . $trace . "\n";
+        return "\n[stacktrace]\n" . $trace . "\n";
     }
 
     private function stacktracesParserCustom(string $trace): string
     {
         return implode("\n", array_filter(array_map($this->stacktracesParser, explode("\n", $trace))));
     }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

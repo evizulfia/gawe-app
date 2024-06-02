@@ -30,7 +30,7 @@ use Monolog\Logger;
  */
 class RedisHandler extends AbstractProcessingHandler
 {
-    /** @var \Predis\Client|\Redis */
+    /** @var \Predis\Client<\Predis\Client>|\Redis */
     private $redisClient;
     /** @var string */
     private $redisKey;
@@ -38,7 +38,7 @@ class RedisHandler extends AbstractProcessingHandler
     protected $capSize;
 
     /**
-     * @param \Predis\Client|\Redis $redis   The redis instance
+     * @param \Predis\Client<\Predis\Client>|\Redis $redis   The redis instance
      * @param string                $key     The key name to push records to
      * @param int                   $capSize Number of entries to limit list size to, 0 = unlimited
      */
@@ -78,13 +78,8 @@ class RedisHandler extends AbstractProcessingHandler
         if ($this->redisClient instanceof \Redis) {
             $mode = defined('\Redis::MULTI') ? \Redis::MULTI : 1;
             $this->redisClient->multi($mode)
-<<<<<<< HEAD
                 ->rpush($this->redisKey, $record["formatted"])
                 ->ltrim($this->redisKey, -$this->capSize, -1)
-=======
-                ->rPush($this->redisKey, $record->formatted)
-                ->lTrim($this->redisKey, -$this->capSize, -1)
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 ->exec();
         } else {
             $redisKey = $this->redisKey;

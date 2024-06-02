@@ -28,6 +28,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 final class ControllerEvent extends KernelEvent
 {
     private string|array|object $controller;
+    private \ReflectionFunctionAbstract $controllerReflector;
+    private array $attributes;
 
     public function __construct(HttpKernelInterface $kernel, callable $controller, Request $request, ?int $requestType)
     {
@@ -41,12 +43,8 @@ final class ControllerEvent extends KernelEvent
         return $this->controller;
     }
 
-    public function setController(callable $controller): void
+    public function getControllerReflector(): \ReflectionFunctionAbstract
     {
-<<<<<<< HEAD
-        $this->controller = $controller;
-    }
-=======
         return $this->controllerReflector;
     }
 
@@ -100,7 +98,7 @@ final class ControllerEvent extends KernelEvent
         } elseif (\is_string($this->controller) && false !== $i = strpos($this->controller, '::')) {
             $class = new \ReflectionClass(substr($this->controller, 0, $i));
         } else {
-            $class = $this->controllerReflector instanceof \ReflectionFunction && $this->controllerReflector->isAnonymous() ? null : $this->controllerReflector->getClosureCalledClass();
+            $class = str_contains($this->controllerReflector->name, '{closure') ? null : (\PHP_VERSION_ID >= 80111 ? $this->controllerReflector->getClosureCalledClass() : $this->controllerReflector->getClosureScopeClass());
         }
         $this->attributes = [];
 
@@ -112,5 +110,4 @@ final class ControllerEvent extends KernelEvent
 
         return null === $className ? $this->attributes : $this->attributes[$className] ?? [];
     }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

@@ -18,12 +18,9 @@ use function is_array;
 use function is_resource;
 use function proc_close;
 use function proc_open;
-<<<<<<< HEAD
 use function proc_terminate;
 use function rewind;
 use function sprintf;
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use function stream_get_contents;
 use function stream_select;
 use function sys_get_temp_dir;
@@ -48,16 +45,11 @@ class DefaultPhpProcess extends AbstractPhpProcess
      */
     public function runJob(string $job, array $settings = []): array
     {
-<<<<<<< HEAD
         if ($this->stdin || $this->useTemporaryFile()) {
             if (!($this->tempFile = tempnam(sys_get_temp_dir(), 'PHPUnit')) ||
-=======
-        if ($this->stdin) {
-            if (!($this->tempFile = tempnam(sys_get_temp_dir(), 'phpunit_')) ||
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
                 file_put_contents($this->tempFile, $job) === false) {
                 throw new Exception(
-                    'Unable to write temporary file'
+                    'Unable to write temporary file',
                 );
             }
 
@@ -68,12 +60,22 @@ class DefaultPhpProcess extends AbstractPhpProcess
     }
 
     /**
+     * Returns an array of file handles to be used in place of pipes.
+     */
+    protected function getHandles(): array
+    {
+        return [];
+    }
+
+    /**
      * Handles creating the child process and returning the STDOUT and STDERR.
      *
      * @throws Exception
      */
     protected function runProcess(string $job, array $settings): array
     {
+        $handles = $this->getHandles();
+
         $env = null;
 
         if ($this->env) {
@@ -89,26 +91,22 @@ class DefaultPhpProcess extends AbstractPhpProcess
         }
 
         $pipeSpec = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w'],
+            0 => $handles[0] ?? ['pipe', 'r'],
+            1 => $handles[1] ?? ['pipe', 'w'],
+            2 => $handles[2] ?? ['pipe', 'w'],
         ];
-
-        if ($this->stderrRedirection) {
-            $pipeSpec[2] = ['redirect', 1];
-        }
 
         $process = proc_open(
             $this->getCommand($settings, $this->tempFile),
             $pipeSpec,
             $pipes,
             null,
-            $env
+            $env,
         );
 
         if (!is_resource($process)) {
             throw new Exception(
-                'Unable to spawn worker process'
+                'Unable to spawn worker process',
             );
         }
 
@@ -140,8 +138,8 @@ class DefaultPhpProcess extends AbstractPhpProcess
                     throw new Exception(
                         sprintf(
                             'Job execution aborted after %d seconds',
-                            $this->timeout
-                        )
+                            $this->timeout,
+                        ),
                     );
                 }
 
@@ -193,6 +191,22 @@ class DefaultPhpProcess extends AbstractPhpProcess
             }
         }
 
+        if (isset($handles[1])) {
+            rewind($handles[1]);
+
+            $stdout = stream_get_contents($handles[1]);
+
+            fclose($handles[1]);
+        }
+
+        if (isset($handles[2])) {
+            rewind($handles[2]);
+
+            $stderr = stream_get_contents($handles[2]);
+
+            fclose($handles[2]);
+        }
+
         proc_close($process);
 
         $this->cleanup();
@@ -213,5 +227,10 @@ class DefaultPhpProcess extends AbstractPhpProcess
         if ($this->tempFile) {
             unlink($this->tempFile);
         }
+    }
+
+    protected function useTemporaryFile(): bool
+    {
+        return false;
     }
 }

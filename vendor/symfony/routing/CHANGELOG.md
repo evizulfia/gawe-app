@@ -1,22 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Add `{foo:bar}` syntax to define a mapping between a route parameter and its corresponding request attribute
-
-7.0
----
-
- * Add argument `$routeParameters` to `UrlMatcher::handleRouteRequirements()`
- * Remove Doctrine annotations support in favor of native attributes
- * Remove `AnnotationClassLoader`, use `AttributeClassLoader` instead
- * Remove `AnnotationDirectoryLoader`, use `AttributeDirectoryLoader` instead
- * Remove `AnnotationFileLoader`, use `AttributeFileLoader` instead
-
 6.4
 ---
 
@@ -47,7 +31,6 @@ CHANGELOG
  * Add `params` variable to condition expression
  * Deprecate not passing route parameters as the fourth argument to `UrlMatcher::handleRouteRequirements()`
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 5.3
 ---
 

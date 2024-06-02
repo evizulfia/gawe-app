@@ -26,40 +26,28 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class Profiler implements ResetInterface
 {
-<<<<<<< HEAD
-    private $storage;
+    private ProfilerStorageInterface $storage;
 
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * @var DataCollectorInterface[]
      */
     private array $collectors = [];
 
-<<<<<<< HEAD
-    private $logger;
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+    private ?LoggerInterface $logger;
     private bool $initiallyEnabled = true;
+    private bool $enabled = true;
 
-<<<<<<< HEAD
-    public function __construct(ProfilerStorageInterface $storage, LoggerInterface $logger = null, bool $enable = true)
+    public function __construct(ProfilerStorageInterface $storage, ?LoggerInterface $logger = null, bool $enable = true)
     {
         $this->storage = $storage;
         $this->logger = $logger;
         $this->initiallyEnabled = $this->enabled = $enable;
-=======
-    public function __construct(
-        private ProfilerStorageInterface $storage,
-        private ?LoggerInterface $logger = null,
-        private bool $enabled = true,
-    ) {
-        $this->initiallyEnabled = $enabled;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
      * Disables the profiler.
+     *
+     * @return void
      */
     public function disable()
     {
@@ -68,10 +56,17 @@ class Profiler implements ResetInterface
 
     /**
      * Enables the profiler.
+     *
+     * @return void
      */
     public function enable()
     {
         $this->enabled = true;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
     }
 
     /**
@@ -107,7 +102,7 @@ class Profiler implements ResetInterface
         }
 
         if (!($ret = $this->storage->write($profile)) && null !== $this->logger) {
-            $this->logger->warning('Unable to store the profiler information.', ['configured_storage' => \get_class($this->storage)]);
+            $this->logger->warning('Unable to store the profiler information.', ['configured_storage' => $this->storage::class]);
         }
 
         return $ret;
@@ -115,6 +110,8 @@ class Profiler implements ResetInterface
 
     /**
      * Purges all data from the storage.
+     *
+     * @return void
      */
     public function purge()
     {
@@ -124,35 +121,42 @@ class Profiler implements ResetInterface
     /**
      * Finds profiler tokens for the given criteria.
      *
-     * @param string|null $limit The maximum number of tokens to return
-     * @param string|null $start The start date to search from
-     * @param string|null $end   The end date to search to
+     * @param int|null      $limit  The maximum number of tokens to return
+     * @param string|null   $start  The start date to search from
+     * @param string|null   $end    The end date to search to
+     * @param \Closure|null $filter A filter to apply on the list of tokens
      *
      * @see https://php.net/datetime.formats for the supported date/time formats
      */
-    public function find(?string $ip, ?string $url, ?string $limit, ?string $method, ?string $start, ?string $end, string $statusCode = null): array
+    public function find(?string $ip, ?string $url, ?int $limit, ?string $method, ?string $start, ?string $end, ?string $statusCode = null/* , \Closure $filter = null */): array
     {
-        return $this->storage->find($ip, $url, $limit, $method, $this->getTimestamp($start), $this->getTimestamp($end), $statusCode);
+        $filter = 7 < \func_num_args() ? func_get_arg(7) : null;
+
+        return $this->storage->find($ip, $url, $limit, $method, $this->getTimestamp($start), $this->getTimestamp($end), $statusCode, $filter);
     }
 
     /**
      * Collects data for the given Response.
      */
-    public function collect(Request $request, Response $response, \Throwable $exception = null): ?Profile
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): ?Profile
     {
         if (false === $this->enabled) {
             return null;
         }
 
-        $profile = new Profile(substr(hash('xxh128', uniqid(mt_rand(), true)), 0, 6));
+        $profile = new Profile(substr(hash('sha256', uniqid(mt_rand(), true)), 0, 6));
         $profile->setTime(time());
         $profile->setUrl($request->getUri());
         $profile->setMethod($request->getMethod());
         $profile->setStatusCode($response->getStatusCode());
         try {
             $profile->setIp($request->getClientIp());
-        } catch (ConflictingHeadersException $e) {
+        } catch (ConflictingHeadersException) {
             $profile->setIp('Unknown');
+        }
+
+        if ($request->attributes->has('_virtual_type')) {
+            $profile->setVirtualType($request->attributes->get('_virtual_type'));
         }
 
         if ($prevToken = $response->headers->get('X-Debug-Token')) {
@@ -171,6 +175,9 @@ class Profiler implements ResetInterface
         return $profile;
     }
 
+    /**
+     * @return void
+     */
     public function reset()
     {
         foreach ($this->collectors as $collector) {
@@ -191,6 +198,8 @@ class Profiler implements ResetInterface
      * Sets the Collectors associated with this profiler.
      *
      * @param DataCollectorInterface[] $collectors An array of collectors
+     *
+     * @return void
      */
     public function set(array $collectors = [])
     {
@@ -202,6 +211,8 @@ class Profiler implements ResetInterface
 
     /**
      * Adds a Collector.
+     *
+     * @return void
      */
     public function add(DataCollectorInterface $collector)
     {
@@ -241,8 +252,8 @@ class Profiler implements ResetInterface
         }
 
         try {
-            $value = new \DateTime(is_numeric($value) ? '@'.$value : $value);
-        } catch (\Exception $e) {
+            $value = new \DateTimeImmutable(is_numeric($value) ? '@'.$value : $value);
+        } catch (\Exception) {
             return null;
         }
 

@@ -25,33 +25,31 @@ use Symfony\Component\VarDumper\VarDumper;
  */
 class DumpListener implements EventSubscriberInterface
 {
-<<<<<<< HEAD
-    private $cloner;
-    private $dumper;
-    private $connection;
+    private ClonerInterface $cloner;
+    private DataDumperInterface $dumper;
+    private ?Connection $connection;
 
-    public function __construct(ClonerInterface $cloner, DataDumperInterface $dumper, Connection $connection = null)
+    public function __construct(ClonerInterface $cloner, DataDumperInterface $dumper, ?Connection $connection = null)
     {
         $this->cloner = $cloner;
         $this->dumper = $dumper;
         $this->connection = $connection;
-=======
-    public function __construct(
-        private ClonerInterface $cloner,
-        private DataDumperInterface $dumper,
-        private ?Connection $connection = null,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
+    /**
+     * @return void
+     */
     public function configure()
     {
         $cloner = $this->cloner;
         $dumper = $this->dumper;
         $connection = $this->connection;
 
-        VarDumper::setHandler(static function ($var) use ($cloner, $dumper, $connection) {
+        VarDumper::setHandler(static function ($var, ?string $label = null) use ($cloner, $dumper, $connection) {
             $data = $cloner->cloneVar($var);
+            if (null !== $label) {
+                $data = $data->withContext(['label' => $label]);
+            }
 
             if (!$connection || !$connection->write($data)) {
                 $dumper->dump($data);

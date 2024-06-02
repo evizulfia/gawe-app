@@ -2,20 +2,9 @@
 
 namespace Illuminate\Support\Facades;
 
-use Illuminate\Database\Console\Migrations\FreshCommand;
-use Illuminate\Database\Console\Migrations\RefreshCommand;
-use Illuminate\Database\Console\Migrations\ResetCommand;
-use Illuminate\Database\Console\WipeCommand;
-
 /**
-<<<<<<< HEAD
- * @method static \Doctrine\DBAL\Driver\PDOConnection getPdo()
- * @method static \Illuminate\Database\ConnectionInterface connection(string $name = null)
- * @method static \Illuminate\Database\Query\Builder table(string $table, string $as = null)
- * @method static \Illuminate\Database\Query\Expression raw($value)
-=======
  * @method static \Illuminate\Database\Connection connection(string|null $name = null)
- * @method static \Illuminate\Database\ConnectionInterface connectUsing(string $name, array $config, bool $force = false)
+ * @method static void registerDoctrineType(string $class, string $name, string $type)
  * @method static void purge(string|null $name = null)
  * @method static void disconnect(string|null $name = null)
  * @method static \Illuminate\Database\Connection reconnect(string|null $name = null)
@@ -29,7 +18,7 @@ use Illuminate\Database\Console\WipeCommand;
  * @method static array getConnections()
  * @method static void setReconnector(callable $reconnector)
  * @method static \Illuminate\Database\DatabaseManager setApplication(\Illuminate\Contracts\Foundation\Application $app)
- * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void macro(string $name, object|callable $macro)
  * @method static void mixin(object $mixin, bool $replace = true)
  * @method static bool hasMacro(string $name)
  * @method static void flushMacros()
@@ -38,13 +27,12 @@ use Illuminate\Database\Console\WipeCommand;
  * @method static void useDefaultSchemaGrammar()
  * @method static void useDefaultPostProcessor()
  * @method static \Illuminate\Database\Schema\Builder getSchemaBuilder()
- * @method static \Illuminate\Database\Query\Builder table(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string $table, string|null $as = null)
+ * @method static \Illuminate\Database\Query\Builder table(\Closure|\Illuminate\Database\Query\Builder|string $table, string|null $as = null)
  * @method static \Illuminate\Database\Query\Builder query()
  * @method static mixed selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static mixed scalar(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static array selectFromWriteConnection(string $query, array $bindings = [])
  * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
- * @method static array selectResultSets(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static \Generator cursor(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static bool insert(string $query, array $bindings = [])
  * @method static int update(string $query, array $bindings = [])
@@ -53,7 +41,6 @@ use Illuminate\Database\Console\WipeCommand;
  * @method static int affectingStatement(string $query, array $bindings = [])
  * @method static bool unprepared(string $query)
  * @method static array pretend(\Closure $callback)
- * @method static mixed withoutPretending(\Closure $callback)
  * @method static void bindValues(\PDOStatement $statement, array $bindings)
  * @method static array prepareBindings(array $bindings)
  * @method static void logQuery(string $query, array $bindings, float|null $time = null)
@@ -61,17 +48,19 @@ use Illuminate\Database\Console\WipeCommand;
  * @method static void allowQueryDurationHandlersToRunAgain()
  * @method static float totalQueryDuration()
  * @method static void resetTotalQueryDuration()
- * @method static void reconnectIfMissingConnection()
- * @method static \Illuminate\Database\Connection beforeStartingTransaction(\Closure $callback)
  * @method static \Illuminate\Database\Connection beforeExecuting(\Closure $callback)
  * @method static void listen(\Closure $callback)
- * @method static \Illuminate\Contracts\Database\Query\Expression raw(mixed $value)
- * @method static string escape(string|float|int|bool|null $value, bool $binary = false)
+ * @method static \Illuminate\Database\Query\Expression raw(mixed $value)
  * @method static bool hasModifiedRecords()
  * @method static void recordsHaveBeenModified(bool $value = true)
  * @method static \Illuminate\Database\Connection setRecordModificationState(bool $value)
  * @method static void forgetRecordModificationState()
  * @method static \Illuminate\Database\Connection useWriteConnectionWhenReading(bool $value = true)
+ * @method static bool isDoctrineAvailable()
+ * @method static bool usingNativeSchemaOperations()
+ * @method static \Doctrine\DBAL\Schema\Column getDoctrineColumn(string $table, string $column)
+ * @method static \Doctrine\DBAL\Schema\AbstractSchemaManager getDoctrineSchemaManager()
+ * @method static \Doctrine\DBAL\Connection getDoctrineConnection()
  * @method static \PDO getPdo()
  * @method static \PDO|\Closure|null getRawPdo()
  * @method static \PDO getReadPdo()
@@ -94,55 +83,30 @@ use Illuminate\Database\Console\WipeCommand;
  * @method static \Illuminate\Database\Connection setTransactionManager(\Illuminate\Database\DatabaseTransactionsManager $manager)
  * @method static void unsetTransactionManager()
  * @method static bool pretending()
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method static array getQueryLog()
- * @method static array prepareBindings(array $bindings)
- * @method static array pretend(\Closure $callback)
- * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
- * @method static bool insert(string $query, array $bindings = [])
- * @method static bool logging()
- * @method static bool statement(string $query, array $bindings = [])
- * @method static bool unprepared(string $query)
- * @method static int affectingStatement(string $query, array $bindings = [])
- * @method static int delete(string $query, array $bindings = [])
- * @method static int transactionLevel()
- * @method static int update(string $query, array $bindings = [])
- * @method static mixed selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
- * @method static mixed transaction(\Closure $callback, int $attempts = 1)
- * @method static string getDefaultConnection()
- * @method static void afterCommit(\Closure $callback)
- * @method static void beginTransaction()
- * @method static void commit()
+ * @method static void flushQueryLog()
  * @method static void enableQueryLog()
  * @method static void disableQueryLog()
- * @method static void flushQueryLog()
- * @method static void registerDoctrineType(string $class, string $name, string $type)
- * @method static \Illuminate\Database\Connection beforeExecuting(\Closure $callback)
- * @method static void listen(\Closure $callback)
- * @method static void rollBack(int $toLevel = null)
- * @method static void setDefaultConnection(string $name)
+ * @method static bool logging()
+ * @method static string getDatabaseName()
+ * @method static \Illuminate\Database\Connection setDatabaseName(string $database)
+ * @method static \Illuminate\Database\Connection setReadWriteType(string|null $readWriteType)
+ * @method static string getTablePrefix()
+ * @method static \Illuminate\Database\Connection setTablePrefix(string $prefix)
+ * @method static \Illuminate\Database\Grammar withTablePrefix(\Illuminate\Database\Grammar $grammar)
+ * @method static void resolverFor(string $driver, \Closure $callback)
+ * @method static mixed getResolver(string $driver)
+ * @method static mixed transaction(\Closure $callback, int $attempts = 1)
+ * @method static void beginTransaction()
+ * @method static void commit()
+ * @method static void rollBack(int|null $toLevel = null)
+ * @method static int transactionLevel()
+ * @method static void afterCommit(callable $callback)
  *
  * @see \Illuminate\Database\DatabaseManager
- * @see \Illuminate\Database\Connection
  */
 class DB extends Facade
 {
-    /**
-     * Indicate if destructive Artisan commands should be prohibited.
-     *
-     * Prohibits: db:wipe, migrate:fresh, migrate:refresh, and migrate:reset
-     *
-     * @param  bool  $prohibit
-     * @return void
-     */
-    public static function prohibitDestructiveCommands(bool $prohibit = true)
-    {
-        FreshCommand::prohibit($prohibit);
-        RefreshCommand::prohibit($prohibit);
-        ResetCommand::prohibit($prohibit);
-        WipeCommand::prohibit($prohibit);
-    }
-
     /**
      * Get the registered name of the component.
      *

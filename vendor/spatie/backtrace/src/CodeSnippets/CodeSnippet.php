@@ -50,8 +50,6 @@ class CodeSnippet
         }
     }
 
-<<<<<<< HEAD:vendor/spatie/backtrace/src/CodeSnippet.php
-=======
     public function getAsString(SnippetProvider $provider): string
     {
         $snippet = $this->get($provider);
@@ -63,7 +61,6 @@ class CodeSnippet
         return implode(PHP_EOL, $snippetStrings);
     }
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec:vendor/spatie/backtrace/src/CodeSnippets/CodeSnippet.php
     protected function getBounds(int $totalNumberOfLineInFile): array
     {
         $startLine = max($this->surroundingLine - floor($this->snippetLineCount / 2), 1);

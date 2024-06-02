@@ -12,7 +12,7 @@ use Illuminate\Support\InteractsWithTime;
 
 class FileStore implements Store, LockProvider
 {
-    use InteractsWithTime, HasCacheLock, RetrievesMultipleKeys;
+    use InteractsWithTime, RetrievesMultipleKeys;
 
     /**
      * The Illuminate Filesystem instance.
@@ -53,7 +53,7 @@ class FileStore implements Store, LockProvider
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param  string  $key
+     * @param  string|array  $key
      * @return mixed
      */
     public function get($key)
@@ -201,6 +201,31 @@ class FileStore implements Store, LockProvider
     }
 
     /**
+     * Get a lock instance.
+     *
+     * @param  string  $name
+     * @param  int  $seconds
+     * @param  string|null  $owner
+     * @return \Illuminate\Contracts\Cache\Lock
+     */
+    public function lock($name, $seconds = 0, $owner = null)
+    {
+        return new FileLock($this, $name, $seconds, $owner);
+    }
+
+    /**
+     * Restore a lock instance using the owner identifier.
+     *
+     * @param  string  $name
+     * @param  string  $owner
+     * @return \Illuminate\Contracts\Cache\Lock
+     */
+    public function restoreLock($name, $owner)
+    {
+        return $this->lock($name, 0, $owner);
+    }
+
+    /**
      * Remove an item from the cache.
      *
      * @param  string  $key
@@ -340,35 +365,6 @@ class FileStore implements Store, LockProvider
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Set the working directory of the cache.
-     *
-     * @param  string  $directory
-     * @return $this
-     */
-    public function setDirectory($directory)
-    {
-        $this->directory = $directory;
-
-        return $this;
-    }
-
-    /**
-     * Set the cache directory where locks should be stored.
-     *
-     * @param  string|null  $lockDirectory
-     * @return $this
-     */
-    public function setLockDirectory($lockDirectory)
-    {
-        $this->lockDirectory = $lockDirectory;
-
-        return $this;
-    }
-
-    /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the cache key prefix.
      *
      * @return string

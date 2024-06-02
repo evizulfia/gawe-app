@@ -3,6 +3,7 @@
 namespace Illuminate\Validation;
 
 use Closure;
+use Illuminate\Contracts\Validation\InvokableRule;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -85,9 +86,7 @@ class ValidationRuleParser
     protected function explodeExplicitRule($rule, $attribute)
     {
         if (is_string($rule)) {
-            [$name] = static::parseStringRule($rule);
-
-            return static::ruleIsRegex($name) ? [$rule] : explode('|', $rule);
+            return explode('|', $rule);
         }
 
         if (is_object($rule)) {
@@ -97,7 +96,7 @@ class ValidationRuleParser
         return array_map(
             [$this, 'prepareRule'],
             $rule,
-            array_fill(array_key_first($rule), count($rule), $attribute)
+            array_fill((int) array_key_first($rule), count($rule), $attribute)
         );
     }
 
@@ -114,6 +113,10 @@ class ValidationRuleParser
             $rule = new ClosureValidationRule($rule);
         }
 
+        if ($rule instanceof InvokableRule) {
+            $rule = InvokableValidationRule::make($rule);
+        }
+
         if (! is_object($rule) ||
             $rule instanceof RuleContract ||
             ($rule instanceof Exists && $rule->queryCallbacks()) ||
@@ -123,7 +126,7 @@ class ValidationRuleParser
 
         if ($rule instanceof NestedRules) {
             return $rule->compile(
-                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data), $this->data
+                $attribute, $this->data[$attribute] ?? null, Arr::dot($this->data)
             )->rules[$attribute];
         }
 
@@ -146,11 +149,9 @@ class ValidationRuleParser
 
         foreach ($data as $key => $value) {
             if (Str::startsWith($key, $attribute) || (bool) preg_match('/^'.$pattern.'\z/', $key)) {
-                foreach (Arr::flatten((array) $rules) as $rule) {
+                foreach ((array) $rules as $rule) {
                     if ($rule instanceof NestedRules) {
-                        $context = Arr::get($this->data, Str::beforeLast($key, '.'));
-
-                        $compiled = $rule->compile($key, $value, $data, $context);
+                        $compiled = $rule->compile($key, $value, $data);
 
                         $this->implicitAttributes = array_merge_recursive(
                             $compiled->implicitAttributes,

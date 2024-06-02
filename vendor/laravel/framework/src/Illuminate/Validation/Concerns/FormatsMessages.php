@@ -20,6 +20,10 @@ trait FormatsMessages
      */
     protected function getMessage($attribute, $rule)
     {
+        $attributeWithPlaceholders = $attribute;
+
+        $attribute = $this->replacePlaceholderInString($attribute);
+
         $inlineMessage = $this->getInlineMessage($attribute, $rule);
 
         // First we will retrieve the custom message for the validation rule if one
@@ -34,9 +38,9 @@ trait FormatsMessages
         $customKey = "validation.custom.{$attribute}.{$lowerRule}";
 
         $customMessage = $this->getCustomMessageFromTranslator(
-                in_array($rule, $this->sizeRules)
-                    ? [$customKey.".{$this->getAttributeType($attribute)}", $customKey]
-                    : $customKey
+            in_array($rule, $this->sizeRules)
+                ? [$customKey.".{$this->getAttributeType($attribute)}", $customKey]
+                : $customKey
         );
 
         // First we check for a custom defined validation message for the attribute
@@ -50,7 +54,7 @@ trait FormatsMessages
         // specific error message for the type of attribute being validated such
         // as a number, file or string which all have different message types.
         elseif (in_array($rule, $this->sizeRules)) {
-            return $this->getSizeMessage($attribute, $rule);
+            return $this->getSizeMessage($attributeWithPlaceholders, $rule);
         }
 
         // Finally, if no developer specified messages have been set, and no other
@@ -95,7 +99,7 @@ trait FormatsMessages
     {
         $source = $source ?: $this->customMessages;
 
-        $keys = ["{$attribute}.{$lowerRule}", $lowerRule];
+        $keys = ["{$attribute}.{$lowerRule}", $lowerRule, $attribute];
 
         // First we will check for a custom message for an attribute specific rule
         // message for the fields, then we will check for a general custom line
@@ -106,14 +110,26 @@ trait FormatsMessages
                     $pattern = str_replace('\*', '([^.]*)', preg_quote($sourceKey, '#'));
 
                     if (preg_match('#^'.$pattern.'\z#u', $key) === 1) {
-                        return $source[$sourceKey];
+                        $message = $source[$sourceKey];
+
+                        if (is_array($message) && isset($message[$lowerRule])) {
+                            return $message[$lowerRule];
+                        }
+
+                        return $message;
                     }
 
                     continue;
                 }
 
                 if (Str::is($sourceKey, $key)) {
-                    return $source[$sourceKey];
+                    $message = $source[$sourceKey];
+
+                    if ($sourceKey === $attribute && is_array($message) && isset($message[$lowerRule])) {
+                        return $message[$lowerRule];
+                    }
+
+                    return $message;
                 }
             }
         }
@@ -229,6 +245,8 @@ trait FormatsMessages
         );
 
         $message = $this->replaceInputPlaceholder($message, $attribute);
+        $message = $this->replaceIndexPlaceholder($message, $attribute);
+        $message = $this->replacePositionPlaceholder($message, $attribute);
 
         if (isset($this->replacers[Str::snake($rule)])) {
             return $this->callReplacer($message, $attribute, Str::snake($rule), $parameters, $this);
@@ -308,8 +326,6 @@ trait FormatsMessages
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Replace the :index placeholder in the given message.
      *
      * @param  string  $message
@@ -346,7 +362,7 @@ trait FormatsMessages
      * @param  \Closure|null  $modifier
      * @return string
      */
-    protected function replaceIndexOrPositionPlaceholder($message, $attribute, $placeholder, ?Closure $modifier = null)
+    protected function replaceIndexOrPositionPlaceholder($message, $attribute, $placeholder, Closure $modifier = null)
     {
         $segments = explode('.', $attribute);
 
@@ -396,7 +412,6 @@ trait FormatsMessages
     }
 
     /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Replace the :input placeholder in the given message.
      *
      * @param  string  $message

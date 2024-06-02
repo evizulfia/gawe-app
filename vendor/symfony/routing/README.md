@@ -6,8 +6,8 @@ The Routing component maps an HTTP request to a set of configuration variables.
 Getting Started
 ---------------
 
-```bash
-composer require symfony/routing
+```
+$ composer require symfony/routing
 ```
 
 ```php
@@ -41,12 +41,10 @@ $url = $generator->generate('blog_show', [
 // $url = '/blog/my-blog-post'
 ```
 
-<<<<<<< HEAD
-=======
 Sponsor
 -------
 
-The Routing component for Symfony 7.1 is [backed][1] by [redirection.io][2].
+The Routing component for Symfony 6.4 is [backed][1] by [redirection.io][2].
 
 redirection.io logs all your website’s HTTP traffic, and lets you fix errors
 with redirect rules in seconds. Give your marketing, SEO and IT teams the
@@ -54,7 +52,6 @@ right tool to manage your website traffic efficiently!
 
 Help Symfony by [sponsoring][3] its development!
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 Resources
 ---------
 
@@ -63,3 +60,7 @@ Resources
  * [Report issues](https://github.com/symfony/symfony/issues) and
    [send Pull Requests](https://github.com/symfony/symfony/pulls)
    in the [main Symfony repository](https://github.com/symfony/symfony)
+
+[1]: https://symfony.com/backers
+[2]: https://redirection.io
+[3]: https://symfony.com/sponsor

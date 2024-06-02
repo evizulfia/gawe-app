@@ -25,19 +25,16 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
  */
 class LocaleAwareListener implements EventSubscriberInterface
 {
-<<<<<<< HEAD
     private iterable $localeAwareServices;
-    private $requestStack;
+    private RequestStack $requestStack;
 
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     /**
      * @param iterable<mixed, LocaleAwareInterface> $localeAwareServices
      */
-    public function __construct(
-        private iterable $localeAwareServices,
-        private RequestStack $requestStack,
-    ) {
+    public function __construct(iterable $localeAwareServices, RequestStack $requestStack)
+    {
+        $this->localeAwareServices = $localeAwareServices;
+        $this->requestStack = $requestStack;
     }
 
     public function onKernelRequest(RequestEvent $event): void
@@ -72,7 +69,7 @@ class LocaleAwareListener implements EventSubscriberInterface
         foreach ($this->localeAwareServices as $service) {
             try {
                 $service->setLocale($locale);
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $service->setLocale($defaultLocale);
             }
         }

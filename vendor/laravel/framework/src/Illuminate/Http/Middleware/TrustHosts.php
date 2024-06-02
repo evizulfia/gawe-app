@@ -15,23 +15,6 @@ abstract class TrustHosts
     protected $app;
 
     /**
-<<<<<<< HEAD
-=======
-     * The trusted hosts that have been configured to always be trusted.
-     *
-     * @var array<int, string>|(callable(): array<int, string>)|null
-     */
-    protected static $alwaysTrust;
-
-    /**
-     * Indicates whether subdomains of the application URL should be trusted.
-     *
-     * @var bool|null
-     */
-    protected static $subdomains;
-
-    /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Create a new middleware instance.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
@@ -47,34 +30,13 @@ abstract class TrustHosts
      *
      * @return array
      */
-<<<<<<< HEAD
     abstract public function hosts();
-=======
-    public function hosts()
-    {
-        if (is_null(static::$alwaysTrust)) {
-            return [$this->allSubdomainsOfApplicationUrl()];
-        }
-
-        $hosts = match (true) {
-            is_array(static::$alwaysTrust) => static::$alwaysTrust,
-            is_callable(static::$alwaysTrust) => call_user_func(static::$alwaysTrust),
-            default => [],
-        };
-
-        if (static::$subdomains) {
-            $hosts[] = $this->allSubdomainsOfApplicationUrl();
-        }
-
-        return $hosts;
-    }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
     /**
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  callable  $next
+     * @param  \Closure  $next
      * @return \Illuminate\Http\Response
      */
     public function handle(Request $request, $next)
@@ -87,22 +49,6 @@ abstract class TrustHosts
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Specify the hosts that should always be trusted.
-     *
-     * @param  array<int, string>|(callable(): array<int, string>)  $hosts
-     * @param  bool  $subdomains
-     * @return void
-     */
-    public static function at(array|callable $hosts, bool $subdomains = true)
-    {
-        static::$alwaysTrust = $hosts;
-        static::$subdomains = $subdomains;
-    }
-
-    /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Determine if the application should specify trusted hosts.
      *
      * @return bool
@@ -124,18 +70,4 @@ abstract class TrustHosts
             return '^(.+\.)?'.preg_quote($host).'$';
         }
     }
-<<<<<<< HEAD
-=======
-
-    /**
-     * Flush the state of the middleware.
-     *
-     * @return void
-     */
-    public static function flushState()
-    {
-        static::$alwaysTrust = null;
-        static::$subdomains = null;
-    }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

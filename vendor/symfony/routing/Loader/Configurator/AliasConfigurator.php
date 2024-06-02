@@ -16,17 +16,11 @@ use Symfony\Component\Routing\Alias;
 
 class AliasConfigurator
 {
-<<<<<<< HEAD
-    private $alias;
+    private Alias $alias;
 
     public function __construct(Alias $alias)
     {
         $this->alias = $alias;
-=======
-    public function __construct(
-        private Alias $alias,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**

@@ -13,20 +13,6 @@ use ReflectionProperty;
 abstract class Component
 {
     /**
-     * The cache of public property names, keyed by class.
-     *
-     * @var array
-     */
-    protected static $propertyCache = [];
-
-    /**
-     * The cache of public method names, keyed by class.
-     *
-     * @var array
-     */
-    protected static $methodCache = [];
-
-    /**
      * The properties / methods that should not be exposed to the component.
      *
      * @var array
@@ -48,8 +34,6 @@ abstract class Component
     public $attributes;
 
     /**
-<<<<<<< HEAD
-=======
      * The view factory instance, if any.
      *
      * @var \Illuminate\Contracts\View\Factory|null
@@ -92,19 +76,54 @@ abstract class Component
     protected static $constructorParametersCache = [];
 
     /**
-     * The cache of ignored parameter names.
-     *
-     * @var array
-     */
-    protected static $ignoredParameterNames = [];
-
-    /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the view / view contents that represent the component.
      *
      * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\Support\Htmlable|\Closure|string
      */
     abstract public function render();
+
+    /**
+     * Resolve the component instance with the given data.
+     *
+     * @param  array  $data
+     * @return static
+     */
+    public static function resolve($data)
+    {
+        if (static::$componentsResolver) {
+            return call_user_func(static::$componentsResolver, static::class, $data);
+        }
+
+        $parameters = static::extractConstructorParameters();
+
+        $dataKeys = array_keys($data);
+
+        if (empty(array_diff($parameters, $dataKeys))) {
+            return new static(...array_intersect_key($data, array_flip($parameters)));
+        }
+
+        return Container::getInstance()->make(static::class, $data);
+    }
+
+    /**
+     * Extract the constructor parameters for the component.
+     *
+     * @return array
+     */
+    protected static function extractConstructorParameters()
+    {
+        if (! isset(static::$constructorParametersCache[static::class])) {
+            $class = new ReflectionClass(static::class);
+
+            $constructor = $class->getConstructor();
+
+            static::$constructorParametersCache[static::class] = $constructor
+                ? collect($constructor->getParameters())->map->getName()->all()
+                : [];
+        }
+
+        return static::$constructorParametersCache[static::class];
+    }
 
     /**
      * Resolve the Blade view or view file that should be used when rendering the component.
@@ -124,11 +143,7 @@ abstract class Component
         }
 
         $resolver = function ($view) {
-            $factory = Container::getInstance()->make('view');
-
-            return $factory->exists($view)
-                        ? $view
-                        : $this->createBladeViewFromString($factory, $view);
+            return $this->extractBladeViewFromString($view);
         };
 
         return $view instanceof Closure ? function (array $data = []) use ($view, $resolver) {
@@ -140,8 +155,6 @@ abstract class Component
     /**
      * Create a Blade view with the raw component string content.
      *
-<<<<<<< HEAD
-=======
      * @param  string  $contents
      * @return string
      */
@@ -153,7 +166,7 @@ abstract class Component
             return static::$bladeViewCache[$key];
         }
 
-        if ($this->factory()->exists($contents)) {
+        if (strlen($contents) <= PHP_MAXPATHLEN && $this->factory()->exists($contents)) {
             return static::$bladeViewCache[$key] = $contents;
         }
 
@@ -163,7 +176,6 @@ abstract class Component
     /**
      * Create a Blade view with the raw component string content.
      *
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * @param  \Illuminate\Contracts\View\Factory  $factory
      * @param  string  $contents
      * @return string
@@ -368,8 +380,6 @@ abstract class Component
     {
         return true;
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Get the evaluated view contents for the given view.
@@ -396,30 +406,6 @@ abstract class Component
         }
 
         return static::$factory;
-    }
-
-    /**
-     * Get the cached set of anonymous component constructor parameter names to exclude.
-     *
-     * @return array
-     */
-    public static function ignoredParameterNames()
-    {
-        if (! isset(static::$ignoredParameterNames[static::class])) {
-            $constructor = (new ReflectionClass(
-                static::class
-            ))->getConstructor();
-
-            if (! $constructor) {
-                return static::$ignoredParameterNames[static::class] = [];
-            }
-
-            static::$ignoredParameterNames[static::class] = collect($constructor->getParameters())
-                ->map->getName()
-                ->all();
-        }
-
-        return static::$ignoredParameterNames[static::class];
     }
 
     /**
@@ -469,5 +455,4 @@ abstract class Component
     {
         static::$componentsResolver = $resolver;
     }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

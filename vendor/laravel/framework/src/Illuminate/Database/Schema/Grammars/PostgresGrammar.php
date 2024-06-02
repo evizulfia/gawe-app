@@ -2,6 +2,7 @@
 
 namespace Illuminate\Database\Schema\Grammars;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Fluent;
 
@@ -82,109 +83,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileColumnListing()
     {
-<<<<<<< HEAD
         return 'select column_name from information_schema.columns where table_catalog = ? and table_schema = ? and table_name = ?';
-=======
-        return "select viewname as name, schemaname as schema, definition from pg_views where schemaname not in ('pg_catalog', 'information_schema') order by viewname";
-    }
-
-    /**
-     * Compile the query to determine the user-defined types.
-     *
-     * @return string
-     */
-    public function compileTypes()
-    {
-        return 'select t.typname as name, n.nspname as schema, t.typtype as type, t.typcategory as category, '
-            ."((t.typinput = 'array_in'::regproc and t.typoutput = 'array_out'::regproc) or t.typtype = 'm') as implicit "
-            .'from pg_type t join pg_namespace n on n.oid = t.typnamespace '
-            .'left join pg_class c on c.oid = t.typrelid '
-            .'left join pg_type el on el.oid = t.typelem '
-            .'left join pg_class ce on ce.oid = el.typrelid '
-            ."where ((t.typrelid = 0 and (ce.relkind = 'c' or ce.relkind is null)) or c.relkind = 'c') "
-            ."and not exists (select 1 from pg_depend d where d.objid in (t.oid, t.typelem) and d.deptype = 'e') "
-            ."and n.nspname not in ('pg_catalog', 'information_schema')";
-    }
-
-    /**
-     * Compile the query to determine the columns.
-     *
-     * @param  string  $schema
-     * @param  string  $table
-     * @return string
-     */
-    public function compileColumns($schema, $table)
-    {
-        return sprintf(
-            'select a.attname as name, t.typname as type_name, format_type(a.atttypid, a.atttypmod) as type, '
-            .'(select tc.collcollate from pg_catalog.pg_collation tc where tc.oid = a.attcollation) as collation, '
-            .'not a.attnotnull as nullable, '
-            .'(select pg_get_expr(adbin, adrelid) from pg_attrdef where c.oid = pg_attrdef.adrelid and pg_attrdef.adnum = a.attnum) as default, '
-            .(version_compare($this->connection?->getServerVersion(), '12.0', '<') ? "'' as generated, " : 'a.attgenerated as generated, ')
-            .'col_description(c.oid, a.attnum) as comment '
-            .'from pg_attribute a, pg_class c, pg_type t, pg_namespace n '
-            .'where c.relname = %s and n.nspname = %s and a.attnum > 0 and a.attrelid = c.oid and a.atttypid = t.oid and n.oid = c.relnamespace '
-            .'order by a.attnum',
-            $this->quoteString($table),
-            $this->quoteString($schema)
-        );
-    }
-
-    /**
-     * Compile the query to determine the indexes.
-     *
-     * @param  string  $schema
-     * @param  string  $table
-     * @return string
-     */
-    public function compileIndexes($schema, $table)
-    {
-        return sprintf(
-            "select ic.relname as name, string_agg(a.attname, ',' order by indseq.ord) as columns, "
-            .'am.amname as "type", i.indisunique as "unique", i.indisprimary as "primary" '
-            .'from pg_index i '
-            .'join pg_class tc on tc.oid = i.indrelid '
-            .'join pg_namespace tn on tn.oid = tc.relnamespace '
-            .'join pg_class ic on ic.oid = i.indexrelid '
-            .'join pg_am am on am.oid = ic.relam '
-            .'join lateral unnest(i.indkey) with ordinality as indseq(num, ord) on true '
-            .'left join pg_attribute a on a.attrelid = i.indrelid and a.attnum = indseq.num '
-            .'where tc.relname = %s and tn.nspname = %s '
-            .'group by ic.relname, am.amname, i.indisunique, i.indisprimary',
-            $this->quoteString($table),
-            $this->quoteString($schema)
-        );
-    }
-
-    /**
-     * Compile the query to determine the foreign keys.
-     *
-     * @param  string  $schema
-     * @param  string  $table
-     * @return string
-     */
-    public function compileForeignKeys($schema, $table)
-    {
-        return sprintf(
-            'select c.conname as name, '
-            ."string_agg(la.attname, ',' order by conseq.ord) as columns, "
-            .'fn.nspname as foreign_schema, fc.relname as foreign_table, '
-            ."string_agg(fa.attname, ',' order by conseq.ord) as foreign_columns, "
-            .'c.confupdtype as on_update, c.confdeltype as on_delete '
-            .'from pg_constraint c '
-            .'join pg_class tc on c.conrelid = tc.oid '
-            .'join pg_namespace tn on tn.oid = tc.relnamespace '
-            .'join pg_class fc on c.confrelid = fc.oid '
-            .'join pg_namespace fn on fn.oid = fc.relnamespace '
-            .'join lateral unnest(c.conkey) with ordinality as conseq(num, ord) on true '
-            .'join pg_attribute la on la.attrelid = c.conrelid and la.attnum = conseq.num '
-            .'join pg_attribute fa on fa.attrelid = c.confrelid and fa.attnum = c.confkey[conseq.ord] '
-            ."where c.contype = 'f' and tc.relname = %s and tn.nspname = %s "
-            .'group by c.conname, fn.nspname, fc.relname, c.confupdtype, c.confdeltype',
-            $this->quoteString($table),
-            $this->quoteString($schema)
-        );
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -232,6 +131,25 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a rename column command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array|string
+     */
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        return $connection->usingNativeSchemaOperations()
+            ? sprintf('alter table %s rename column %s to %s',
+                $this->wrapTable($blueprint),
+                $this->wrap($command->from),
+                $this->wrap($command->to)
+            )
+            : parent::compileRenameColumn($blueprint, $command, $connection);
+    }
+
+    /**
      * Compile a primary key command.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
@@ -254,11 +172,21 @@ class PostgresGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s add constraint %s unique (%s)',
+        $sql = sprintf('alter table %s add constraint %s unique (%s)',
             $this->wrapTable($blueprint),
             $this->wrap($command->index),
             $this->columnize($command->columns)
         );
+
+        if (! is_null($command->deferrable)) {
+            $sql .= $command->deferrable ? ' deferrable' : ' not deferrable';
+        }
+
+        if ($command->deferrable && ! is_null($command->initiallyImmediate)) {
+            $sql .= $command->initiallyImmediate ? ' initially immediate' : ' initially deferred';
+        }
+
+        return $sql;
     }
 
     /**
@@ -374,7 +302,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropAllTables($tables)
     {
-        return 'drop table "'.implode('","', $tables).'" cascade';
+        return 'drop table '.implode(',', $this->escapeNames($tables)).' cascade';
     }
 
     /**
@@ -385,7 +313,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropAllViews($views)
     {
-        return 'drop view "'.implode('","', $views).'" cascade';
+        return 'drop view '.implode(',', $this->escapeNames($views)).' cascade';
     }
 
     /**
@@ -396,7 +324,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropAllTypes($types)
     {
-        return 'drop type "'.implode('","', $types).'" cascade';
+        return 'drop type '.implode(',', $this->escapeNames($types)).' cascade';
     }
 
     /**
@@ -407,7 +335,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileGetAllTables($searchPath)
     {
-        return "select tablename from pg_catalog.pg_tables where schemaname in ('".implode("','", (array) $searchPath)."')";
+        return "select tablename, concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname from pg_catalog.pg_tables where schemaname in ('".implode("','", (array) $searchPath)."')";
     }
 
     /**
@@ -418,7 +346,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileGetAllViews($searchPath)
     {
-        return "select viewname from pg_catalog.pg_views where schemaname in ('".implode("','", (array) $searchPath)."')";
+        return "select viewname, concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname from pg_catalog.pg_views where schemaname in ('".implode("','", (array) $searchPath)."')";
     }
 
     /**
@@ -589,6 +517,36 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a table comment command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compileTableComment(Blueprint $blueprint, Fluent $command)
+    {
+        return sprintf('comment on table %s is %s',
+            $this->wrapTable($blueprint),
+            "'".str_replace("'", "''", $command->comment)."'"
+        );
+    }
+
+    /**
+     * Quote-escape the given tables, views, or types.
+     *
+     * @param  array  $names
+     * @return array
+     */
+    public function escapeNames($names)
+    {
+        return array_map(static function ($name) {
+            return '"'.collect(explode('.', $name))
+                ->map(fn ($segment) => trim($segment, '\'"'))
+                ->implode('"."').'"';
+        }, $names);
+    }
+
+    /**
      * Create the column definition for a char type.
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -596,7 +554,11 @@ class PostgresGrammar extends Grammar
      */
     protected function typeChar(Fluent $column)
     {
-        return "char({$column->length})";
+        if ($column->length) {
+            return "char({$column->length})";
+        }
+
+        return 'char';
     }
 
     /**
@@ -607,7 +569,11 @@ class PostgresGrammar extends Grammar
      */
     protected function typeString(Fluent $column)
     {
-        return "varchar({$column->length})";
+        if ($column->length) {
+            return "varchar({$column->length})";
+        }
+
+        return 'varchar';
     }
 
     /**

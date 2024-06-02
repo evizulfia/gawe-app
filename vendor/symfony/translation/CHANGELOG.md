@@ -1,19 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Mark class `DataCollectorTranslator` as `final`
-
-7.0
----
-
- * Remove `PhpStringTokenParser`
- * Remove `PhpExtractor` in favor of `PhpAstExtractor`
-
 6.4
 ---
 
@@ -43,7 +30,6 @@ CHANGELOG
  * Parameters implementing `TranslatableInterface` are processed
  * Add the file extension to the `XliffFileDumper` constructor
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 5.4
 ---
 

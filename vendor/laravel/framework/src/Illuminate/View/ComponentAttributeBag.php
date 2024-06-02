@@ -36,16 +36,6 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     }
 
     /**
-     * Get all of the attribute values.
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->attributes;
-    }
-
-    /**
      * Get the first attribute's value.
      *
      * @param  mixed  $default
@@ -77,6 +67,17 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     public function has($key)
     {
         return array_key_exists($key, $this->attributes);
+    }
+
+    /**
+     * Determine if a given attribute is missing from the attribute array.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function missing($key)
+    {
+        return ! $this->has($key, $this->attributes);
     }
 
     /**
@@ -173,7 +174,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function onlyProps($keys)
     {
-        return $this->only(static::extractPropNames($keys));
+        return $this->only($this->extractPropNames($keys));
     }
 
     /**
@@ -184,7 +185,27 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function exceptProps($keys)
     {
-        return $this->except(static::extractPropNames($keys));
+        return $this->except($this->extractPropNames($keys));
+    }
+
+    /**
+     * Extract prop names from given keys.
+     *
+     * @param  mixed|array  $keys
+     * @return array
+     */
+    protected function extractPropNames($keys)
+    {
+        $props = [];
+
+        foreach ($keys as $key => $defaultValue) {
+            $key = is_numeric($key) ? $defaultValue : $key;
+
+            $props[] = $key;
+            $props[] = Str::kebab($key);
+        }
+
+        return $props;
     }
 
     /**
@@ -198,6 +219,19 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
         $classList = Arr::wrap($classList);
 
         return $this->merge(['class' => Arr::toCssClasses($classList)]);
+    }
+
+    /**
+     * Conditionally merge styles into the attribute bag.
+     *
+     * @param  mixed|array  $styleList
+     * @return static
+     */
+    public function style($styleList)
+    {
+        $styleList = Arr::wrap($styleList);
+
+        return $this->merge(['style' => Arr::toCssStyles($styleList)]);
     }
 
     /**
@@ -217,15 +251,20 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
         [$appendableAttributes, $nonAppendableAttributes] = collect($this->attributes)
                     ->partition(function ($value, $key) use ($attributeDefaults) {
-                        return $key === 'class' ||
-                               (isset($attributeDefaults[$key]) &&
-                                $attributeDefaults[$key] instanceof AppendableAttributeValue);
+                        return $key === 'class' || $key === 'style' || (
+                            isset($attributeDefaults[$key]) &&
+                            $attributeDefaults[$key] instanceof AppendableAttributeValue
+                        );
                     });
 
         $attributes = $appendableAttributes->mapWithKeys(function ($value, $key) use ($attributeDefaults, $escape) {
             $defaultsValue = isset($attributeDefaults[$key]) && $attributeDefaults[$key] instanceof AppendableAttributeValue
                         ? $this->resolveAppendableAttributeDefault($attributeDefaults, $key, $escape)
                         : ($attributeDefaults[$key] ?? '');
+
+            if ($key === 'style') {
+                $value = Str::finish($value, ';');
+            }
 
             return [$key => implode(' ', array_unique(array_filter([$defaultsValue, $value])))];
         })->merge($nonAppendableAttributes)->all();
@@ -307,26 +346,6 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
         }
 
         $this->attributes = $attributes;
-    }
-
-    /**
-     * Extract "prop" names from given keys.
-     *
-     * @param  array  $keys
-     * @return array
-     */
-    public static function extractPropNames(array $keys)
-    {
-        $props = [];
-
-        foreach ($keys as $key => $default) {
-            $key = is_numeric($key) ? $default : $key;
-
-            $props[] = $key;
-            $props[] = Str::kebab($key);
-        }
-
-        return $props;
     }
 
     /**
@@ -420,11 +439,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
             }
 
             if ($value === true) {
-<<<<<<< HEAD
                 $value = $key;
-=======
-                $value = $key === 'x-data' || str_starts_with($key, 'wire:') ? '' : $key;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             }
 
             $string .= ' '.$key.'="'.str_replace('"', '\\"', trim($value)).'"';

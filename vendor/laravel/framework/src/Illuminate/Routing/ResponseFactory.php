@@ -119,7 +119,7 @@ class ResponseFactory implements FactoryContract
     /**
      * Create a new streamed response instance.
      *
-     * @param  \Closure  $callback
+     * @param  callable  $callback
      * @param  int  $status
      * @param  array  $headers
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
@@ -132,13 +132,11 @@ class ResponseFactory implements FactoryContract
     /**
      * Create a new streamed response instance as a file download.
      *
-     * @param  \Closure  $callback
+     * @param  callable  $callback
      * @param  string|null  $name
      * @param  array  $headers
      * @param  string|null  $disposition
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     *
-     * @throws \Illuminate\Routing\Exceptions\StreamedResponseException
      */
     public function streamDownload($callback, $name = null, array $headers = [], $disposition = 'attachment')
     {

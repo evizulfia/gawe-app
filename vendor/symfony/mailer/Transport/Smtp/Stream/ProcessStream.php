@@ -24,16 +24,10 @@ use Symfony\Component\Mailer\Exception\TransportException;
 final class ProcessStream extends AbstractStream
 {
     private string $command;
-    private bool $interactive = false;
 
-    public function setCommand(string $command)
+    public function setCommand(string $command): void
     {
         $this->command = $command;
-    }
-
-    public function setInteractive(bool $interactive)
-    {
-        $this->interactive = $interactive;
     }
 
     public function initialize(): void
@@ -41,7 +35,7 @@ final class ProcessStream extends AbstractStream
         $descriptorSpec = [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],
-            2 => ['pipe', 'w'],
+            2 => ['pipe', '\\' === \DIRECTORY_SEPARATOR ? 'a' : 'w'],
         ];
         $pipes = [];
         $this->stream = proc_open($this->command, $descriptorSpec, $pipes);
@@ -63,15 +57,11 @@ final class ProcessStream extends AbstractStream
             $err = stream_get_contents($this->err);
             fclose($this->err);
             if (0 !== $exitCode = proc_close($this->stream)) {
-                $errorMessage = 'Process failed with exit code '.$exitCode.': '.$out.$err;
+                throw new TransportException('Process failed with exit code '.$exitCode.': '.$out.$err);
             }
         }
 
         parent::terminate();
-
-        if (!$this->interactive && isset($errorMessage)) {
-            throw new TransportException($errorMessage);
-        }
     }
 
     protected function getReadConnectionDescription(): string

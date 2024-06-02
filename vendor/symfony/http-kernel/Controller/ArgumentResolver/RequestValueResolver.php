@@ -13,41 +13,28 @@ namespace Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\HttpKernel\Exception\NearMissValueResolverException;
 
 /**
  * Yields the same instance as the request object passed along.
  *
  * @author Iltar van der Berg <kjarli@gmail.com>
  */
-final class RequestValueResolver implements ArgumentValueResolverInterface
+final class RequestValueResolver implements ArgumentValueResolverInterface, ValueResolverInterface
 {
     /**
-     * {@inheritdoc}
+     * @deprecated since Symfony 6.2, use resolve() instead
      */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-<<<<<<< HEAD
+        @trigger_deprecation('symfony/http-kernel', '6.2', 'The "%s()" method is deprecated, use "resolve()" instead.', __METHOD__);
+
         return Request::class === $argument->getType() || is_subclass_of($argument->getType(), Request::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    public function resolve(Request $request, ArgumentMetadata $argument): array
     {
-        yield $request;
-=======
-        if (Request::class === $argument->getType() || is_subclass_of($argument->getType(), Request::class)) {
-            return [$request];
-        }
-
-        if (str_ends_with($argument->getType() ?? '', '\\Request')) {
-            throw new NearMissValueResolverException(sprintf('Looks like you required a Request object with the wrong class name "%s". Did you mean to use "%s" instead?', $argument->getType(), Request::class));
-        }
-
-        return [];
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+        return Request::class === $argument->getType() || is_subclass_of($argument->getType(), Request::class) ? [$request] : [];
     }
 }

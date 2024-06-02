@@ -1,38 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Add method `isKernelTerminating()` to `ExceptionEvent` that allows to check if an exception was thrown while the kernel is being terminated
- * Add `HttpException::fromStatusCode()`
- * Add `$validationFailedStatusCode` argument to `#[MapQueryParameter]` that allows setting a custom HTTP status code when validation fails
- * Add `NearMissValueResolverException` to let value resolvers report when an argument could be under their watch but failed to be resolved
- * Add `$type` argument to `#[MapRequestPayload]` that allows mapping a list of items
- * The `Extension` class is marked as internal, extend the `Extension` class from the DependencyInjection component instead
- * Deprecate `Extension::addAnnotatedClassesToCompile()`
- * Deprecate `AddAnnotatedClassesToCachePass`
- * Deprecate the `setAnnotatedClassCache()` and `getAnnotatedClassesToCompile()` methods of the `Kernel` class
- * Add `#[MapUploadedFile]` attribute to fetch, validate, and inject uploaded files into controller arguments
-
-7.0
----
-
- * Add argument `$reflector` to `ArgumentResolverInterface::getArguments()` and `ArgumentMetadataFactoryInterface::createArgumentMetadata()`
- * Remove `ArgumentValueResolverInterface`, use `ValueResolverInterface` instead
- * Remove `StreamedResponseListener`
- * Remove `AbstractSurrogate::$phpEscapeMap`
- * Remove `HttpKernelInterface::MASTER_REQUEST`
- * Remove `terminate_on_cache_hit` option from `HttpCache`
- * Require explicit argument when calling `ConfigDataCollector::setKernel()`, `RouterListener::setCurrentRequest()`
- * Remove `Kernel::stripComments()`
- * Remove `FileLinkFormatter`, use `FileLinkFormatter` from the ErrorHandler component instead
- * Remove `UriSigner`, use `UriSigner` from the HttpFoundation component instead
- * Add argument `$buildDir` to `WarmableInterface`
- * Add argument `$filter` to `Profiler::find()` and `FileProfilerStorage::find()`
-
 6.4
 ---
 
@@ -89,7 +57,6 @@ CHANGELOG
  * Add `AbstractBundle` class for DI configuration/definition on a single file
  * Update the path of a bundle placed in the `src/` directory to the parent directory when `AbstractBundle` is used
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 6.0
 ---
 
@@ -103,7 +70,7 @@ CHANGELOG
 ---
 
  * Add the ability to enable the profiler using a request query parameter, body parameter or attribute
- * Deprecate `AbstractTestSessionListener::getSession` inject a session in the request instead
+ * Deprecate `AbstractTestSessionListener` and `TestSessionListener`, use `AbstractSessionListener` and `SessionListener` instead
  * Deprecate the `fileLinkFormat` parameter of `DebugHandlersListener`
  * Add support for configuring log level, and status code by exception class
  * Allow ignoring "kernel.reset" methods that don't exist with "on_invalid" attribute

@@ -21,6 +21,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class RemoveEmptyControllerArgumentLocatorsPass implements CompilerPassInterface
 {
+    /**
+     * @return void
+     */
     public function process(ContainerBuilder $container)
     {
         $controllerLocator = $container->findDefinition('argument_resolver.controller_locator');
@@ -28,10 +31,6 @@ class RemoveEmptyControllerArgumentLocatorsPass implements CompilerPassInterface
 
         foreach ($controllers as $controller => $argumentRef) {
             $argumentLocator = $container->getDefinition((string) $argumentRef->getValues()[0]);
-
-            if ($argumentLocator->getFactory()) {
-                $argumentLocator = $container->getDefinition($argumentLocator->getFactory()[0]);
-            }
 
             if (!$argumentLocator->getArgument(0)) {
                 // remove empty argument locators

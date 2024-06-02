@@ -89,10 +89,8 @@ class RateLimiter
      */
     public function tooManyAttempts($key, $maxAttempts)
     {
-        $key = $this->cleanRateLimiterKey($key);
-
         if ($this->attempts($key) >= $maxAttempts) {
-            if ($this->cache->has($key.':timer')) {
+            if ($this->cache->has($this->cleanRateLimiterKey($key).':timer')) {
                 return true;
             }
 
@@ -126,19 +124,6 @@ class RateLimiter
         }
 
         return $hits;
-    }
-
-    /**
-     * Decrement the counter for a given key for a given decay time by a given amount.
-     *
-     * @param  string  $key
-     * @param  int  $decaySeconds
-     * @param  int  $amount
-     * @return int
-     */
-    public function decrement($key, $decaySeconds = 60, $amount = 1)
-    {
-        return $this->increment($key, $decaySeconds, $amount * -1);
     }
 
     /**

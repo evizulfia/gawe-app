@@ -16,25 +16,22 @@ namespace Symfony\Component\Console\Completion;
  *
  * @author Wouter de Jong <wouter@wouterj.nl>
  */
-class Suggestion
+class Suggestion implements \Stringable
 {
-<<<<<<< HEAD
-    private string $value;
-
-    public function __construct(string $value)
-    {
-        $this->value = $value;
-=======
     public function __construct(
         private readonly string $value,
-        private readonly string $description = '',
+        private readonly string $description = ''
     ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     public function __toString(): string

@@ -4,7 +4,6 @@ use Illuminate\Contracts\Support\DeferringDisplayableValue;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Env;
-use Illuminate\Support\Fluent;
 use Illuminate\Support\HigherOrderTapProxy;
 use Illuminate\Support\Optional;
 use Illuminate\Support\Str;
@@ -57,10 +56,6 @@ if (! function_exists('blank')) {
             return count($value) === 0;
         }
 
-        if ($value instanceof Stringable) {
-            return trim((string) $value) === '';
-        }
-
         return empty($value);
     }
 }
@@ -107,11 +102,7 @@ if (! function_exists('e')) {
     /**
      * Encode HTML special characters in a string.
      *
-<<<<<<< HEAD
-     * @param  \Illuminate\Contracts\Support\DeferringDisplayableValue|\Illuminate\Contracts\Support\Htmlable|string|null  $value
-=======
-     * @param  \Illuminate\Contracts\Support\DeferringDisplayableValue|\Illuminate\Contracts\Support\Htmlable|\BackedEnum|string|int|float|null  $value
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+     * @param  \Illuminate\Contracts\Support\DeferringDisplayableValue|\Illuminate\Contracts\Support\Htmlable|\BackedEnum|string|null  $value
      * @param  bool  $doubleEncode
      * @return string
      */
@@ -123,6 +114,10 @@ if (! function_exists('e')) {
 
         if ($value instanceof Htmlable) {
             return $value->toHtml();
+        }
+
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
         }
 
         return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8', $doubleEncode);
@@ -156,38 +151,6 @@ if (! function_exists('filled')) {
     }
 }
 
-<<<<<<< HEAD
-=======
-if (! function_exists('fluent')) {
-    /**
-     * Create an Fluent object from the given value.
-     *
-     * @param  object|array  $value
-     * @return \Illuminate\Support\Fluent
-     */
-    function fluent($value)
-    {
-        return new Fluent($value);
-    }
-}
-
-if (! function_exists('literal')) {
-    /**
-     * Return a new literal or anonymous object using named arguments.
-     *
-     * @return \stdClass
-     */
-    function literal(...$arguments)
-    {
-        if (count($arguments) === 1 && array_is_list($arguments)) {
-            return $arguments[0];
-        }
-
-        return (object) $arguments;
-    }
-}
-
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 if (! function_exists('object_get')) {
     /**
      * Get an item from an object using "dot" notation.
@@ -223,7 +186,7 @@ if (! function_exists('optional')) {
      * @param  callable|null  $callback
      * @return mixed
      */
-    function optional($value = null, ?callable $callback = null)
+    function optional($value = null, callable $callback = null)
     {
         if (is_null($callback)) {
             return new Optional($value);
@@ -245,7 +208,7 @@ if (! function_exists('preg_replace_array')) {
     function preg_replace_array($pattern, array $replacements, $subject)
     {
         return preg_replace_callback($pattern, function () use (&$replacements) {
-            foreach ($replacements as $key => $value) {
+            foreach ($replacements as $value) {
                 return array_shift($replacements);
             }
         }, $subject);
@@ -262,7 +225,7 @@ if (! function_exists('retry')) {
      * @param  callable|null  $when
      * @return mixed
      *
-     * @throws \Throwable
+     * @throws \Exception
      */
     function retry($times, callable $callback, $sleepMilliseconds = 0, $when = null)
     {
@@ -282,7 +245,7 @@ if (! function_exists('retry')) {
 
         try {
             return $callback($attempts);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             if ($times < 1 || ($when && ! $when($e))) {
                 throw $e;
             }
@@ -290,7 +253,7 @@ if (! function_exists('retry')) {
             $sleepMilliseconds = $backoff[$attempts - 1] ?? $sleepMilliseconds;
 
             if ($sleepMilliseconds) {
-                usleep(value($sleepMilliseconds, $attempts) * 1000);
+                usleep(value($sleepMilliseconds, $attempts, $e) * 1000);
             }
 
             goto beginning;
@@ -449,12 +412,13 @@ if (! function_exists('with')) {
      * Return the given value, optionally passed through the given callback.
      *
      * @template TValue
+     * @template TReturn
      *
      * @param  TValue  $value
-     * @param  (callable(TValue): TValue)|null  $callback
-     * @return TValue
+     * @param  (callable(TValue): (TReturn))|null  $callback
+     * @return ($callback is null ? TValue : TReturn)
      */
-    function with($value, ?callable $callback = null)
+    function with($value, callable $callback = null)
     {
         return is_null($callback) ? $value : $callback($value);
     }

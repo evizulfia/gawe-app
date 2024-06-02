@@ -50,7 +50,7 @@ class Authorize
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  array|null  $models
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Model|array|string
      */
     protected function getGateArguments($request, $models)
     {
@@ -75,7 +75,7 @@ class Authorize
         if ($this->isClassName($model)) {
             return trim($model);
         } else {
-            return $request->route($model, null) ?:
+            return $request->route($model, null) ??
                 ((preg_match("/^['\"](.*)['\"]$/", trim($model), $matches)) ? $matches[1] : null);
         }
     }

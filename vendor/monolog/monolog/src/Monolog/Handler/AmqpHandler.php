@@ -11,12 +11,7 @@
 
 namespace Monolog\Handler;
 
-<<<<<<< HEAD
 use Monolog\Logger;
-=======
-use Gelf\Message as GelfMessage;
-use Monolog\Level;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\JsonFormatter;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -32,6 +27,31 @@ class AmqpHandler extends AbstractProcessingHandler
      * @var AMQPExchange|AMQPChannel $exchange
      */
     protected $exchange;
+    /** @var array<string, mixed> */
+    private $extraAttributes = [];
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraAttributes(): array
+    {
+        return $this->extraAttributes;
+    }
+
+    /**
+     * Configure extra attributes to pass to the AMQPExchange (if you are using the amqp extension)
+     *
+     * @param array<string, mixed> $extraAttributes  One of content_type, content_encoding,
+     *                                               message_id, user_id, app_id, delivery_mode,
+     *                                               priority, timestamp, expiration, type
+     *                                               or reply_to, headers.
+     * @return AmqpHandler
+     */
+    public function setExtraAttributes(array $extraAttributes): self
+    {
+        $this->extraAttributes = $extraAttributes;
+        return $this;
+    }
 
     /**
      * @var string
@@ -64,19 +84,19 @@ class AmqpHandler extends AbstractProcessingHandler
         $data = $record["formatted"];
         $routingKey = $this->getRoutingKey($record);
 
-        if($data instanceof GelfMessage) {
-            $data = json_encode($data->toArray());
-        }
-
         if ($this->exchange instanceof AMQPExchange) {
+            $attributes = [
+                'delivery_mode' => 2,
+                'content_type'  => 'application/json',
+            ];
+            if ($this->extraAttributes) {
+                $attributes = array_merge($attributes, $this->extraAttributes);
+            }
             $this->exchange->publish(
                 $data,
                 $routingKey,
                 0,
-                [
-                    'delivery_mode' => 2,
-                    'content_type' => 'application/json',
-                ]
+                $attributes
             );
         } else {
             $this->exchange->basic_publish(
@@ -107,10 +127,6 @@ class AmqpHandler extends AbstractProcessingHandler
             $record = $this->processRecord($record);
             $data = $this->getFormatter()->format($record);
 
-            if($data instanceof GelfMessage) {
-                $data = json_encode($data->toArray());
-            }
-
             $this->exchange->batch_basic_publish(
                 $this->createAmqpMessage($data),
                 $this->exchangeName,
@@ -135,13 +151,14 @@ class AmqpHandler extends AbstractProcessingHandler
 
     private function createAmqpMessage(string $data): AMQPMessage
     {
-        return new AMQPMessage(
-            $data,
-            [
-                'delivery_mode' => 2,
-                'content_type' => 'application/json',
-            ]
-        );
+        $attributes = [
+            'delivery_mode' => 2,
+            'content_type' => 'application/json',
+        ];
+        if ($this->extraAttributes) {
+            $attributes = array_merge($attributes, $this->extraAttributes);
+        }
+        return new AMQPMessage($data, $attributes);
     }
 
     /**

@@ -3,19 +3,22 @@
 namespace Spatie\Backtrace;
 
 use Closure;
-<<<<<<< HEAD
-=======
 use Laravel\SerializableClosure\Support\ClosureStream;
 use Spatie\Backtrace\Arguments\ArgumentReducers;
 use Spatie\Backtrace\Arguments\ReduceArgumentsAction;
 use Spatie\Backtrace\Arguments\Reducers\ArgumentReducer;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 use Throwable;
 
 class Backtrace
 {
     /** @var bool */
     protected $withArguments = false;
+
+    /** @var bool */
+    protected $reduceArguments = false;
+
+    /** @var array<class-string<ArgumentReducer>|ArgumentReducer>|ArgumentReducers|null */
+    protected $argumentReducers = null;
 
     /** @var bool */
     protected $withObject = false;
@@ -52,9 +55,24 @@ class Backtrace
         return $this;
     }
 
-    public function withArguments(): self
-    {
-        $this->withArguments = true;
+    public function withArguments(
+        bool $withArguments = true
+    ): self {
+        $this->withArguments = $withArguments;
+
+        return $this;
+    }
+
+    /**
+     * @param array<class-string<ArgumentReducer>|ArgumentReducer>|ArgumentReducers|null $argumentReducers
+     *
+     * @return $this
+     */
+    public function reduceArguments(
+        $argumentReducers = null
+    ): self {
+        $this->reduceArguments = true;
+        $this->argumentReducers = $argumentReducers;
 
         return $this;
     }
@@ -68,7 +86,7 @@ class Backtrace
 
     public function applicationPath(string $applicationPath): self
     {
-        $this->applicationPath = $applicationPath;
+        $this->applicationPath = rtrim($applicationPath, '/');
 
         return $this;
     }
@@ -147,8 +165,11 @@ class Backtrace
     {
         $currentFile = $this->throwable ? $this->throwable->getFile() : '';
         $currentLine = $this->throwable ? $this->throwable->getLine() : 0;
+        $arguments = $this->withArguments ? [] : null;
 
         $frames = [];
+
+        $reduceArgumentsAction = new ReduceArgumentsAction($this->resolveArgumentReducers());
 
         foreach ($rawFrames as $rawFrame) {
             $textSnippet = null;
@@ -165,15 +186,13 @@ class Backtrace
             $frame = new Frame(
                 $currentFile,
                 $currentLine,
-                $rawFrame['args'] ?? null,
+                $arguments,
                 $rawFrame['function'] ?? null,
                 $rawFrame['class'] ?? null,
                 $this->isApplicationFrame($currentFile),
                 $textSnippet
             );
 
-<<<<<<< HEAD
-=======
             $frames[] = $frame;
 
             $arguments = $this->withArguments
@@ -188,7 +207,6 @@ class Backtrace
                 );
             }
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
             $currentFile = $rawFrame['file'] ?? 'unknown';
             $currentLine = $rawFrame['line'] ?? 0;
         }
@@ -218,7 +236,7 @@ class Backtrace
             $relativeFile = array_reverse(explode($this->applicationPath ?? '', $frameFilename, 2))[0];
         }
 
-        if (strpos($relativeFile, DIRECTORY_SEPARATOR . 'vendor') === 0) {
+        if (strpos($relativeFile, DIRECTORY_SEPARATOR.'vendor') === 0) {
             return false;
         }
 
@@ -251,5 +269,18 @@ class Backtrace
         }
 
         return $frames;
+    }
+
+    protected function resolveArgumentReducers(): ArgumentReducers
+    {
+        if ($this->argumentReducers === null) {
+            return ArgumentReducers::default();
+        }
+
+        if ($this->argumentReducers instanceof ArgumentReducers) {
+            return $this->argumentReducers;
+        }
+
+        return ArgumentReducers::create($this->argumentReducers);
     }
 }

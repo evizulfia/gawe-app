@@ -18,7 +18,7 @@ class ImplicitRouteBinding
      * @param  \Illuminate\Routing\Route  $route
      * @return void
      *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      * @throws \Illuminate\Routing\Exceptions\BackedEnumCaseNotFoundException
      */
     public static function resolveForRoute($container, $route)
@@ -46,8 +46,10 @@ class ImplicitRouteBinding
                         ? 'resolveSoftDeletableRouteBinding'
                         : 'resolveRouteBinding';
 
-            if ($parent instanceof UrlRoutable && ($route->enforcesScopedBindings() || array_key_exists($parameterName, $route->bindingFields()))) {
-                $childRouteBindingMethod = $route->allowsTrashedBindings()
+            if ($parent instanceof UrlRoutable &&
+                ! $route->preventsScopedBindings() &&
+                ($route->enforcesScopedBindings() || array_key_exists($parameterName, $route->bindingFields()))) {
+                $childRouteBindingMethod = $route->allowsTrashedBindings() && in_array(SoftDeletes::class, class_uses_recursive($instance))
                             ? 'resolveSoftDeletableChildRouteBinding'
                             : 'resolveChildRouteBinding';
 
@@ -82,19 +84,9 @@ class ImplicitRouteBinding
 
             $parameterValue = $parameters[$parameterName];
 
-<<<<<<< HEAD
             $backedEnumClass = (string) $parameter->getType();
-=======
-            if ($parameterValue === null) {
-                continue;
-            }
 
-            $backedEnumClass = $parameter->getType()?->getName();
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
-
-            $backedEnum = $parameterValue instanceof $backedEnumClass
-                ? $parameterValue
-                : $backedEnumClass::tryFrom((string) $parameterValue);
+            $backedEnum = $backedEnumClass::tryFrom((string) $parameterValue);
 
             if (is_null($backedEnum)) {
                 throw new BackedEnumCaseNotFoundException($backedEnumClass, $parameterValue);

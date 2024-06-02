@@ -28,17 +28,11 @@ class ApplicationTester
 {
     use TesterTrait;
 
-<<<<<<< HEAD
-    private $application;
+    private Application $application;
 
     public function __construct(Application $application)
     {
         $this->application = $application;
-=======
-    public function __construct(
-        private Application $application,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -55,17 +49,37 @@ class ApplicationTester
      */
     public function run(array $input, array $options = []): int
     {
-        $this->input = new ArrayInput($input);
-        if (isset($options['interactive'])) {
-            $this->input->setInteractive($options['interactive']);
+        $prevShellVerbosity = getenv('SHELL_VERBOSITY');
+
+        try {
+            $this->input = new ArrayInput($input);
+            if (isset($options['interactive'])) {
+                $this->input->setInteractive($options['interactive']);
+            }
+
+            if ($this->inputs) {
+                $this->input->setStream(self::createStream($this->inputs));
+            }
+
+            $this->initOutput($options);
+
+            return $this->statusCode = $this->application->run($this->input, $this->output);
+        } finally {
+            // SHELL_VERBOSITY is set by Application::configureIO so we need to unset/reset it
+            // to its previous value to avoid one test's verbosity to spread to the following tests
+            if (false === $prevShellVerbosity) {
+                if (\function_exists('putenv')) {
+                    @putenv('SHELL_VERBOSITY');
+                }
+                unset($_ENV['SHELL_VERBOSITY']);
+                unset($_SERVER['SHELL_VERBOSITY']);
+            } else {
+                if (\function_exists('putenv')) {
+                    @putenv('SHELL_VERBOSITY='.$prevShellVerbosity);
+                }
+                $_ENV['SHELL_VERBOSITY'] = $prevShellVerbosity;
+                $_SERVER['SHELL_VERBOSITY'] = $prevShellVerbosity;
+            }
         }
-
-        if ($this->inputs) {
-            $this->input->setStream(self::createStream($this->inputs));
-        }
-
-        $this->initOutput($options);
-
-        return $this->statusCode = $this->application->run($this->input, $this->output);
     }
 }

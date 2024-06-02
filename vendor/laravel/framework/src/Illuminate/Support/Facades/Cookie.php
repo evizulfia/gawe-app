@@ -3,11 +3,6 @@
 namespace Illuminate\Support\Facades;
 
 /**
-<<<<<<< HEAD
- * @method static array getQueuedCookies()
- * @method static unqueue($name)
- * @method static void queue(...$parameters)
-=======
  * @method static \Symfony\Component\HttpFoundation\Cookie make(string $name, string $value, int $minutes = 0, string|null $path = null, string|null $domain = null, bool|null $secure = null, bool $httpOnly = true, bool $raw = false, string|null $sameSite = null)
  * @method static \Symfony\Component\HttpFoundation\Cookie forever(string $name, string $value, string|null $path = null, string|null $domain = null, bool|null $secure = null, bool $httpOnly = true, bool $raw = false, string|null $sameSite = null)
  * @method static \Symfony\Component\HttpFoundation\Cookie forget(string $name, string|null $path = null, string|null $domain = null)
@@ -19,11 +14,10 @@ namespace Illuminate\Support\Facades;
  * @method static \Illuminate\Cookie\CookieJar setDefaultPathAndDomain(string $path, string|null $domain, bool|null $secure = false, string|null $sameSite = null)
  * @method static \Symfony\Component\HttpFoundation\Cookie[] getQueuedCookies()
  * @method static \Illuminate\Cookie\CookieJar flushQueuedCookies()
- * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void macro(string $name, object|callable $macro)
  * @method static void mixin(object $mixin, bool $replace = true)
  * @method static bool hasMacro(string $name)
  * @method static void flushMacros()
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Cookie\CookieJar
  */

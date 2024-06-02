@@ -16,18 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseIsUnprocessable extends Constraint
 {
-    /**
-<<<<<<< HEAD
-     * {@inheritdoc}
-     */
-=======
-     * @param bool $verbose If true, the entire response is printed on failure. If false, the response body is omitted.
-     */
-    public function __construct(private readonly bool $verbose = true)
-    {
-    }
-
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function toString(): string
     {
         return 'is unprocessable';
@@ -35,8 +23,6 @@ final class ResponseIsUnprocessable extends Constraint
 
     /**
      * @param Response $other
-     *
-     * {@inheritdoc}
      */
     protected function matches($other): bool
     {
@@ -45,8 +31,6 @@ final class ResponseIsUnprocessable extends Constraint
 
     /**
      * @param Response $other
-     *
-     * {@inheritdoc}
      */
     protected function failureDescription($other): string
     {
@@ -54,16 +38,10 @@ final class ResponseIsUnprocessable extends Constraint
     }
 
     /**
-<<<<<<< HEAD
      * @param Response $other
-     *
-     * {@inheritdoc}
-=======
-     * @param Response $response
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      */
-    protected function additionalFailureDescription($response): string
+    protected function additionalFailureDescription($other): string
     {
-        return $this->verbose ? (string) $response : explode("\r\n\r\n", (string) $response)[0];
+        return (string) $other;
     }
 }

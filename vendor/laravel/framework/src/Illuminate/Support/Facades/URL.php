@@ -3,22 +3,11 @@
 namespace Illuminate\Support\Facades;
 
 /**
-<<<<<<< HEAD
- * @method static \Illuminate\Contracts\Routing\UrlGenerator setRootControllerNamespace(string $rootNamespace)
- * @method static bool hasValidSignature(\Illuminate\Http\Request $request, bool $absolute = true)
- * @method static string action(string|array $action, $parameters = [], bool $absolute = true)
- * @method static string asset(string $path, bool $secure = null)
- * @method static string secureAsset(string $path)
- * @method static string current()
- * @method static string full()
- * @method static void macro(string $name, object|callable $macro)
-=======
  * @method static string full()
  * @method static string current()
  * @method static string previous(mixed $fallback = false)
  * @method static string previousPath(mixed $fallback = false)
  * @method static string to(string $path, mixed $extra = [], bool|null $secure = null)
- * @method static string query(string $path, array $query = [], mixed $extra = [], bool|null $secure = null)
  * @method static string secure(string $path, array $parameters = [])
  * @method static string asset(string $path, bool|null $secure = null)
  * @method static string secureAsset(string $path)
@@ -50,21 +39,12 @@ namespace Illuminate\Support\Facades;
  * @method static \Illuminate\Routing\UrlGenerator setSessionResolver(callable $sessionResolver)
  * @method static \Illuminate\Routing\UrlGenerator setKeyResolver(callable $keyResolver)
  * @method static \Illuminate\Routing\UrlGenerator withKeyResolver(callable $keyResolver)
- * @method static \Illuminate\Routing\UrlGenerator resolveMissingNamedRoutesUsing(callable $missingNamedRouteResolver)
  * @method static string getRootControllerNamespace()
  * @method static \Illuminate\Routing\UrlGenerator setRootControllerNamespace(string $rootNamespace)
- * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
+ * @method static void macro(string $name, object|callable $macro)
  * @method static void mixin(object $mixin, bool $replace = true)
- * @method static string previous($fallback = false)
- * @method static string route(string $name, $parameters = [], bool $absolute = true)
- * @method static string secure(string $path, array $parameters = [])
- * @method static string signedRoute(string $name, array $parameters = [], \DateTimeInterface|\DateInterval|int $expiration = null, bool $absolute = true)
- * @method static string temporarySignedRoute(string $name, \DateTimeInterface|\DateInterval|int $expiration, array $parameters = [], bool $absolute = true)
- * @method static string to(string $path, $extra = [], bool $secure = null)
- * @method static void defaults(array $defaults)
- * @method static void forceScheme(string $scheme)
- * @method static bool isValidUrl(string $path)
+ * @method static bool hasMacro(string $name)
+ * @method static void flushMacros()
  *
  * @see \Illuminate\Routing\UrlGenerator
  */

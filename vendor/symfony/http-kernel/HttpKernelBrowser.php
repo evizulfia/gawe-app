@@ -30,27 +30,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class HttpKernelBrowser extends AbstractBrowser
 {
-<<<<<<< HEAD
     protected $kernel;
-=======
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     private bool $catchExceptions = true;
 
     /**
      * @param array $server The server parameters (equivalent of $_SERVER)
      */
-<<<<<<< HEAD
-    public function __construct(HttpKernelInterface $kernel, array $server = [], History $history = null, CookieJar $cookieJar = null)
+    public function __construct(HttpKernelInterface $kernel, array $server = [], ?History $history = null, ?CookieJar $cookieJar = null)
     {
-=======
-    public function __construct(
-        protected HttpKernelInterface $kernel,
-        array $server = [],
-        ?History $history = null,
-        ?CookieJar $cookieJar = null,
-    ) {
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
         // These class properties must be set before calling the parent constructor, as it may depend on it.
+        $this->kernel = $kernel;
         $this->followRedirects = false;
 
         parent::__construct($server, $history, $cookieJar);
@@ -58,6 +47,8 @@ class HttpKernelBrowser extends AbstractBrowser
 
     /**
      * Sets whether to catch exceptions when the kernel is handling a request.
+     *
+     * @return void
      */
     public function catchExceptions(bool $catchExceptions)
     {
@@ -65,8 +56,6 @@ class HttpKernelBrowser extends AbstractBrowser
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param Request $request
      *
      * @return Response
@@ -83,8 +72,6 @@ class HttpKernelBrowser extends AbstractBrowser
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param Request $request
      *
      * @return string
@@ -98,7 +85,7 @@ class HttpKernelBrowser extends AbstractBrowser
 
         $requires = '';
         foreach (get_declared_classes() as $class) {
-            if (0 === strpos($class, 'ComposerAutoloaderInit')) {
+            if (str_starts_with($class, 'ComposerAutoloaderInit')) {
                 $r = new \ReflectionClass($class);
                 $file = \dirname($r->getFileName(), 2).'/autoload.php';
                 if (file_exists($file)) {
@@ -125,6 +112,9 @@ EOF;
         return $code.$this->getHandleScript();
     }
 
+    /**
+     * @return string
+     */
     protected function getHandleScript()
     {
         return <<<'EOF'
@@ -138,9 +128,6 @@ echo serialize($response);
 EOF;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function filterRequest(DomRequest $request): Request
     {
         $httpRequest = Request::create($request->getUri(), $request->getMethod(), $request->getParameters(), $request->getCookies(), $request->getFiles(), $server = $request->getServer(), $request->getContent());
@@ -197,8 +184,6 @@ EOF;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param Response $response
      */
     protected function filterResponse(object $response): DomResponse

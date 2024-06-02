@@ -5,12 +5,17 @@ namespace Illuminate\Session;
 use Closure;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Arr;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\ViewErrorBag;
 use SessionHandlerInterface;
 use stdClass;
 
 class Store implements Session
 {
+    use Macroable;
+
     /**
      * The session ID.
      *
@@ -93,13 +98,9 @@ class Store implements Session
      */
     protected function loadSession()
     {
-<<<<<<< HEAD
         $this->attributes = array_merge($this->attributes, $this->readFromHandler());
-=======
-        $this->attributes = array_replace($this->attributes, $this->readFromHandler());
 
         $this->marshalErrorBag();
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -116,7 +117,7 @@ class Store implements Session
                 $data = @unserialize($this->prepareForUnserialize($data));
             }
 
-            if ($data !== false && ! is_null($data) && is_array($data)) {
+            if ($data !== false && is_array($data)) {
                 return $data;
             }
         }
@@ -136,6 +137,28 @@ class Store implements Session
     }
 
     /**
+     * Marshal the ViewErrorBag when using JSON serialization for sessions.
+     *
+     * @return void
+     */
+    protected function marshalErrorBag()
+    {
+        if ($this->serialization !== 'json' || $this->missing('errors')) {
+            return;
+        }
+
+        $errorBag = new ViewErrorBag;
+
+        foreach ($this->get('errors') as $key => $value) {
+            $messageBag = new MessageBag($value['messages']);
+
+            $errorBag->put($key, $messageBag->setFormat($value['format']));
+        }
+
+        $this->put('errors', $errorBag);
+    }
+
+    /**
      * Save the session data to storage.
      *
      * @return void
@@ -144,11 +167,36 @@ class Store implements Session
     {
         $this->ageFlashData();
 
+        $this->prepareErrorBagForSerialization();
+
         $this->handler->write($this->getId(), $this->prepareForStorage(
             $this->serialization === 'json' ? json_encode($this->attributes) : serialize($this->attributes)
         ));
 
         $this->started = false;
+    }
+
+    /**
+     * Prepare the ViewErrorBag instance for JSON serialization.
+     *
+     * @return void
+     */
+    protected function prepareErrorBagForSerialization()
+    {
+        if ($this->serialization !== 'json' || $this->missing('errors')) {
+            return;
+        }
+
+        $errors = [];
+
+        foreach ($this->attributes['errors']->getBags() as $key => $value) {
+            $errors[$key] = [
+                'format' => $value->getFormat(),
+                'messages' => $value->getMessages(),
+            ];
+        }
+
+        $this->attributes['errors'] = $errors;
     }
 
     /**
@@ -224,7 +272,7 @@ class Store implements Session
     }
 
     /**
-     * Determine if a key is present and not null.
+     * Checks if a key is present and not null.
      *
      * @param  string|array  $key
      * @return bool
@@ -234,19 +282,6 @@ class Store implements Session
         return ! collect(is_array($key) ? $key : func_get_args())->contains(function ($key) {
             return is_null($this->get($key));
         });
-    }
-
-    /**
-     * Determine if any of the given keys are present and not null.
-     *
-     * @param  string|array  $key
-     * @return bool
-     */
-    public function hasAny($key)
-    {
-        return collect(is_array($key) ? $key : func_get_args())->filter(function ($key) {
-            return ! is_null($this->get($key));
-        })->count() >= 1;
     }
 
     /**
@@ -597,7 +632,7 @@ class Store implements Session
     /**
      * Set the session ID.
      *
-     * @param  string  $id
+     * @param  string|null  $id
      * @return void
      */
     public function setId($id)
@@ -608,7 +643,7 @@ class Store implements Session
     /**
      * Determine if this is a valid session ID.
      *
-     * @param  string  $id
+     * @param  string|null  $id
      * @return bool
      */
     public function isValidId($id)
@@ -698,6 +733,17 @@ class Store implements Session
     public function getHandler()
     {
         return $this->handler;
+    }
+
+    /**
+     * Set the underlying session handler implementation.
+     *
+     * @param  \SessionHandlerInterface  $handler
+     * @return \SessionHandlerInterface
+     */
+    public function setHandler(SessionHandlerInterface $handler)
+    {
+        return $this->handler = $handler;
     }
 
     /**

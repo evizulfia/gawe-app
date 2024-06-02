@@ -1,31 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Add optional `$expirationParameter` argument to `UriSigner::__construct()`
- * Add optional `$expiration` argument to `UriSigner::sign()`
- * Rename `$parameter` argument of `UriSigner::__construct()` to `$hashParameter`
- * Add `UploadedFile::getClientOriginalPath()`
- * Add `QueryParameterRequestMatcher`
- * Add `HeaderRequestMatcher`
- * Add support for `\SplTempFileObject` in `BinaryFileResponse`
- * Add `verbose` argument to response test constraints
-
-7.0
----
-
- * Calling `ParameterBag::filter()` throws an `UnexpectedValueException` on invalid value, unless flag `FILTER_NULL_ON_FAILURE` is set
- * Calling `ParameterBag::getInt()` and `ParameterBag::getBool()` throws an `UnexpectedValueException` on invalid value
- * Remove classes `RequestMatcher` and `ExpressionRequestMatcher`
- * Remove `Request::getContentType()`, use `Request::getContentTypeFormat()` instead
- * Throw an `InvalidArgumentException` when calling `Request::create()` with a malformed URI
- * Require explicit argument when calling `JsonResponse::setCallback()`, `Response::setExpires/setLastModified/setEtag()`, `MockArraySessionStorage/NativeSessionStorage::setMetadataBag()`, `NativeSessionStorage::setSaveHandler()`
- * Add argument `$statusCode` to `Response::sendHeaders()` and `StreamedResponse::sendHeaders()`
-
 6.4
 ---
 
@@ -67,7 +42,6 @@ CHANGELOG
  * Allow dynamic session "ttl" when using a remote storage
  * Deprecate `Request::getContentType()`, use `Request::getContentTypeFormat()` instead
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 6.0
 ---
 
@@ -155,7 +129,7 @@ CHANGELOG
    make sure to run `ALTER TABLE sessions MODIFY sess_lifetime INTEGER UNSIGNED NOT NULL` to
    update your database.
  * `PdoSessionHandler` now precalculates the expiry timestamp in the lifetime column,
-    make sure to run `CREATE INDEX EXPIRY ON sessions (sess_lifetime)` to update your database
+    make sure to run `CREATE INDEX expiry ON sessions (sess_lifetime)` to update your database
     to speed up garbage collection of expired sessions.
  * added `SessionHandlerFactory` to create session handlers with a DSN
  * added `IpUtils::anonymize()` to help with GDPR compliance.

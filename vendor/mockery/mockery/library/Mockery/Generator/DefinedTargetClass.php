@@ -1,33 +1,15 @@
 <?php
+
 /**
- * Mockery
+ * Mockery (https://docs.mockery.io/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://github.com/padraic/mockery/blob/master/LICENSE
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to padraic@php.net so we can send you a copy immediately.
- *
- * @category   Mockery
- * @package    Mockery
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
- * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
+ * @copyright https://github.com/mockery/mockery/blob/HEAD/COPYRIGHT.md
+ * @license https://github.com/mockery/mockery/blob/HEAD/LICENSE BSD 3-Clause License
+ * @link https://github.com/mockery/mockery for the canonical source repository
  */
 
 namespace Mockery\Generator;
 
-<<<<<<< HEAD
-class DefinedTargetClass implements TargetClassInterface
-{
-    private $rfc;
-    private $name;
-
-    public function __construct(\ReflectionClass $rfc, $alias = null)
-=======
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
@@ -55,17 +37,11 @@ class DefinedTargetClass implements TargetClassInterface
      * @param class-string|null $alias
      */
     public function __construct(ReflectionClass $rfc, $alias = null)
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     {
         $this->rfc = $rfc;
-        $this->name = $alias === null ? $rfc->getName() : $alias;
+        $this->name = $alias ?? $rfc->getName();
     }
 
-<<<<<<< HEAD
-    public static function factory($name, $alias = null)
-    {
-        return new self(new \ReflectionClass($name), $alias);
-=======
     /**
      * @return class-string
      */
@@ -130,7 +106,6 @@ class DefinedTargetClass implements TargetClassInterface
             },
             $this->rfc->getMethods()
         );
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -141,74 +116,25 @@ class DefinedTargetClass implements TargetClassInterface
         return $this->name;
     }
 
-<<<<<<< HEAD
-    public function isAbstract()
-    {
-        return $this->rfc->isAbstract();
-    }
-
-    public function isFinal()
-    {
-        return $this->rfc->isFinal();
-    }
-
-    public function getMethods()
-    {
-        return array_map(function ($method) {
-            return new Method($method);
-        }, $this->rfc->getMethods());
-    }
-
-    public function getInterfaces()
-    {
-        $class = __CLASS__;
-        return array_map(function ($interface) use ($class) {
-            return new $class($interface);
-        }, $this->rfc->getInterfaces());
-    }
-
-    public function __toString()
-    {
-        return $this->getName();
-    }
-
-=======
     /**
      * @return string
      */
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function getNamespaceName()
     {
         return $this->rfc->getNamespaceName();
     }
 
-<<<<<<< HEAD
-    public function inNamespace()
-    {
-        return $this->rfc->inNamespace();
-    }
-
-=======
     /**
      * @return string
      */
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function getShortName()
     {
         return $this->rfc->getShortName();
     }
 
-<<<<<<< HEAD
-    public function implementsInterface($interface)
-    {
-        return $this->rfc->implementsInterface($interface);
-    }
-
-=======
     /**
      * @return bool
      */
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     public function hasInternalAncestor()
     {
         if ($this->rfc->isInternal()) {
@@ -220,13 +146,12 @@ class DefinedTargetClass implements TargetClassInterface
             if ($parent->isInternal()) {
                 return true;
             }
+
             $child = $parent;
         }
 
         return false;
     }
-<<<<<<< HEAD
-=======
 
     /**
      * @param  class-string $interface
@@ -260,5 +185,4 @@ class DefinedTargetClass implements TargetClassInterface
     {
         return $this->rfc->isFinal();
     }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }

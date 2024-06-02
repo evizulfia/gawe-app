@@ -101,7 +101,7 @@ class LockableFile
      * Write to the file.
      *
      * @param  string  $contents
-     * @return string
+     * @return $this
      */
     public function write($contents)
     {
@@ -149,7 +149,7 @@ class LockableFile
      * Get an exclusive lock on the file.
      *
      * @param  bool  $block
-     * @return $this
+     * @return bool
      *
      * @throws \Illuminate\Contracts\Filesystem\LockTimeoutException
      */

@@ -1,21 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Add `ArgvInput::getRawTokens()`
-
-7.0
----
-
- * Add method `__toString()` to `InputInterface`
- * Remove `Command::$defaultName` and `Command::$defaultDescription`, use the `AsCommand` attribute instead
- * Require explicit argument when calling `*Command::setApplication()`, `*FormatterStyle::setForeground/setBackground()`, `Helper::setHelpSet()`, `Input*::setDefault()` and `Question::setAutocompleterCallback/setValidator()`
- * Remove `StringInput::REGEX_STRING`
-
 6.4
 ---
 
@@ -51,7 +36,6 @@ CHANGELOG
  * Add suggested values for arguments and options in input definition, for input completion
  * Add `$resumeAt` parameter to `ProgressBar#start()`, so that one can easily 'resume' progress on longer tasks, and still get accurate `getEstimate()` and `getRemaining()` results.
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 6.0
 ---
 

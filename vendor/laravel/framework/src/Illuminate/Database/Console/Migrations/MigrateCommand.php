@@ -3,19 +3,16 @@
 namespace Illuminate\Database\Console\Migrations;
 
 use Illuminate\Console\ConfirmableTrait;
+use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Database\SQLiteDatabaseDoesNotExistException;
 use Illuminate\Database\SqlServerConnection;
-<<<<<<< HEAD
-=======
 use PDOException;
-use RuntimeException;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Throwable;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 
-class MigrateCommand extends BaseCommand
+class MigrateCommand extends BaseCommand implements Isolatable
 {
     use ConfirmableTrait;
 
@@ -31,6 +28,7 @@ class MigrateCommand extends BaseCommand
                 {--schema-path= : The path to a schema dump file}
                 {--pretend : Dump the SQL queries that would be run}
                 {--seed : Indicates if the seed task should be re-run}
+                {--seeder= : The class name of the root seeder}
                 {--step : Force the migrations to be run so they can be rolled back individually}';
 
     /**
@@ -86,7 +84,7 @@ class MigrateCommand extends BaseCommand
             // Next, we will check to see if a path option has been defined. If it has
             // we will use the path relative to the root of this installation folder
             // so that migrations may be run for any path within the applications.
-            $this->migrator->setOutput($this->output)
+            $migrations = $this->migrator->setOutput($this->output)
                     ->run($this->getMigrationPaths(), [
                         'pretend' => $this->option('pretend'),
                         'step' => $this->option('step'),
@@ -96,7 +94,10 @@ class MigrateCommand extends BaseCommand
             // seed task to re-populate the database, which is convenient when adding
             // a migration and a seed at the same time, as it is only this command.
             if ($this->option('seed') && ! $this->option('pretend')) {
-                $this->call('db:seed', ['--force' => true]);
+                $this->call('db:seed', [
+                    '--class' => $this->option('seeder') ?: 'Database\\Seeders\\DatabaseSeeder',
+                    '--force' => true,
+                ]);
             }
         });
 
@@ -110,10 +111,16 @@ class MigrateCommand extends BaseCommand
      */
     protected function prepareDatabase()
     {
-        if (! $this->migrator->repositoryExists()) {
-            $this->call('migrate:install', array_filter([
-                '--database' => $this->option('database'),
-            ]));
+        if (! $this->repositoryExists()) {
+            $this->components->info('Preparing database.');
+
+            $this->components->task('Creating migration table', function () {
+                return $this->callSilent('migrate:install', array_filter([
+                    '--database' => $this->option('database'),
+                ])) == 0;
+            });
+
+            $this->newLine();
         }
 
         if (! $this->migrator->hasRunAnyMigrations() && ! $this->option('pretend')) {
@@ -122,8 +129,6 @@ class MigrateCommand extends BaseCommand
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Determine if the migrator repository exists.
      *
      * @return bool
@@ -133,7 +138,7 @@ class MigrateCommand extends BaseCommand
         return retry(2, fn () => $this->migrator->repositoryExists(), 0, function ($e) {
             try {
                 if ($e->getPrevious() instanceof SQLiteDatabaseDoesNotExistException) {
-                    return $this->createMissingSqliteDatabase($e->getPrevious()->path);
+                    return $this->createMissingSqliteDatbase($e->getPrevious()->path);
                 }
 
                 $connection = $this->migrator->resolveConnection($this->option('database'));
@@ -141,7 +146,7 @@ class MigrateCommand extends BaseCommand
                 if (
                     $e->getPrevious() instanceof PDOException &&
                     $e->getPrevious()->getCode() === 1049 &&
-                    in_array($connection->getDriverName(), ['mysql', 'mariadb'])) {
+                    $connection->getDriverName() === 'mysql') {
                     return $this->createMissingMysqlDatabase($connection);
                 }
 
@@ -157,10 +162,8 @@ class MigrateCommand extends BaseCommand
      *
      * @param  string  $path
      * @return bool
-     *
-     * @throws \RuntimeException
      */
-    protected function createMissingSqliteDatabase($path)
+    protected function createMissingSqliteDatbase($path)
     {
         if ($this->option('force')) {
             return touch($path);
@@ -170,12 +173,10 @@ class MigrateCommand extends BaseCommand
             return false;
         }
 
-        $this->components->warn('The SQLite database configured for this application does not exist: '.$path);
+        $this->components->warn('The SQLite database does not exist: '.$path);
 
-        if (! confirm('Would you like to create it?', default: true)) {
-            $this->components->info('Operation cancelled. No database was created.');
-
-            throw new RuntimeException('Database was not created. Aborting migration.');
+        if (! $this->components->confirm('Would you like to create it?')) {
+            return false;
         }
 
         return touch($path);
@@ -185,8 +186,6 @@ class MigrateCommand extends BaseCommand
      * Create a missing MySQL database.
      *
      * @return bool
-     *
-     * @throws \RuntimeException
      */
     protected function createMissingMysqlDatabase($connection)
     {
@@ -201,10 +200,8 @@ class MigrateCommand extends BaseCommand
         if (! $this->option('force') && ! $this->option('no-interaction')) {
             $this->components->warn("The database '{$connection->getDatabaseName()}' does not exist on the '{$connection->getName()}' connection.");
 
-            if (! confirm('Would you like to create it?', default: true)) {
-                $this->components->info('Operation cancelled. No database was created.');
-
-                throw new RuntimeException('Database was not created. Aborting migration.');
+            if (! $this->components->confirm('Would you like to create it?')) {
+                return false;
             }
         }
 
@@ -224,7 +221,6 @@ class MigrateCommand extends BaseCommand
     }
 
     /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Load the schema state to seed the initial database schema structure.
      *
      * @return void
@@ -241,20 +237,20 @@ class MigrateCommand extends BaseCommand
             return;
         }
 
-        $this->line('<info>Loading stored database schema:</info> '.$path);
+        $this->components->info('Loading stored database schemas.');
 
-        $startTime = microtime(true);
+        $this->components->task($path, function () use ($connection, $path) {
+            // Since the schema file will create the "migrations" table and reload it to its
+            // proper state, we need to delete it here so we don't get an error that this
+            // table already exists when the stored database schema file gets executed.
+            $this->migrator->deleteRepository();
 
-        // Since the schema file will create the "migrations" table and reload it to its
-        // proper state, we need to delete it here so we don't get an error that this
-        // table already exists when the stored database schema file gets executed.
-        $this->migrator->deleteRepository();
+            $connection->getSchemaState()->handleOutputUsing(function ($type, $buffer) {
+                $this->output->write($buffer);
+            })->load($path);
+        });
 
-        $connection->getSchemaState()->handleOutputUsing(function ($type, $buffer) {
-            $this->output->write($buffer);
-        })->load($path);
-
-        $runTime = number_format((microtime(true) - $startTime) * 1000, 2);
+        $this->newLine();
 
         // Finally, we will fire an event that this schema has been loaded so developers
         // can perform any post schema load tasks that are necessary in listeners for
@@ -262,8 +258,6 @@ class MigrateCommand extends BaseCommand
         $this->dispatcher->dispatch(
             new SchemaLoaded($connection, $path)
         );
-
-        $this->line('<info>Loaded stored database schema.</info> ('.$runTime.'ms)');
     }
 
     /**

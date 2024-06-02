@@ -3,12 +3,8 @@
 namespace Illuminate\Support\Facades;
 
 /**
-<<<<<<< HEAD
-=======
  * @method static bool shouldBlock()
  * @method static string|null blockDriver()
- * @method static int defaultRouteBlockLockSeconds()
- * @method static int defaultRouteBlockWaitSeconds()
  * @method static array getSessionConfig()
  * @method static string getDefaultDriver()
  * @method static void setDefaultDriver(string $name)
@@ -23,11 +19,9 @@ namespace Illuminate\Support\Facades;
  * @method static void ageFlashData()
  * @method static array all()
  * @method static array only(array $keys)
- * @method static array except(array $keys)
  * @method static bool exists(string|array $key)
  * @method static bool missing(string|array $key)
  * @method static bool has(string|array $key)
- * @method static bool hasAny(string|array $key)
  * @method static mixed get(string $key, mixed $default = null)
  * @method static mixed pull(string $key, mixed $default = null)
  * @method static bool hasOldInput(string|null $key = null)
@@ -61,41 +55,16 @@ namespace Illuminate\Support\Facades;
  * @method static string|null previousUrl()
  * @method static void setPreviousUrl(string $url)
  * @method static void passwordConfirmed()
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  * @method static \SessionHandlerInterface getHandler()
- * @method static array all()
- * @method static bool exists(string|array $key)
+ * @method static \SessionHandlerInterface setHandler(\SessionHandlerInterface $handler)
  * @method static bool handlerNeedsRequest()
- * @method static bool has(string|array $key)
- * @method static bool isStarted()
- * @method static bool migrate(bool $destroy = false)
- * @method static bool save()
- * @method static bool start()
- * @method static mixed get(string $key, $default = null)
- * @method static mixed flash(string $key, $value = true)
- * @method static mixed pull(string $key, $default = null)
- * @method static mixed remove(string $key)
- * @method static string getId()
- * @method static string getName()
- * @method static string token()
- * @method static string|null previousUrl()
- * @method static void flush()
- * @method static void forget(string|array $keys)
- * @method static void push(string $key, mixed $value)
- * @method static void put(string|array $key, $value = null)
- * @method static void setId(string $id)
- * @method static void setPreviousUrl(string $url)
  * @method static void setRequestOnHandler(\Illuminate\Http\Request $request)
-<<<<<<< HEAD
-=======
- * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+ * @method static void macro(string $name, object|callable $macro)
  * @method static void mixin(object $mixin, bool $replace = true)
  * @method static bool hasMacro(string $name)
  * @method static void flushMacros()
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
  *
  * @see \Illuminate\Session\SessionManager
- * @see \Illuminate\Session\Store
  */
 class Session extends Facade
 {

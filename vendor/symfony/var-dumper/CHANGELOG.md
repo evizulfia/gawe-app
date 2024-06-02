@@ -1,20 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
-=======
-7.1
----
-
- * Add support for new DOM extension classes in `DOMCaster`
-
-7.0
----
-
- * Add argument `$label` to `VarDumper::dump()`
- * Require explicit argument when calling `VarDumper::setHandler()`
- * Remove display of backtrace in `Twig_Template`, only `Twig\Template` is supported
-
 6.4
 ---
 
@@ -34,7 +20,6 @@ CHANGELOG
  * Add support for `FFI\CData` and `FFI\CType`
  * Deprecate calling `VarDumper::setHandler()` without arguments
 
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 5.4
 ---
 

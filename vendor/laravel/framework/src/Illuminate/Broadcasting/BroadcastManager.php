@@ -10,9 +10,12 @@ use Illuminate\Broadcasting\Broadcasters\LogBroadcaster;
 use Illuminate\Broadcasting\Broadcasters\NullBroadcaster;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Broadcasting\Broadcasters\RedisBroadcaster;
+use Illuminate\Bus\UniqueLock;
 use Illuminate\Contracts\Broadcasting\Factory as FactoryContract;
+use Illuminate\Contracts\Broadcasting\ShouldBeUnique;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Contracts\Bus\Dispatcher as BusDispatcherContract;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Foundation\CachesRoutes;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -56,12 +59,12 @@ class BroadcastManager implements FactoryContract
     }
 
     /**
-     * Register the routes for handling broadcast authentication and sockets.
+     * Register the routes for handling broadcast channel authentication and sockets.
      *
      * @param  array|null  $attributes
      * @return void
      */
-    public function routes(?array $attributes = null)
+    public function routes(array $attributes = null)
     {
         if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
             return;
@@ -78,14 +81,12 @@ class BroadcastManager implements FactoryContract
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Register the routes for handling broadcast user authentication.
      *
      * @param  array|null  $attributes
      * @return void
      */
-    public function userRoutes(?array $attributes = null)
+    public function userRoutes(array $attributes = null)
     {
         if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
             return;
@@ -109,13 +110,12 @@ class BroadcastManager implements FactoryContract
      * @param  array|null  $attributes
      * @return void
      */
-    public function channelRoutes(?array $attributes = null)
+    public function channelRoutes(array $attributes = null)
     {
-        $this->routes($attributes);
+        return $this->routes($attributes);
     }
 
     /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Get the socket ID for the given request.
      *
      * @param  \Illuminate\Http\Request|null  $request
@@ -130,30 +130,6 @@ class BroadcastManager implements FactoryContract
         $request = $request ?: $this->app['request'];
 
         return $request->header('X-Socket-ID');
-    }
-
-    /**
-     * Begin sending an anonymous broadcast to the given channels.
-     */
-    public function on(Channel|string|array $channels): AnonymousEvent
-    {
-        return new AnonymousEvent($channels);
-    }
-
-    /**
-     * Begin sending an anonymous broadcast to the given private channels.
-     */
-    public function private(string $channel): AnonymousEvent
-    {
-        return $this->on(new PrivateChannel($channel));
-    }
-
-    /**
-     * Begin sending an anonymous broadcast to the given presence channels.
-     */
-    public function presence(string $channel): AnonymousEvent
-    {
-        return $this->on(new PresenceChannel($channel));
     }
 
     /**
@@ -192,9 +168,34 @@ class BroadcastManager implements FactoryContract
             $queue = $event->queue;
         }
 
-        $this->app->make('queue')->connection($event->connection ?? null)->pushOn(
-            $queue, new BroadcastEvent(clone $event)
-        );
+        $broadcastEvent = new BroadcastEvent(clone $event);
+
+        if ($event instanceof ShouldBeUnique) {
+            $broadcastEvent = new UniqueBroadcastEvent(clone $event);
+
+            if ($this->mustBeUniqueAndCannotAcquireLock($broadcastEvent)) {
+                return;
+            }
+        }
+
+        $this->app->make('queue')
+            ->connection($event->connection ?? null)
+            ->pushOn($queue, $broadcastEvent);
+    }
+
+    /**
+     * Determine if the broadcastable event must be unique and determine if we can acquire the necessary lock.
+     *
+     * @param  mixed  $event
+     * @return bool
+     */
+    protected function mustBeUniqueAndCannotAcquireLock($event)
+    {
+        return ! (new UniqueLock(
+            method_exists($event, 'uniqueVia')
+                ? $event->uniqueVia()
+                : $this->app->make(Cache::class)
+        ))->acquire($event);
     }
 
     /**
@@ -243,6 +244,10 @@ class BroadcastManager implements FactoryContract
     protected function resolve($name)
     {
         $config = $this->getConfig($name);
+
+        if (is_null($config)) {
+            throw new InvalidArgumentException("Broadcast connection [{$name}] is not defined.");
+        }
 
         if (isset($this->customCreators[$config['driver']])) {
             return $this->callCustomCreator($config);
@@ -408,7 +413,7 @@ class BroadcastManager implements FactoryContract
      */
     public function purge($name = null)
     {
-        $name = $name ?? $this->getDefaultDriver();
+        $name ??= $this->getDefaultDriver();
 
         unset($this->drivers[$name]);
     }

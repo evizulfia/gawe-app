@@ -22,11 +22,17 @@ class Schedule
     use Macroable;
 
     const SUNDAY = 0;
+
     const MONDAY = 1;
+
     const TUESDAY = 2;
+
     const WEDNESDAY = 3;
+
     const THURSDAY = 4;
+
     const FRIDAY = 5;
+
     const SATURDAY = 6;
 
     /**
@@ -141,14 +147,6 @@ class Schedule
      */
     public function job($job, $queue = null, $connection = null)
     {
-        $jobName = $job;
-
-        if (! is_string($job)) {
-            $jobName = method_exists($job, 'displayName')
-                ? $job->displayName()
-                : $job::class;
-        }
-
         return $this->call(function () use ($job, $queue, $connection) {
             $job = is_string($job) ? Container::getInstance()->make($job) : $job;
 
@@ -157,7 +155,7 @@ class Schedule
             } else {
                 $this->dispatchNow($job);
             }
-        })->name($jobName);
+        })->name(is_string($job) ? $job : get_class($job));
     }
 
     /**
@@ -359,7 +357,7 @@ class Schedule
             } catch (BindingResolutionException $e) {
                 throw new RuntimeException(
                     'Unable to resolve the dispatcher from the service container. Please bind it or install the illuminate/bus package.',
-                    $e->getCode(), $e
+                    is_int($e->getCode()) ? $e->getCode() : 0, $e
                 );
             }
         }

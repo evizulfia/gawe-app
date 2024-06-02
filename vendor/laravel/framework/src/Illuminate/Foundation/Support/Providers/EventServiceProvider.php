@@ -11,7 +11,7 @@ class EventServiceProvider extends ServiceProvider
     /**
      * The event handler mappings for the application.
      *
-     * @var array
+     * @var array<string, array<int, string>>
      */
     protected $listen = [];
 
@@ -30,23 +30,6 @@ class EventServiceProvider extends ServiceProvider
     protected $observers = [];
 
     /**
-<<<<<<< HEAD
-=======
-     * Indicates if events should be discovered.
-     *
-     * @var bool
-     */
-    protected static $shouldDiscoverEvents = true;
-
-    /**
-     * The configured event discovery paths.
-     *
-     * @var array|null
-     */
-    protected static $eventDiscoveryPaths;
-
-    /**
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
      * Register the application's event listeners.
      *
      * @return void
@@ -57,7 +40,7 @@ class EventServiceProvider extends ServiceProvider
             $events = $this->getEvents();
 
             foreach ($events as $event => $listeners) {
-                foreach (array_unique($listeners) as $listener) {
+                foreach (array_unique($listeners, SORT_REGULAR) as $listener) {
                     Event::listen($event, $listener);
                 }
             }
@@ -130,11 +113,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents()
     {
-<<<<<<< HEAD
         return false;
-=======
-        return get_class($this) === __CLASS__ && static::$shouldDiscoverEvents === true;
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
     }
 
     /**
@@ -177,30 +156,4 @@ class EventServiceProvider extends ServiceProvider
     {
         return base_path();
     }
-<<<<<<< HEAD
-=======
-
-    /**
-     * Disable event discovery for the application.
-     *
-     * @return void
-     */
-    public static function disableEventDiscovery()
-    {
-        static::$shouldDiscoverEvents = false;
-    }
-
-    /**
-     * Configure the proper event listeners for email verification.
-     *
-     * @return void
-     */
-    protected function configureEmailVerification()
-    {
-        if (! isset($this->listen[Registered::class]) ||
-            ! in_array(SendEmailVerificationNotification::class, Arr::wrap($this->listen[Registered::class]))) {
-            Event::listen(Registered::class, SendEmailVerificationNotification::class);
-        }
-    }
->>>>>>> d8f983b1cb0ca70c53c56485f5bc9875abae52ec
 }
