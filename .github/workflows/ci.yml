@@ -1,14 +1,9 @@
-name: Laravel CI and Merge
+name: Laravel CI
 
 on:
   push:
     branches:
       - "*"
-  workflow_dispatch:
-    inputs:
-      target-branch:
-        description: "Target branch to merge into"
-        required: true
 
 jobs:
   build:
@@ -21,7 +16,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "^7.3|^8.0"
+          php-version: "8.2"
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -36,22 +31,14 @@ jobs:
         run: |
           npm install
 
-      - name: Copy .env.example to .env
+      - name: Copy .env and generate key
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      - name: Copy .env.testing to .env
-        run: cp .env.testing .env
-
-      - name: Generate APP_KEY for testing environment
-        run: php artisan key:generate --env=testing
-
-      - name: Run Laravel migrations
-        run: php artisan migrate --force --env=testing
-
       - name: Run Laravel tests
-        run: php artisan test --env=testing
+        run: |
+          php artisan test
 
       - name: Debugging Info
         run: |
@@ -59,29 +46,3 @@ jobs:
           node -v
           npm -v
           composer -V
-
-  merge:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Configure Git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: Fetch all branches
-        run: git fetch --all
-
-      - name: Merge master into target branch
-        run: |
-          git checkout ${{ github.event.inputs['target-branch'] }}
-          git merge master -m "Merged 'master' into ${{ github.event.inputs['target-branch'] }}"
-
-      - name: Push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: git push origin ${{ github.event.inputs['target-branch'] }}
