@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticIniteb9d8f4802051ea13854f10c889a5739
+class ComposerStaticInit57c6686e6c79a492cecc0217964dd6dc
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -352,8 +352,8 @@ class ComposerStaticIniteb9d8f4802051ea13854f10c889a5739
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -459,8 +459,8 @@ class ComposerStaticIniteb9d8f4802051ea13854f10c889a5739
         ),
         'Fruitcake\\Cors\\' => 
         array (
-            0 => __DIR__ . '/..' . '/fruitcake/laravel-cors/src',
-            1 => __DIR__ . '/..' . '/fruitcake/php-cors/src',
+            0 => __DIR__ . '/..' . '/fruitcake/php-cors/src',
+            1 => __DIR__ . '/..' . '/fruitcake/laravel-cors/src',
         ),
         'Faker\\' => 
         array (
@@ -5895,9 +5895,9 @@ class ComposerStaticIniteb9d8f4802051ea13854f10c889a5739
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticIniteb9d8f4802051ea13854f10c889a5739::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticIniteb9d8f4802051ea13854f10c889a5739::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticIniteb9d8f4802051ea13854f10c889a5739::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit57c6686e6c79a492cecc0217964dd6dc::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit57c6686e6c79a492cecc0217964dd6dc::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit57c6686e6c79a492cecc0217964dd6dc::$classMap;
 
         }, null, ClassLoader::class);
     }
