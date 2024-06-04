@@ -21,7 +21,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.1.1"
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Composer dependencies
         run: |
-          composer install --prefer-dist --no-progress --no-suggest
+          composer install --ignore-platform-reqs --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
       - name: Install NPM dependencies
         run: |
